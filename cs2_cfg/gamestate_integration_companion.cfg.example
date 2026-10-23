@@ -1,0 +1,20 @@
+"CS2 Companion Studio"
+{
+    "uri" "http://127.0.0.1:8080/gsi"
+    "timeout" "5.0"
+    "buffer" "0.1"
+    "throttle" "0.2"
+    "heartbeat" "10.0"
+    "auth" { "token" "GENERATED_BY_SETUP" }
+    "data"
+    {
+        "provider" "1"
+        "map" "1"
+        "map_round_wins" "1"
+        "round" "1"
+        "player_id" "1"
+        "player_state" "1"
+        "player_weapons" "1"
+        "player_match_stats" "1"
+    }
+}

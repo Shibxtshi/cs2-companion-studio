@@ -1,0 +1,21 @@
+services:
+  cs2-companion-studio:
+    build: .
+    init: true
+    ports:
+      - "${BIND_HOST:-127.0.0.1}:${PORT:-8080}:8080"
+    env_file:
+      - .env
+    volumes:
+      - ./data:/app/data
+      - ./logs:/app/logs
+    read_only: true
+    tmpfs:
+      - /tmp:rw,noexec,nosuid,size=16m
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    pids_limit: 128
+    mem_limit: 256m
+    restart: unless-stopped

@@ -1,0 +1,24 @@
+.env
+.env.*
+PIN.txt
+cs2_cfg/
+.git/
+.github/
+tests/
+test_*.py
+scripts/
+docs/
+__pycache__/
+*.pyc
+*.zip
+*.log
+*.bak
+
+installer/
+INSTALLER_WINDOWS.cmd
+DESINSTALLER_WINDOWS.cmd
+.installer-state/
+
+# Runtime data should never become part of the Docker build context
+data/
+logs/

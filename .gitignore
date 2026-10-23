@@ -1,0 +1,30 @@
+# User secrets (never commit)
+.env
+.env.*
+!.env.example
+PIN.txt
+**/PIN.txt
+cs2_cfg/*.cfg
+!cs2_cfg/*.cfg.example
+# Local state, backups and containers
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.coverage
+htmlcov/
+.venv/
+venv/
+*.log
+*.zip
+.DS_Store
+*.bak
+*.backup
+
+# Windows installer state/backups, which can contain the GSI token
+.installer-state/
+
+# Private persisted profiles and sanitized runtime diagnostics
+data/*
+!data/.gitkeep
+logs/*
+!logs/.gitkeep

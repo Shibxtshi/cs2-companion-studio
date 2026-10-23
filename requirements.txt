@@ -1,0 +1,4 @@
+# Runtime dependencies; pin for predictable public Docker builds.
+# Dependency-audit CI job MUST pass before a public tag is published.
+fastapi==0.159.1
+uvicorn[standard]==0.54.0

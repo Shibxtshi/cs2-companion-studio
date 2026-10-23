@@ -1,0 +1,25 @@
+name: Feature request
+description: Suggest a feature for this independent personal project.
+title: '[Feature] '
+labels: ['enhancement']
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: What would this improve?
+      description: Explain your use case and the user-visible benefit.
+    validations:
+      required: true
+  - type: textarea
+    id: proposal
+    attributes:
+      label: Suggested behavior
+    validations:
+      required: true
+  - type: checkboxes
+    id: safety
+    attributes:
+      label: Scope and rules
+      options:
+        - label: This suggestion does not require game-memory access, injection, hidden enemy data or violation of competitive platform rules.
+          required: true

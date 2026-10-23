@@ -1,0 +1,86 @@
+# CS2 Companion Studio
+
+**Personal, open-source dashboard project for Counter-Strike 2 (CS2)** — customizable widgets, live Game State Integration (GSI), and a responsive interface for phones, tablets, and PCs.
+
+> **Independent personal project, developed with AI assistance.** CS2 Companion Studio is shared by a solo maintainer and was developed iteratively with help from **ChatGPT by OpenAI**, including suggestions and generated code for the interface, backend, tests, and documentation. AI-assisted code can contain mistakes; this project has **not** received an independent security audit. Read the [full development disclosure](AI_DISCLOSURE.md).
+>
+> **Not affiliated with or endorsed by Valve, Counter-Strike 2, FACEIT, or OpenAI.** The game and company names are used solely to describe compatibility. Use of GSI or an external display does **not** mean any competitive platform has approved the tool. Check applicable rules before competitive use.
+
+**Status:** `V1P-G` — step 9 **public repository preparation**, **not yet the final public V1P release**. GitHub Actions must still run successfully and the release checklist must be completed before making the repository public.
+
+**Languages:** English (default), French (available). [Documentation en français](docs/README.fr.md).
+
+## What it does
+
+- Live personal GSI dashboard over HTTP/WebSocket — **no game memory reading, DLL injection, or in-game overlay**.
+- 29 customizable widgets (weapons, ammunition, score, economy estimates, match statistics, equipment, round state, etc.). Some widgets depend on available GSI fields.
+- Personalizable layouts: drag, resize, choose styles, create and rename profiles.
+- **Server-side profiles** in `data/` shared by PIN-authenticated browsers and devices.
+- Demo mode with synthetic values; private profiles are not accessible in demo mode.
+- EN/FR interface and guided Windows installer for Steam + Docker Desktop.
+- Support diagnostics designed to avoid writing secrets and raw GSI packets. Inspect logs before sharing them.
+- Optional **estimated** bomb countdown for private testing; **disabled by default**. Its use in competitive matches may be prohibited. Do not use it on FACEIT without explicit permission.
+
+## Getting started on Windows
+
+**Requirements:** Windows, CS2 installed via Steam, and running Docker Desktop. You do **not** need Python for guided installation.
+
+1. Download the source ZIP **from a trusted release/source**, unpack it into an ordinary folder (not directly from within the ZIP).
+2. Start Docker Desktop.
+3. Double-click **`INSTALLER_WINDOWS.cmd`**. Choose English or French, confirm the detected CS2 directory, and follow the prompts.
+4. The installer creates a **unique private PIN and GSI token**, writes the game GSI configuration (with backup when replacing an existing one), and starts Docker.
+5. Restart CS2 if a GSI config was newly installed; start a training match. Open **`http://localhost:8080`** and enter your PIN.
+6. To use your phone, opt into trusted-LAN mode during setup. Connect the phone to the same private Wi-Fi and open `http://YOUR-PC-LAN-IP:8080`.
+
+The installer does not silently install Docker, alter the Windows firewall, or guarantee anti-cheat compatibility. Administrative elevation should only be requested if needed for filesystem access. Detailed instructions: [Windows installation](docs/INSTALLATION_WINDOWS.md).
+
+### Manual installation (advanced)
+
+```powershell
+python scripts/generate_config.py
+# Ensure generated cs2_cfg/gamestate_integration_companion.cfg is installed under CS2 game/csgo/cfg
+# Restart CS2 after adding/changing that file.
+docker compose up -d --build
+```
+
+**Do not commit** the generated `.env`, PIN, GSI `.cfg`, personal `data/`, or local `logs/`. The public repo contains only `.env.example` and GSI config examples. When updating, keep both **`.env` and `data/`**; profiles live on the server, not in the browser.
+
+## Networking and safety
+
+- Docker binds to **127.0.0.1** by default. LAN mode (`BIND_HOST=0.0.0.0`) is optional: allow port 8080 only on a trusted private network via the host firewall.
+- LAN uses **unencrypted HTTP and WebSocket**. Anyone able to observe that network could capture traffic or credentials. Never forward port 8080 from your router or expose it directly to the Internet.
+- A single PIN grants dashboard/profile access to the instance. It is not a multi-user account system.
+- The `/health` endpoint reports service health, not your private match state. Never post `.env`, live GSI tokens, `data/profiles.json`, or raw Docker logs to a GitHub issue.
+- Economy predictions and bomb timing are **estimates** and may be unavailable or inaccurate. The bomb timer is a training/authorized-environment feature, not an approved FACEIT aid.
+
+See [SECURITY.md](SECURITY.md), [technical security notes](docs/SECURITY.md), and [rules/limitations](docs/USAGE_AND_AFFILIATION.md).
+
+## Troubleshooting and reporting bugs
+
+- First check `http://localhost:8080/health`; then use the authenticated in-app **Diagnostics** at the bottom of the page.
+- Verify `game/csgo/cfg/gamestate_integration_companion.cfg` is installed and CS2 has restarted if GSI stays offline.
+- You can optionally attach the **redacted diagnostic export**, after inspecting it manually. **Never attach** `.env`, PIN, generated `.cfg`, `data/profiles.json`, raw Docker logs, or player-identifying screenshots.
+- Report bugs through [GitHub Issues](.github/ISSUE_TEMPLATE/bug_report.yml); send security vulnerabilities **privately** according to [SECURITY.md](SECURITY.md).
+
+## Contributing and transparency
+
+This is a **solo personal project being shared with the community**, not an official product or service. Contributions and respectful feedback are welcome, with no promise of a particular response time or feature roadmap.
+
+AI-assisted work is welcome, but please be transparent in pull requests about substantial AI-generated content, what you personally reviewed, and what you tested. See [AI disclosure](AI_DISCLOSURE.md), [contributing guide](CONTRIBUTING.md), and [code of conduct](CODE_OF_CONDUCT.md).
+
+**Local checks:**
+
+```powershell
+python -m pip install -r requirements-dev.txt pytest
+python scripts/run_checks.py
+```
+
+The CI configuration adds Windows/Linux tests, browser tests, PowerShell checks, a Docker smoke test and a dependency audit. **The presence of a workflow is not evidence that it has passed on GitHub.** See [release checklist](docs/PUBLIC_RELEASE_CHECKLIST.md).
+
+## License and credits
+
+**Proposed license: MIT.** The `LICENSE` file includes a maintainer-holder placeholder which **must be completed and confirmed before publishing**. Review third-party dependencies/assets and their licenses. Contributions may require appropriate attribution.
+
+Credits: independent maintainer and community contributors (once any exist); **OpenAI's ChatGPT** for substantial development assistance. OpenAI is **not** the owner, publisher or endorser of this project.
+
+[Functional changelog](CHANGELOG.md) · [Windows setup](docs/INSTALLATION_WINDOWS.md) · [Roadmap](docs/ROADMAP.md) · [Release preparation](docs/PUBLIC_RELEASE_CHECKLIST.md)

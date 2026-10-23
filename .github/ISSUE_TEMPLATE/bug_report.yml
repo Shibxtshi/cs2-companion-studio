@@ -1,0 +1,64 @@
+name: Bug report
+description: Report an application bug with sanitized details and reproduction steps.
+title: '[Bug] '
+labels: ['bug']
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Privacy:** Never paste your `.env`, PIN, GSI `.cfg`, `data/profiles.json`, raw Docker logs, SteamID, or identifiable screenshots. Review exported support diagnostics before attaching them. Security vulnerabilities must be reported privately following SECURITY.md.
+  - type: input
+    id: version
+    attributes:
+      label: Application version
+      placeholder: e.g. 1p-f or 1p-g
+    validations:
+      required: true
+  - type: dropdown
+    id: environment
+    attributes:
+      label: Where does it happen?
+      options:
+        - Demo mode (synthetic data)
+        - CS2 local training/bots
+        - Desktop dashboard / profiles
+        - LAN device / phone
+        - Windows installer / Docker
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to reproduce
+      description: Use sanitized information only.
+      placeholder: |
+        1. Start demo mode
+        2. Create a layout
+        3. ...
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: Actual behavior
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: environment_details
+    attributes:
+      label: OS, browser, Docker and additional context (no secrets)
+      placeholder: Windows 11, Docker Desktop, Edge, etc.
+  - type: checkboxes
+    id: privacy
+    attributes:
+      label: Privacy checklist
+      options:
+        - label: I have removed secrets, raw GSI information and personal identifiers from this report and attachments.
+          required: true
