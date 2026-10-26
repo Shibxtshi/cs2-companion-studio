@@ -21,7 +21,7 @@ from fastapi.responses import FileResponse, JSONResponse
 from fastapi.staticfiles import StaticFiles
 
 ROOT = Path(__file__).resolve().parent
-VERSION = '1p-f'
+VERSION = '1.0.0'
 DATA_DIR = Path(os.getenv('PROFILE_DATA_DIR', str(ROOT / 'data')))
 LOG_DIR = Path(os.getenv('DIAGNOSTICS_DIR', str(ROOT / 'logs')))
 profile_store = ProfileStore(DATA_DIR / 'profiles.json')
