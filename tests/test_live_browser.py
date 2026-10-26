@@ -12,7 +12,7 @@ import time
 from urllib.request import urlopen, Request
 from urllib.error import URLError
 
-from playwright.sync_api import sync_playwright
+from playwright.sync_api import expect, sync_playwright
 
 ROOT = Path(__file__).resolve().parents[1]
 PIN = 'e2e-pin-239840'
@@ -81,17 +81,16 @@ def run(browser_name):
             a.locator('#tab-custom').click()
             a.on('dialog', lambda dialog: dialog.accept('Shared V1P-F setup'))
             a.locator('#rename-profile').click()
-            a.wait_for_function("[...document.querySelector('#profile-select').options].some(o=>o.textContent==='Shared V1P-F setup')", timeout=8000)
+            expect(a.locator('#profile-select')).to_contain_text('Shared V1P-F setup', timeout=8000)
 
             b = phone.new_page()
             b.on('pageerror', lambda error: errors.append(str(error)))
             login(b, url)
             b.locator('#tab-custom').click()
-            b.wait_for_function("[...document.querySelector('#profile-select').options].some(o=>o.textContent==='Shared V1P-F setup')", timeout=8000)
+            expect(b.locator('#profile-select')).to_contain_text('Shared V1P-F setup', timeout=8000)
 
-            # Capture authenticated, live CS2-state events (not merely WS authentication).
-            for page in (a, b):
-                page.evaluate("window.__sawLive = false; document.addEventListener('cs2:state', e => { if(e.detail.online) window.__sawLive = true; });")
+            # Observe the live status in the DOM instead of evaluating JS:
+            # Firefox correctly enforces the app's restrictive CSP.
             # Real simulated GSI POST must propagate over WS to both authenticated devices.
             body = json.dumps({'auth': {'token': TOKEN},
                 'map': {'name': 'de_mirage', 'phase': 'live', 'round': 3,
@@ -101,8 +100,8 @@ def run(browser_name):
                            'state': {'health': 77, 'money': 2600}}}).encode()
             with urlopen(Request(url+'/gsi', body, {'Content-Type': 'application/json'}, method='POST'), timeout=5) as r:
                 assert r.status == 200
-            a.wait_for_function('window.__sawLive === true', timeout=8000)
-            b.wait_for_function('window.__sawLive === true', timeout=8000)
+            expect(a.locator('#session-banner')).to_have_attribute('data-state', 'live', timeout=8000)
+            expect(b.locator('#session-banner')).to_have_attribute('data-state', 'live', timeout=8000)
 
             # Search must work in either language, and no JS runtime errors.
             a.locator('#edit').click()
