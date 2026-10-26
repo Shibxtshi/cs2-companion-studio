@@ -63,8 +63,8 @@ def check_git_index(root):
     if parent.returncode != 0:
         print('NOTE: not a git checkout; repository index check skipped')
         return
-    repo_root = Path(parent.stdout.strip()).resolve()
-    prefix = root.resolve().relative_to(repo_root).as_posix()
+    repoRoot = Path(parent.stdout.strip()).resolve()
+    prefix = root.resolve().relative_to(repoRoot).as_posix()
     prefix = '' if prefix == '.' else prefix + '/'
     tracked = subprocess.run(['git', '-C', str(root), 'ls-files', '--cached', '-z', '--full-name'],
                              capture_output=True, check=True).stdout.decode('utf-8', errors='replace')

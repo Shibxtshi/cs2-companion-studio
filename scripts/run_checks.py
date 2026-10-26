@@ -14,7 +14,7 @@ def run():
         print('Running:', test, flush=True)
         subprocess.run([sys.executable, str(ROOT/test)], cwd=ROOT, check=True)
     print('Running: public security and persistence regressions', flush=True)
-    subprocess.run([sys.executable, '-m', 'pytest', '-q', 'tests/test_public_security.py', 'tests/test_secret_hygiene.py', 'tests/test_public_docs.py', 'tests/test_release_version.py'], cwd=ROOT, check=True)
+    subprocess.run([sys.executable, '-m', 'pytest', '-q', 'tests/test_public_security.py', 'tests/test_secret_hygiene.py', 'tests/test_public_docs.py', 'tests/test_release_version.py', 'tests/test_code_quality.py'], cwd=ROOT, check=True)
     subprocess.run([sys.executable, 'scripts/check_secrets.py'], cwd=ROOT, check=True)
     print('OK: local backend/security quality gate. Browser, Docker and dependency scans run in CI.', flush=True)
 

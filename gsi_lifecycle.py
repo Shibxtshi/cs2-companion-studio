@@ -45,22 +45,22 @@ def history_loss_level(mp: dict[str, Any], side: str) -> int | None:
     # Only consider completed rounds; map.round may point to an ongoing round.
     completed = {integer(k): side_from_win(v) for k, v in wins.items()}
     completed = {k: v for k, v in completed.items() if k is not None and k > 0}
-    half_start = 1 if current <= 12 else 13
-    half_end = min(current - 1, 12) if current <= 12 else current - 1
+    halfStart = 1 if current <= 12 else 13
+    halfEnd = min(current - 1, 12) if current <= 12 else current - 1
     # The map.round counter is not entirely consistent across integrations.
     # Where a result exists for the current number, include it only if round
     # phase is clearly over (a live round can still be running).
-    if half_end < half_start:
-        if half_start == 13:
+    if halfEnd < halfStart:
+        if halfStart == 13:
             # A mid-match join at halftime alone does not prove MR12 settings.
             if any(completed.get(i) is None for i in range(1, 13)):
                 return None
         return 1  # default starting half level; still only *estimated*
-    for index in range(half_start, half_end + 1):
+    for index in range(halfStart, halfEnd + 1):
         if completed.get(index) is None:
             return None
     level = 1  # documented default competitive starting level per half
-    for index in range(half_start, half_end + 1):
+    for index in range(halfStart, halfEnd + 1):
         winner = completed[index]
         level = max(0, level - 1) if winner == side else min(4, level + 1)
     return level
@@ -82,9 +82,9 @@ class EconomyObserver:
     def ingest(self, incoming_map: dict[str, Any], merged_map: dict[str, Any]) -> None:
         rnd = integer(merged_map.get('round'))
         for side, field_name in (('CT', 'team_ct'), ('T', 'team_t')):
-            team_data = incoming_map.get(field_name)
-            if isinstance(team_data, dict) and 'consecutive_round_losses' in team_data:
-                level = integer(team_data['consecutive_round_losses'])
+            teamData = incoming_map.get(field_name)
+            if isinstance(teamData, dict) and 'consecutive_round_losses' in teamData:
+                level = integer(teamData['consecutive_round_losses'])
                 if level is not None and 0 <= level <= 100:
                     self.direct[side] = (level, rnd)
                 else:

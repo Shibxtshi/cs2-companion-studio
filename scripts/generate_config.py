@@ -12,18 +12,18 @@ GSI = ROOT / 'cs2_cfg' / 'gamestate_integration_companion.cfg'
 
 def main():
     if DOTENV.exists() or GSI.exists():
-        print('Configuration déjà présente. Aucune modification effectuée.')
-        print('Pour renouveler les identifiants, sauvegarde puis supprime les fichiers .env et GSI locaux.')
+        print('Local configuration already exists; no changes were made.')
+        print('To regenerate credentials, back up and remove the local .env and GSI configuration files first.')
         return 1
     pin = ''.join(str(secrets.randbelow(10)) for _ in range(10))
     token = secrets.token_urlsafe(36)
     content = (
-        '# Fichier local privé : ne jamais publier sur GitHub.\n'
+        '# Local private configuration: never publish to GitHub.\n'
         'GSI_TOKEN=' + token + '\n'
         'DASHBOARD_PIN=' + pin + '\n'
         'BOMB_TIMER_ENABLED=false\n'
         'BOMB_DURATION_SECONDS=40\n'
-        '# localhost par défaut. Pour le téléphone : BIND_HOST=0.0.0.0 et pare-feu LAN.\n'
+        '# Localhost by default. For phone access, use BIND_HOST=0.0.0.0 on a trusted LAN with firewall rules.\n'
         'BIND_HOST=127.0.0.1\n'
         'PORT=8080\n'
     )
@@ -52,9 +52,9 @@ def main():
     if os.name != 'nt':
         DOTENV.chmod(0o600)
         GSI.chmod(0o600)
-    print('Configuration créée. PIN personnel : ' + pin)
-    print('Fichier GSI : ' + str(GSI))
-    print('Ne partage pas ces valeurs ni les fichiers générés.')
+    print('Local configuration created. Personal PIN: ' + pin)
+    print('GSI configuration file: ' + str(GSI))
+    print('Never share these values or the generated files.')
     return 0
 
 

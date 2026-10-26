@@ -26,7 +26,7 @@ def wait_for_health(base, timeout=60):
     A connection reset during this short window is expected, not a failure.
     """
     deadline = time.monotonic() + timeout
-    last_error = None
+    lastError = None
     while time.monotonic() < deadline:
         try:
             code, data = get(base + '/health')
@@ -35,9 +35,9 @@ def wait_for_health(base, timeout=60):
         except (URLError, OSError, ValueError) as exc:
             # URLError: refused connections; OSError: resets/disconnects;
             # ValueError: incomplete or invalid health JSON during startup.
-            last_error = exc
+            lastError = exc
         time.sleep(0.5)
-    raise RuntimeError('Docker service not healthy or wrong version after restart') from last_error
+    raise RuntimeError('Docker service not healthy or wrong version after restart') from lastError
 
 
 def run():

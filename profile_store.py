@@ -43,11 +43,11 @@ def validate_document(obj):
         if not pid or pid in ids:
             raise ValueError('profile_id')
         ids.add(pid)
-        widgets_raw = raw.get('widgets')
-        if not isinstance(widgets_raw, list) or len(widgets_raw) > MAX_WIDGETS:
+        widgetsRaw = raw.get('widgets')
+        if not isinstance(widgetsRaw, list) or len(widgetsRaw) > MAX_WIDGETS:
             raise ValueError('widgets_count')
         widgets, wids = [], set()
-        for item in widgets_raw:
+        for item in widgetsRaw:
             if not isinstance(item, dict) or item.get('kind') not in PROFILE_KINDS:
                 raise ValueError('widget_type')
             wid = _id(item.get('id'))
@@ -106,8 +106,8 @@ class ProfileStore:
         if type(revision) is not int or revision != self.revision:
             return False
         cleaned = validate_document(document)
-        next_rev = self.revision + 1
-        packed = json.dumps({**cleaned, 'revision': next_rev}, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
+        nextRev = self.revision + 1
+        packed = json.dumps({**cleaned, 'revision': nextRev}, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
         if len(packed) > MAX_STORE_BYTES:
             raise ValueError('too_large')
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -125,5 +125,5 @@ class ProfileStore:
             if os.path.exists(filename):
                 os.unlink(filename)
         self.data = cleaned
-        self.revision = next_rev
+        self.revision = nextRev
         return True

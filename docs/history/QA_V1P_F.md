@@ -55,4 +55,4 @@ PIN + WebSocket protect profiles from casual local guests, but **HTTP and WS on 
 The bomb timer remains optional and disabled by default. GSI use and absence of injections **do not imply FACEIT approval**. This remains an independent project not affiliated with Valve, Counter-Strike 2, or FACEIT.
 
 
-**Step 9 note:** Root `SECURITY.md`, README, MIT license draft, AI disclosure and contribution templates now exist. License holder, private contacts and GitHub CI execution remain **publication blockers**; see [`PUBLIC_RELEASE_CHECKLIST.md`](PUBLIC_RELEASE_CHECKLIST.md).
+**Step 9 note:** Root `SECURITY.md`, README, historical MIT license proposal (now superseded by the no-resale draft), AI disclosure and contribution templates now exist. License holder, private contacts and GitHub CI execution remain **publication blockers**; see [`PUBLIC_RELEASE_CHECKLIST.md`](../PUBLIC_RELEASE_CHECKLIST.md).

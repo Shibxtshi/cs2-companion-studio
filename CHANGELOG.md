@@ -52,4 +52,4 @@
 
 - Stabilized project structure and introduced secret handling and network protections.
 
-Older technical details: [functional changelog](docs/CHANGELOG_FONCTIONNEL.md).
+Older technical details: [functional changelog](docs/history/CHANGELOG_FONCTIONNEL.md).

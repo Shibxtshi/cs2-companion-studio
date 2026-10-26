@@ -119,7 +119,8 @@ def add_event(message: str, category: str = 'info') -> None:
 
 
 def summary() -> dict[str, Any]:
-    online = last_game_seen is not None and time.monotonic() - last_game_seen < 20
+    now = time.monotonic()
+    online = last_game_seen is not None and now - last_game_seen < 20
     p = (state.get('player') or {}) if online else {}
     ps = p.get('state') or {}
     stats = p.get('match_stats') or {}
@@ -150,11 +151,11 @@ def summary() -> dict[str, Any]:
     return {
         'type': 'state',
         'online': online,
-        'gsi_connected': last_seen is not None and time.monotonic() - last_seen < 20,
-        'age_seconds': None if last_seen is None else min(999, round(time.monotonic() - last_seen, 1)),
+        'gsi_connected': last_seen is not None and now - last_seen < 20,
+        'age_seconds': None if last_seen is None else min(999, round(now - last_seen, 1)),
         'map': str(mp.get('name') or ''),
         'map_mode': str(mp.get('mode') or ''),
-        'map_phase': str(mp.get('phase') or ''),
+        'mapPhase': str(mp.get('phase') or ''),
         'round': number(mp.get('round')),
         'round_phase': str(rnd.get('phase') or ''),
         'round_winner': str(rnd.get('win_team') or ''),
@@ -196,6 +197,9 @@ def val_if_str(v: Any) -> str:
 
 
 async def send_state() -> None:
+    # Do not serialize game state while no authenticated dashboards are connected.
+    if not connected:
+        return
     msg = json.dumps(summary(), ensure_ascii=False)
     gone = []
     for ws in tuple(connected):
@@ -261,127 +265,127 @@ def update_from_gsi(incoming: dict[str, Any], now: float) -> None:
     events, weapons, money or loss-level observations from the old session.
     """
     global last_seen, last_game_seen, bomb_started_at, bomb_start_unknown
-    old_map = state.get('map') or {}
-    old_round = state.get('round') or {}
-    old_player = state.get('player') or {}
-    incoming_map = incoming.get('map') if isinstance(incoming.get('map'), dict) else {}
-    incoming_round = incoming.get('round') if isinstance(incoming.get('round'), dict) else {}
-    incoming_player = incoming.get('player') if isinstance(incoming.get('player'), dict) else {}
-    incoming_bomb = incoming.get('bomb') if isinstance(incoming.get('bomb'), dict) else {}
-    old_map_name = old_map.get('name')
-    new_map_name = incoming_map.get('name')
-    old_number, new_number = number(old_map.get('round')), number(incoming_map.get('round'))
-    map_switched = bool(old_map_name and new_map_name and new_map_name != old_map_name)
-    mode_switched = bool(old_map.get('mode') and incoming_map.get('mode') and
-                         incoming_map['mode'] != old_map['mode'])
-    rewind = old_number is not None and new_number is not None and new_number < old_number
-    phase_restarted = (old_map.get('phase') == 'gameover' and
-                       incoming_map.get('phase') in ('warmup', 'live'))
-    fresh_match = map_switched or mode_switched or rewind or phase_restarted
-    changed_round = old_number is not None and new_number is not None and new_number != old_number
-    old_id = old_player.get('steamid')
-    new_id = incoming_player.get('steamid')
-    identity_changed = bool(old_id and new_id and old_id != new_id)
-    old_team = old_player.get('team')
-    new_team = incoming_player.get('team')
-    side_switched = bool(old_team and new_team and old_team != new_team)
+    oldMap = state.get('map') or {}
+    oldRound = state.get('round') or {}
+    oldPlayer = state.get('player') or {}
+    incomingMap = incoming.get('map') if isinstance(incoming.get('map'), dict) else {}
+    incomingRound = incoming.get('round') if isinstance(incoming.get('round'), dict) else {}
+    incomingPlayer = incoming.get('player') if isinstance(incoming.get('player'), dict) else {}
+    incomingBomb = incoming.get('bomb') if isinstance(incoming.get('bomb'), dict) else {}
+    oldMapName = oldMap.get('name')
+    newMapName = incomingMap.get('name')
+    oldNumber, newNumber = number(oldMap.get('round')), number(incomingMap.get('round'))
+    mapSwitched = bool(oldMapName and newMapName and newMapName != oldMapName)
+    modeSwitched = bool(oldMap.get('mode') and incomingMap.get('mode') and
+                         incomingMap['mode'] != oldMap['mode'])
+    rewind = oldNumber is not None and newNumber is not None and newNumber < oldNumber
+    phaseRestarted = (oldMap.get('phase') == 'gameover' and
+                       incomingMap.get('phase') in ('warmup', 'live'))
+    freshMatch = mapSwitched or modeSwitched or rewind or phaseRestarted
+    changedRound = oldNumber is not None and newNumber is not None and newNumber != oldNumber
+    oldId = oldPlayer.get('steamid')
+    newId = incomingPlayer.get('steamid')
+    identityChanged = bool(oldId and newId and oldId != newId)
+    oldTeam = oldPlayer.get('team')
+    newTeam = incomingPlayer.get('team')
+    sideSwitched = bool(oldTeam and newTeam and oldTeam != newTeam)
     recent = last_game_seen is not None and 0 <= now - last_game_seen <= 20
-    old_bomb_state = str(old_round.get('bomb') or '').lower()
-    old_ps = old_player.get('state') if isinstance(old_player.get('state'), dict) else {}
-    old_stats = old_player.get('match_stats') if isinstance(old_player.get('match_stats'), dict) else {}
-    prev_health = number(old_ps.get('health'))
-    prev_kills = number(old_stats.get('kills'))
+    oldBombState = str(oldRound.get('bomb') or '').lower()
+    oldPlayerState = oldPlayer.get('state') if isinstance(oldPlayer.get('state'), dict) else {}
+    oldStats = oldPlayer.get('match_stats') if isinstance(oldPlayer.get('match_stats'), dict) else {}
+    prevHealth = number(oldPlayerState.get('health'))
+    prevKills = number(oldStats.get('kills'))
 
-    if fresh_match:
+    if freshMatch:
         state.clear()
         state.update({'map': {}, 'round': {}, 'player': {}, 'provider': {}})
         events.clear()
         economy_observer.reset()
         bomb_started_at = None
         bomb_start_unknown = False
-    elif changed_round:
+    elif changedRound:
         state['round'] = {}
         p = state.setdefault('player', {})
         p.pop('state', None)
         p.pop('weapons', None)
         bomb_started_at = None
         bomb_start_unknown = False
-        if old_map_name:
+        if oldMapName:
             add_event('Nouvelle manche', 'round')
-    if not recent and last_game_seen is not None and not (fresh_match or changed_round):
+    if not recent and last_game_seen is not None and not (freshMatch or changedRound):
         p = state.setdefault('player', {})
         for transient in ('state', 'weapons', 'match_stats'):
             p.pop(transient, None)
-        prev_health = prev_kills = None
-    if identity_changed:
+        prevHealth = prevKills = None
+    if identityChanged:
         state['player'] = {}
-        prev_health = prev_kills = None
-    if side_switched and not changed_round:
+        prevHealth = prevKills = None
+    if sideSwitched and not changedRound:
         # Never mix weapons and health from two sides (e.g. spectator/team swap).
         p = state.setdefault('player', {})
         p.pop('state', None)
         p.pop('weapons', None)
-        prev_health = None
-    if fresh_match or changed_round or identity_changed:
-        prev_health = prev_kills = None
+        prevHealth = None
+    if freshMatch or changedRound or identityChanged:
+        prevHealth = prevKills = None
 
     for section in ('map', 'round', 'player', 'provider'):
         if isinstance(incoming.get(section), dict):
             merge(state.setdefault(section, {}), incoming[section])
     # Never blindly trust a cached direct bonus from the prior round.
-    economy_observer.ingest(incoming_map, state.get('map') or {})
+    economy_observer.ingest(incomingMap, state.get('map') or {})
 
-    new_ps = (state.get('player') or {}).get('state') or {}
-    new_stats = (state.get('player') or {}).get('match_stats') or {}
-    current_health = number(new_ps.get('health'))
-    current_kills = number(new_stats.get('kills'))
-    if prev_health is not None and current_health is not None and prev_health != current_health:
-        add_event(('Soins' if current_health > prev_health else 'Dégâts') + f' · {current_health} HP', 'health')
-    if prev_kills is not None and current_kills is not None and current_kills > prev_kills:
-        add_event(f'Élimination · {current_kills} au total', 'kill')
+    newPlayerState = (state.get('player') or {}).get('state') or {}
+    newStats = (state.get('player') or {}).get('match_stats') or {}
+    currentHealth = number(newPlayerState.get('health'))
+    currentKills = number(newStats.get('kills'))
+    if prevHealth is not None and currentHealth is not None and prevHealth != currentHealth:
+        add_event(('Soins' if currentHealth > prevHealth else 'Dégâts') + f' · {currentHealth} HP', 'health')
+    if prevKills is not None and currentKills is not None and currentKills > prevKills:
+        add_event(f'Élimination · {currentKills} au total', 'kill')
 
-    new_bomb_state = incoming_round.get('bomb')
-    if new_bomb_state is None:
-        new_bomb_state = incoming_bomb.get('state')
-    if isinstance(new_bomb_state, str):
-        new_bomb_state = new_bomb_state.lower()
-        if new_bomb_state == 'planted' and old_bomb_state != 'planted':
+    newBombState = incomingRound.get('bomb')
+    if newBombState is None:
+        newBombState = incomingBomb.get('state')
+    if isinstance(newBombState, str):
+        newBombState = newBombState.lower()
+        if newBombState == 'planted' and oldBombState != 'planted':
             add_event('Bombe plantée', 'bomb')
             # An actively observed round *before* this packet is required.
-            observed_live = bool(old_round) and old_round.get('phase') == 'live' and recent and not (fresh_match or changed_round)
-            if observed_live:
+            observedLive = bool(oldRound) and oldRound.get('phase') == 'live' and recent and not (freshMatch or changedRound)
+            if observedLive:
                 bomb_started_at = now
                 bomb_start_unknown = False
             else:
                 bomb_started_at = None
                 bomb_start_unknown = True
-        elif new_bomb_state in ('defused', 'exploded'):
-            if new_bomb_state != old_bomb_state:
-                add_event('Bombe ' + ('désamorcée' if new_bomb_state == 'defused' else 'explosée'), 'bomb')
+        elif newBombState in ('defused', 'exploded'):
+            if newBombState != oldBombState:
+                add_event('Bombe ' + ('désamorcée' if newBombState == 'defused' else 'explosée'), 'bomb')
             bomb_started_at = None
             bomb_start_unknown = False
-        if new_bomb_state in ('planted', 'defused', 'exploded'):
-            state.setdefault('round', {})['bomb'] = new_bomb_state
+        if newBombState in ('planted', 'defused', 'exploded'):
+            state.setdefault('round', {})['bomb'] = newBombState
 
-    new_phase = (state.get('round') or {}).get('phase')
-    map_phase = (state.get('map') or {}).get('phase')
-    if new_phase in ('over', 'freezetime') or map_phase == 'gameover':
-        if new_phase in ('over', 'freezetime') and (state.get('round') or {}).get('bomb') == 'planted':
+    newPhase = (state.get('round') or {}).get('phase')
+    mapPhase = (state.get('map') or {}).get('phase')
+    if newPhase in ('over', 'freezetime') or mapPhase == 'gameover':
+        if newPhase in ('over', 'freezetime') and (state.get('round') or {}).get('bomb') == 'planted':
             state['round']['bomb'] = None
         bomb_started_at = None
         bomb_start_unknown = False
-    if map_phase in ('gameover', 'warmup') and old_map.get('phase') not in ('gameover', 'warmup'):
+    if mapPhase in ('gameover', 'warmup') and oldMap.get('phase') not in ('gameover', 'warmup'):
         # An ended match must not show the previous player's weapon/cash/HP.
         state['player'] = {}
         state['round'] = {}
         economy_observer.reset()
         bomb_started_at = None
         bomb_start_unknown = False
-    if not recent and last_game_seen is not None and old_bomb_state == 'planted' and not (fresh_match or changed_round):
+    if not recent and last_game_seen is not None and oldBombState == 'planted' and not (freshMatch or changedRound):
         bomb_started_at = None
         bomb_start_unknown = True
     last_seen = now
-    if incoming_map or incoming_round or incoming_player:
+    if incomingMap or incomingRound or incomingPlayer:
         last_game_seen = now
 
 
@@ -471,20 +475,20 @@ async def ws(websocket: WebSocket):
             return
         limiter.success(ip)
         diagnostics.record('login_success')
-        session_id = secrets.token_hex(8)
-        await websocket.send_json({'type': 'auth_ok', 'version': VERSION, 'session': session_id})
+        sessionId = secrets.token_hex(8)
+        await websocket.send_json({'type': 'auth_ok', 'version': VERSION, 'session': sessionId})
         authenticated = True
         connected.add(websocket)
         pending_logins -= 1
         await websocket.send_json(profile_store.snapshot())
         await websocket.send_text(json.dumps(summary(), ensure_ascii=False))
         while True:
-            raw_msg = await websocket.receive_text()
-            if len(raw_msg) > 225_000:
+            rawMsg = await websocket.receive_text()
+            if len(rawMsg) > 225_000:
                 await websocket.close(code=1009)
                 break
             try:
-                command = json.loads(raw_msg)
+                command = json.loads(rawMsg)
             except (ValueError, UnicodeDecodeError):
                 continue
             if not isinstance(command, dict):
@@ -508,7 +512,7 @@ async def ws(websocket: WebSocket):
                         continue
                     diagnostics.record('profiles_saved')
                     diagnostics.write_summary(len(profile_store.data['profiles']))
-                    snapshot = profile_store.snapshot(source=session_id)
+                    snapshot = profile_store.snapshot(source=sessionId)
                     for client in tuple(connected):
                         try:
                             await client.send_json(snapshot)
