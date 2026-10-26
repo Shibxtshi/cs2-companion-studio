@@ -22,6 +22,8 @@ These conventions guide incremental refactors; existing public interfaces remain
 - Avoid timers or DOM refreshes without work to perform; preserve timer accuracy and the default-disabled setting.
 - Treat Windows `.cmd` launchers, the top-level `app.py`, Docker entry points and CI commands as compatibility surfaces; relocate them only with explicit tests and updated documentation.
 - Place historical development documentation in `docs/history/`, and active product documentation at the root of `docs/`.
+- Keep ordinary pytest tests in `tests/`, isolated CLI regression suites in `tests/standalone/`, and historical offline browser tests in `tests/legacy_browser/`. See `tests/README.md` for the different invocation methods.
+- Keep widget template definitions in `static/widgets.js` and ensure it loads before `static/studio.js`.
 
 ## Quality gates
 
