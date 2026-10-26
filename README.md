@@ -6,7 +6,7 @@
 >
 > **Not affiliated with or endorsed by Valve, Counter-Strike 2, FACEIT, or OpenAI.** The game and company names are used solely to describe compatibility. Use of GSI or an external display does **not** mean any competitive platform has approved the tool. Check applicable rules before competitive use.
 
-**Status:** `V1P-G` — step 9 **public repository preparation**, **not yet the final public V1P release**. GitHub Actions must still run successfully and the release checklist must be completed before making the repository public.
+**Status:** `v1.0.0` release candidate — the eight private CI checks passed on `main` on 26 October 2026. **Not publicly released**: complete the licensing, private security reporting, real Windows/CS2 verification and final release checklist before publication.
 
 **Languages:** English (default), French (available). [Documentation en français](docs/README.fr.md).
 
@@ -75,7 +75,7 @@ python -m pip install -r requirements-dev.txt pytest
 python scripts/run_checks.py
 ```
 
-The CI configuration adds Windows/Linux tests, browser tests, PowerShell checks, a Docker smoke test and a dependency audit. **The presence of a workflow is not evidence that it has passed on GitHub.** See [release checklist](docs/PUBLIC_RELEASE_CHECKLIST.md).
+CI runs Windows/Linux tests, Chromium/Firefox/WebKit browser journeys, PowerShell checks, Docker smoke tests and a dependency audit. A [private main run passed all eight jobs](https://github.com/Shibxtshi/cs2-companion-studio/actions/runs/40338691160); verify the release commit again before publication. See [release checklist](docs/PUBLIC_RELEASE_CHECKLIST.md).
 
 ## License and credits
 
