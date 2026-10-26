@@ -14,6 +14,17 @@ def test_version_identifiers_are_consistent():
     assert "version='1.0.0'" in text("installer/install.ps1")
     assert "json.loads(data).get('version') == '1.0.0'" in text("scripts/docker_smoke.py")
 
+def test_licensing_draft_does_not_misrepresent_mit_or_open_source():
+    license_text = text("LICENSE")
+    readme = text("README.md")
+    assert "DRAFT v0.1" in license_text
+    assert "NOT YET APPROVED OR EFFECTIVE" in license_text
+    assert "No resale" in license_text
+    assert "business purposes is allowed" in license_text
+    assert "MIT License" not in license_text
+    assert "source-available" in readme
+    assert "not OSI-approved open source" in readme
+
 def test_disclosure_survives_release():
     readme = text("README.md")
     assert "ChatGPT" in readme and "personal project" in readme.lower()
