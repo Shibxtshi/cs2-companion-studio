@@ -1,6 +1,17 @@
 # Changelog — user-visible changes
 
-Development-stage names are listed for clarity; **V1P is not yet a public stable release**.
+Development-stage names are retained as historical milestones. **v1.0.0 is a release candidate and has not yet been publicly released.**
+
+## v1.0.0 — release candidate (unpublished)
+
+- First proposed public stable version of the independent, AI-assisted CS2 GSI dashboard.
+- 29 configurable widgets, bilingual interface, authenticated WebSocket live data, shared server-side profiles, Windows installer and Docker deployment.
+- Verified eight private CI checks on `main`: Windows/Linux, PowerShell, Chromium/Firefox/WebKit, Docker and dependency auditing.
+- Fixed Docker restart readiness, Firefox CSP-safe browser test assertions and Firefox container HOME; used prebuilt Playwright image to avoid slow Ubuntu dependency downloads.
+- Preserved localhost default, isolated public demo mode and disabled-by-default estimated bomb timer.
+- Known limitations: no independent security audit, unencrypted trusted-LAN HTTP/WS, and no guarantee of approval for competitive platforms.
+
+
 
 ## V1P-G — Step 9: public repository preparation
 
