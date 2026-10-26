@@ -15,6 +15,10 @@ This is a personal CS2 Game State Integration dashboard developed with substanti
 
 Windows, Docker Desktop and CS2 installed via Steam for guided setup. LAN access is optional and uses unencrypted HTTP/WebSocket; keep it on trusted networks and never expose port 8080 to the Internet.
 
+## License (draft — not yet effective)
+
+The intended Community No-Resale license would allow free access, use, modifications, free redistribution, and professional/internal use, while prohibiting sale of the software and its modified versions. Paid standalone services are intended to remain permitted. This would be **source-available, not OSI-approved open source**. Legal review and rights-holder confirmation remain mandatory before release.
+
 ## Transparency and limitations
 
 AI-assisted implementation and automated tests are not an independent security audit or evidence of anti-cheat approval. See AI_DISCLOSURE.md, SECURITY.md and README.md. Preserve `.env` and `data/` across upgrades; never publish personal files.
