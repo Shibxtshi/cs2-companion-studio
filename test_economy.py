@@ -30,7 +30,7 @@ def run():
 
     app.economy_observer.reset()
     with TestClient(app.app) as client:
-        assert client.get('/health').json()['version'] == '1p-f'
+        assert client.get('/health').json()['version'] == '1.0.0'
         with client.websocket_connect('/ws', headers={'origin':'http://testserver'}) as ws:
             ws.send_json({'type': 'auth', 'pin': '123456'})
             assert ws.receive_json()['type'] == 'auth_ok'

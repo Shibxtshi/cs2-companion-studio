@@ -24,7 +24,7 @@ def run():
     assert limiter.allowed('test', 904)
     with TestClient(app.app) as client:
         r = client.get('/health')
-        assert r.json() == {'service': 'ok', 'version': '1p-f'}
+        assert r.json() == {'service': 'ok', 'version': '1.0.0'}
         assert r.headers['x-frame-options'] == 'DENY'
         assert "script-src 'self'" in r.headers['content-security-policy']
         assert 'gsi_online' not in r.text

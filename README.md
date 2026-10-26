@@ -1,12 +1,12 @@
 # CS2 Companion Studio
 
-**Personal, open-source dashboard project for Counter-Strike 2 (CS2)** — customizable widgets, live Game State Integration (GSI), and a responsive interface for phones, tablets, and PCs.
+**Personal, source-available dashboard project for Counter-Strike 2 (CS2)** — customizable widgets, live Game State Integration (GSI), and a responsive interface for phones, tablets, and PCs.
 
 > **Independent personal project, developed with AI assistance.** CS2 Companion Studio is shared by a solo maintainer and was developed iteratively with help from **ChatGPT by OpenAI**, including suggestions and generated code for the interface, backend, tests, and documentation. AI-assisted code can contain mistakes; this project has **not** received an independent security audit. Read the [full development disclosure](AI_DISCLOSURE.md).
 >
 > **Not affiliated with or endorsed by Valve, Counter-Strike 2, FACEIT, or OpenAI.** The game and company names are used solely to describe compatibility. Use of GSI or an external display does **not** mean any competitive platform has approved the tool. Check applicable rules before competitive use.
 
-**Status:** `V1P-G` — step 9 **public repository preparation**, **not yet the final public V1P release**. GitHub Actions must still run successfully and the release checklist must be completed before making the repository public.
+**Software version:** `1.0.0` (first-release candidate). A source version does not mean that the GitHub release has been published; check [GitHub Releases](https://github.com/Shibxtshi/cs2-companion-studio/releases) for published packages. Before public launch, the maintainer must complete the license and private-reporting requirements in the [release checklist](docs/PUBLIC_RELEASE_CHECKLIST.md).
 
 **Languages:** English (default), French (available). [Documentation en français](docs/README.fr.md).
 
@@ -75,11 +75,11 @@ python -m pip install -r requirements-dev.txt pytest
 python scripts/run_checks.py
 ```
 
-The CI configuration adds Windows/Linux tests, browser tests, PowerShell checks, a Docker smoke test and a dependency audit. **The presence of a workflow is not evidence that it has passed on GitHub.** See [release checklist](docs/PUBLIC_RELEASE_CHECKLIST.md).
+The CI configuration adds Windows/Linux tests, browser tests, PowerShell checks, a Docker smoke test and a dependency audit. See [GitHub Actions](https://github.com/Shibxtshi/cs2-companion-studio/actions) for the current result; earlier successful runs do not validate newer commits. See [release checklist](docs/PUBLIC_RELEASE_CHECKLIST.md).
 
 ## License and credits
 
-**Proposed license: MIT.** The `LICENSE` file includes a maintainer-holder placeholder which **must be completed and confirmed before publishing**. Review third-party dependencies/assets and their licenses. Contributions may require appropriate attribution.
+**Proposed license: Community No-Resale (custom, draft).** You may use, modify, and redistribute the software free of charge, including for professional use, but may not sell copies or modified versions. Professional use, monetized coaching and paid commissioned development are intended to remain permitted; charging for setup, hosting or support is still under legal review. This is **source-available, not OSI-approved open source**. The `LICENSE` draft is not effective yet; the rights holder, legal wording, and third-party compatibility must be confirmed before publication.
 
 Credits: independent maintainer and community contributors (once any exist); **OpenAI's ChatGPT** for substantial development assistance. OpenAI is **not** the owner, publisher or endorser of this project.
 

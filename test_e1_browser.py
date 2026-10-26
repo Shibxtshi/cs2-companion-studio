@@ -16,12 +16,12 @@ with sync_playwright() as p:
       const mem={'cs2-companion-studio-v3': JSON.stringify({profiles:[{name:'SECRET DEMO PROFILE'}]})};
       Object.defineProperty(window,'localStorage',{configurable:true,value:{getItem:k=>mem[k]||null,setItem:(k,v)=>mem[k]=v}});
       window.__sent=[];
-      window.fetch=async()=>({ok:true,json:async()=>({service:'ok',version:'1p-f'})});
+      window.fetch=async()=>({ok:true,json:async()=>({service:'ok',version:'1.0.0'})});
       window.WebSocket=class{
         static OPEN=1;static CLOSED=3;
         constructor(){this.readyState=0;window.__socket=this;setTimeout(()=>{this.readyState=1;this.onopen?.();},0);}
         send(raw){const req=JSON.parse(raw);window.__sent.push(req);if(req.type==='auth'){
-          setTimeout(()=>{this.onmessage?.({data:JSON.stringify({type:'auth_ok',version:'1p-f',session:'s123'})});
+          setTimeout(()=>{this.onmessage?.({data:JSON.stringify({type:'auth_ok',version:'1.0.0',session:'s123'})});
             this.onmessage?.({data:JSON.stringify({type:'profiles_state',revision:1,source:null,profiles:[{id:'p123',name:'Shared profile',accent:'#f3ac52',density:'normal',widgets:[{id:'w1',kind:'score',span:12,title:'',color:'',background:'',opacity:100,style:'solid'}]}],activeProfile:'p123'})});
             this.onmessage?.({data:JSON.stringify({type:'state',online:false,player:{},bomb_timer:{status:'disabled'}})});},0);
           }else if(req.type==='profiles_save')setTimeout(()=>this.onmessage?.({data:JSON.stringify({type:'profiles_state',revision:2,source:'s123',...req.document})}),0);

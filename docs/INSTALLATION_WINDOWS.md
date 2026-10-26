@@ -1,6 +1,6 @@
-# Installation Windows — V1P-E.1 (installateur V1P-C.2.1 conservé)
+# Installation Windows — CS2 Companion Studio v1.0.0
 
-L'assistant est un script **PowerShell natif** (Windows PowerShell 5.1 ou PowerShell 7) ; Python n'est pas nécessaire. Docker Desktop + Docker Compose v2 doivent être installés et démarrés. Le dashboard utilise le port TCP 8080 par défaut, en local uniquement. La version reste une *préversion de développement*.
+L'assistant est un script **PowerShell natif** (Windows PowerShell 5.1 ou PowerShell 7) ; Python n'est pas nécessaire. Docker Desktop + Docker Compose v2 doivent être installés et démarrés. Le dashboard utilise le port TCP 8080 par défaut, en local uniquement. La version de l'application est `1.0.0` ; consulte les releases GitHub pour savoir si une archive officielle a été publiée.
 
 ## Nouvelle installation
 
@@ -31,14 +31,16 @@ Pour revenir à une écoute locale uniquement :
 powershell -NoProfile -ExecutionPolicy Bypass -File .\installer\install.ps1 -LocalOnly
 ```
 
-## Migration depuis V1P-B
+## Mise à jour depuis une installation existante
 
-1. Exporter tes profils de widgets en JSON par précaution.
-2. Arrêter **l'ancienne** V1P-B depuis son dossier avec `docker compose down` (sinon deux serveurs voudront le port 8080).
-3. Décompresser V1P-C dans un **nouveau** dossier.
-4. Copier uniquement ton ancien `.env` personnel dans ce nouveau dossier. L'assistant réutilise le **même PIN, le même token, le même port et le même mode réseau** ; il ne les écrase pas sans demande explicite.
-5. Lancer `INSTALLER_WINDOWS.cmd`. Le fichier CS2 GSI est comparé à la configuration désirée ; si sa mise à jour est nécessaire, l'assistant demande confirmation et crée une sauvegarde (même si c'est un fichier GSI de l'ancienne version).
-6. Les profils V1P-E.1 résident dans `data/profiles.json` sur le serveur Docker : conserver ce dossier lors des futures mises à jour. Aucun profil navigateur antérieur n’est migré automatiquement.
+1. Sauvegarder le fichier **`.env`** et tout le dossier **`data/`** (profils partagés).
+2. Arrêter l'ancienne version depuis son dossier avec `docker compose down`.
+3. Décompresser la nouvelle version dans un dossier distinct.
+4. Restaurer `.env` et `data/` dans le nouveau dossier avant de relancer Docker.
+5. Lancer `INSTALLER_WINDOWS.cmd` et vérifier le chemin CS2/GSI proposé. L'assistant sauvegarde un fichier GSI existant avant remplacement.
+6. Vérifier les profils depuis PC et téléphone et effectuer une partie d'entraînement CS2 après mise à jour.
+
+Ne jamais inclure `.env`, `data/profiles.json`, les diagnostics locaux ou les configurations GSI générées dans un dépôt GitHub ou un ZIP public.
 
 ## Diagnostic
 
@@ -47,7 +49,7 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\installer\status.ps1
 docker compose logs --tail=30
 ```
 
-- `http://localhost:8080/health` doit annoncer `"version":"1p-e.1"`.
+- `http://localhost:8080/health` doit annoncer `"version":"1.0.0"`.
 - Si le serveur ne démarre pas, vérifier Docker Desktop et qu'aucun ancien conteneur n'occupe 8080.
 - Si GSI reste déconnecté, vérifier que CS2 a été **redémarré après installation du .cfg** et que `127.0.0.1:8080` est joignable.
 - Les messages du diagnostic ne doivent jamais afficher le token ni le PIN.

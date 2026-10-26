@@ -1,13 +1,25 @@
 # Changelog — user-visible changes
 
-Development-stage names are listed for clarity; **V1P is not yet a public stable release**.
+**Current release candidate:** 1.0.0. The previous V1P labels below record internal development milestones; no public release has been published yet.
+
+## 1.0.0 — First release candidate (publication pending)
+
+- CS2 GSI dashboard with 29 customizable widgets and EN/FR interface.
+- Shared server-side profiles across authenticated PCs and phones, private demo, imports/exports.
+- Game state, economy estimates and optional estimated bomb timer (disabled by default).
+- Windows guided installer, Docker, privacy-conscious diagnostics and CI test suite.
+- Independent personal project developed with substantial ChatGPT (OpenAI) assistance.
+
+**Release not yet published:** complete the license, confidential reporting and final release checklist before tagging `v1.0.0`.
+
+## Internal development history
 
 ## V1P-G — Step 9: public repository preparation
 
 - Reorganized the README around installation, features, limitations, support and public release status.
 - Added **explicit, prominent disclosure** of the personal/solo nature of the project and extensive ChatGPT (OpenAI) development assistance, including an in-app Help note.
 - Added GitHub issue / PR templates, contribution and community guidance, security reporting draft, release checklist and French overview.
-- Documented the proposed MIT license; maintainer holder must be confirmed before public publication.
+- Earlier preparation proposed MIT; this was superseded by a draft no-resale, source-available license after clarifying the intended redistribution terms.
 - **No planned changes to GSI behavior, profiles, widgets, Docker configuration or the Windows installer.**
 
 ## V1P-F / V1P-F.1 — Step 8: quality and security
