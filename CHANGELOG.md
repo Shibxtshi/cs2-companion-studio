@@ -19,7 +19,7 @@
 - Reorganized the README around installation, features, limitations, support and public release status.
 - Added **explicit, prominent disclosure** of the personal/solo nature of the project and extensive ChatGPT (OpenAI) development assistance, including an in-app Help note.
 - Added GitHub issue / PR templates, contribution and community guidance, security reporting draft, release checklist and French overview.
-- Documented the proposed MIT license; maintainer holder must be confirmed before public publication.
+- Earlier preparation proposed MIT; this was superseded by a draft no-resale, source-available license after clarifying the intended redistribution terms.
 - **No planned changes to GSI behavior, profiles, widgets, Docker configuration or the Windows installer.**
 
 ## V1P-F / V1P-F.1 — Step 8: quality and security
