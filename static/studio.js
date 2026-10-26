@@ -56,7 +56,7 @@ function clearPrivateProfiles(){
  currentView='default';editing=false;catalogOpen=false;
 }
 function toast(message){const t=$('toast');t.textContent=message;t.classList.remove('hidden');clearTimeout(notifyTimeout);notifyTimeout=setTimeout(()=>t.classList.add('hidden'),3000);}
-function setStatus(msg,kind=''){const x=$('status');x.textContent=msg;x.className='badge '+kind;document.dispatchEvent(new CustomEvent('cs2:status',{detail:{message:msg,kind}}));}
+function setStatus(msg,kind='',code=''){const x=$('status');x.textContent=msg;x.className='badge '+kind;document.dispatchEvent(new CustomEvent('cs2:status',{detail:{message:msg,kind,code}}));}
 function setOnline(s){if(modeDemo)setStatus('Mode démo','ok');else setStatus(s?.online?'Partie connectée':s?.gsi_connected?'GSI actif · en attente de partie':'CS2 hors ligne',s?.online?'ok':'bad');$('notice').classList.toggle('hidden',!!s?.online&&!modeDemo);$('notice').textContent=modeDemo?'Données simulées':(!s?.online?'En attente de données de partie CS2.':'');document.dispatchEvent(new CustomEvent('cs2:state',{detail:{online:!!s?.online,gsi_connected:!!s?.gsi_connected,demo:modeDemo}}));}
 function updateProfiles(){const x=$('profile-select');x.replaceChildren();for(const p of profiles){const o=document.createElement('option');o.value=p.id;o.textContent=p.name;x.append(o);}x.value=activeProfile;$('accent').value=profile()?.accent||COLOR;$('density').value=profile()?.density||'normal';$('delete-profile').disabled=profiles.length<=1;document.documentElement.style.setProperty('--accent',currentView==='custom'?profile()?.accent||COLOR:COLOR);}
 function updateChrome(){const custom=currentView==='custom'&&!modeDemo&&profilesReady;$('tab-custom').classList.toggle('hidden',modeDemo||!profilesReady);$('tab-default').classList.toggle('active',!custom);$('tab-custom').classList.toggle('active',custom);$('tab-default').setAttribute('aria-selected',String(!custom));$('tab-custom').setAttribute('aria-selected',String(custom));$('tab-default').tabIndex=custom?-1:0;$('tab-custom').tabIndex=custom?0:-1;$('custom-tools').classList.toggle('hidden',!custom);$('edit').classList.toggle('hidden',!custom);$('add').classList.toggle('hidden',!custom);$('edit').textContent=editing?'✓ Terminer':'✎ Personnaliser';$('edit').setAttribute('aria-pressed',String(editing));$('add').disabled=!editing;$('catalog').classList.toggle('hidden',!custom||!editing||!catalogOpen);$('edit-hint').classList.toggle('hidden',!custom||!editing);updateProfiles();}
@@ -126,9 +126,9 @@ function paintBomb(){if(!last)return;let left=null,kind='',message='En attente',
  else if(timer.status==='expired'){left=0;kind='red';message='Explosion estimée';}else if(timer.status==='disabled'){message='Minuteur désactivé';}else if(timer.status==='stale')message='Données interrompues';else if(timer.status==='unknown_start')message='Heure de pose inconnue';else if(last.bomb_state==='defused')message='Bombe désamorcée';else if(last.bomb_state==='exploded')message='Bombe explosée';else message='En attente d’une pose';
  for(const card of document.querySelectorAll('.widget.w-bomb')){const clock=card.querySelector('[data-bomb-clock]'),bar=card.querySelector('[data-bomb-fill]'),msg=card.querySelector('[data-bomb-msg]');if(!clock||!bar||!msg)continue;clock.textContent=left===null?'--.- s':left.toFixed(1)+' s';clock.className='bomb-clock '+kind;bar.style.width=left===null?'0%':pct(100*left/(timer.duration||40));bar.className='bomb-fill '+kind;msg.textContent=message;}}
 function renderData(s){last=s;anchor=s.bomb_timer?.status==='active'&&isNum(s.bomb_timer.remaining)?{at:performance.now(),left:s.bomb_timer.remaining}:null;$('login').classList.add('hidden');$('view').classList.remove('hidden');setOnline(s);updateValues();}
-async function login(){modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerror').textContent='';$('pin').setAttribute('aria-invalid','false');if(pin.length<6){$('loginerror').textContent='Code PIN trop court.';$('pin').setAttribute('aria-invalid','true');return;}if(ws){ws.onclose=null;ws.close();ws=null;}setStatus('Connexion…');
- try{const res=await fetch('/health',{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const health=await res.json();if(health.version!==VERSION){$('loginerror').textContent='Redémarre Docker avec la version 1.0.0.';setStatus('Mise à jour requise','bad');return;}}
- catch(err){$('loginerror').textContent='Serveur indisponible : '+err.message;setStatus('Hors ligne','bad');return;}
+async function login(){modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerror').textContent='';$('pin').setAttribute('aria-invalid','false');if(pin.length<6){$('loginerror').textContent='Code PIN trop court.';$('pin').setAttribute('aria-invalid','true');return;}if(ws){ws.onclose=null;ws.close();ws=null;}setStatus('Connexion…','','connecting');
+ try{const res=await fetch('/health',{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const health=await res.json();if(health.version!==VERSION){$('loginerror').textContent='Redémarre Docker avec la version 1.0.0.';setStatus('Mise à jour requise','bad','error');return;}}
+ catch(err){$('loginerror').textContent='Serveur indisponible : '+err.message;setStatus('Hors ligne','bad','error');return;}
  const url=(location.protocol==='https:'?'wss:':'ws:')+'//'+location.host+'/ws',socket=new WebSocket(url);ws=socket;let authorized=false,failed=false;
  socket.onopen=()=>socket.send(JSON.stringify({type:'auth',pin}));
  socket.onmessage=e=>{
@@ -139,7 +139,7 @@ async function login(){modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerr
    failed=true;
    $('loginerror').textContent=msg.message||'Code incorrect.';
    $('pin').setAttribute('aria-invalid','true');
-   setStatus('PIN incorrect','bad');
+   setStatus('PIN incorrect','bad','error');
    return;
   }
   if(msg.type==='auth_ok'){
@@ -172,7 +172,7 @@ async function login(){modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerr
   if(msg.type==='state'&&authorized)renderData(msg);
  };
  socket.onerror=()=>{
-  if(!failed)setStatus('Erreur réseau','bad');
+  if(!failed)setStatus('Erreur réseau','bad','error');
   document.dispatchEvent(new Event('cs2:network-error'));
  };
  socket.onclose=()=>{
@@ -181,10 +181,10 @@ async function login(){modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerr
   saveQueued=true;
   if(!authorized){
    if(!failed)$('loginerror').textContent='Impossible de se connecter au WebSocket.';
-   setStatus('Déconnecté','bad');
+   setStatus('Déconnecté','bad','lost');
    return;
   }
-  setStatus('Reconnexion…','bad');
+  setStatus('Reconnexion…','bad','lost');
   document.dispatchEvent(new CustomEvent('cs2:connection-lost'));
   anchor=null;
   if(last){
