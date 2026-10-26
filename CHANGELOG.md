@@ -2,6 +2,18 @@
 
 **Current release candidate:** 1.0.0. The previous V1P labels below record internal development milestones; no public release has been published yet.
 
+## 1.0.0 — First release candidate (publication pending)
+
+- CS2 GSI dashboard with 29 customizable widgets and EN/FR interface.
+- Shared server-side profiles across authenticated PCs and phones, private demo, imports/exports.
+- Game state, economy estimates and optional estimated bomb timer (disabled by default).
+- Windows guided installer, Docker, privacy-conscious diagnostics and CI test suite.
+- Independent personal project developed with substantial ChatGPT (OpenAI) assistance.
+
+**Release not yet published:** complete the license, confidential reporting and final release checklist before tagging `v1.0.0`.
+
+## Internal development history
+
 ## V1P-G — Step 9: public repository preparation
 
 - Reorganized the README around installation, features, limitations, support and public release status.
