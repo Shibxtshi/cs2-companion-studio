@@ -4,8 +4,8 @@ The step-9 archive is a **publication candidate**, not a published or security-c
 
 ## Ownership, licensing and openness — BLOCKING
 
-- [ ] **Choose and confirm the license.** MIT text is drafted; replace `[MAINTAINER COPYRIGHT HOLDER ...]` in `LICENSE` with the holder you have the right to name and review third-party dependencies/assets.
-- [ ] Confirm the README and [AI disclosure](../AI_DISCLOSURE.md) accurately describe the personal nature of the project and significant ChatGPT contribution. Do **not** erase AI attribution.
+- [ ] **Finalize and approve the no-resale source-available license.** `LICENSE` is currently a **non-effective draft**: obtain qualified legal review, confirm the intended distinction between selling copies and permitted commercial use/services, and replace `[RIGHTS HOLDER TO CONFIRM]` with the correct rights holder. Check compatibility with third-party dependencies/assets before publication.
+- [ ] Confirm the README labels the project **source-available**, not OSI-approved open source, and that [AI disclosure](../AI_DISCLOSURE.md) accurately describes its personal nature and significant ChatGPT contribution. Do **not** erase AI attribution.
 - [ ] Confirm names/brands are used only for compatibility descriptions and no affiliation/approval is claimed.
 - [ ] Confirm no copied proprietary CS2 assets, Valve logos, FACEIT marks or third-party graphics are distributed without permission.
 
