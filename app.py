@@ -119,7 +119,8 @@ def add_event(message: str, category: str = 'info') -> None:
 
 
 def summary() -> dict[str, Any]:
-    online = last_game_seen is not None and time.monotonic() - last_game_seen < 20
+    now = time.monotonic()
+    online = last_game_seen is not None and now - last_game_seen < 20
     p = (state.get('player') or {}) if online else {}
     ps = p.get('state') or {}
     stats = p.get('match_stats') or {}
@@ -150,8 +151,8 @@ def summary() -> dict[str, Any]:
     return {
         'type': 'state',
         'online': online,
-        'gsi_connected': last_seen is not None and time.monotonic() - last_seen < 20,
-        'age_seconds': None if last_seen is None else min(999, round(time.monotonic() - last_seen, 1)),
+        'gsi_connected': last_seen is not None and now - last_seen < 20,
+        'age_seconds': None if last_seen is None else min(999, round(now - last_seen, 1)),
         'map': str(mp.get('name') or ''),
         'map_mode': str(mp.get('mode') or ''),
         'map_phase': str(mp.get('phase') or ''),
@@ -196,6 +197,9 @@ def val_if_str(v: Any) -> str:
 
 
 async def send_state() -> None:
+    # Do not serialize game state while no authenticated dashboards are connected.
+    if not connected:
+        return
     msg = json.dumps(summary(), ensure_ascii=False)
     gone = []
     for ws in tuple(connected):
