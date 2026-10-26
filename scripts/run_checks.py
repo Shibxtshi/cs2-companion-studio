@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Local V1P-F quality gate (stdlib orchestration; no CS2/FACEIT connection)."""
+"""Local 1.0.0 quality gate (stdlib orchestration; no CS2/FACEIT connection)."""
 from pathlib import Path
 import subprocess
 import sys
