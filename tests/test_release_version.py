@@ -20,7 +20,10 @@ def test_licensing_draft_does_not_misrepresent_mit_or_open_source():
     assert "DRAFT v0.2" in license_text
     assert "NOT YET APPROVED OR EFFECTIVE" in license_text
     assert "Prohibition on selling the Software" in license_text
-    assert "professional/business purposes" in license_text\n    assert "Private and purely internal modifications need not be published" in license_text\n    assert "paid coaching" in license_text\n    assert "corresponding source code" in license_text
+    assert "professional/business purposes" in license_text
+    assert "Private and purely internal modifications need not be published" in license_text
+    assert "paid coaching" in license_text
+    assert "corresponding source code" in license_text
     assert "MIT License" not in license_text
     assert "source-available" in readme
     assert "not OSI-approved open source" in readme
