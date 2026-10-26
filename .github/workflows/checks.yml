@@ -136,6 +136,7 @@ jobs:
         run: |
           test -s data/profiles.json
           docker compose restart
+          docker compose up -d --wait --wait-timeout 120
           python scripts/docker_smoke.py
           test -s data/profiles.json
       - name: Verify unprivileged container
