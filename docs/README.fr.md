@@ -1,4 +1,4 @@
-# CS2 Companion Studio — présentation en français
+# CS2 Companion Studio v1.0.0 — présentation en français
 
 **Projet personnel indépendant, partagé en open source.** Le projet a été développé avec l'aide importante de **ChatGPT d'OpenAI** pour le code, l'interface, les tests, le dépannage et la documentation. Cette aide n'est pas dissimulée : voir la [déclaration détaillée (anglais)](../AI_DISCLOSURE.md).
 
