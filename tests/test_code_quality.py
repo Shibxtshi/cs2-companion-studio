@@ -72,3 +72,22 @@ def test_widget_catalog_module_and_script_load_order():
     assert "window.CS2WidgetCatalog=Object.freeze(" in catalog
     assert "const W=window.CS2WidgetCatalog" in script
     assert "const W={" not in script
+
+
+def test_standalone_suites_are_isolated_and_grouped():
+    runner = read("scripts/run_checks.py")
+    workflow = read(".github/workflows/checks.yml")
+    config = read("pytest.ini")
+    suites = (
+        "test_economy", "test_timer", "test_studio", "test_security",
+        "test_lifecycle", "test_profiles_and_diagnostics",
+    )
+    for suite in suites:
+        module = f"tests.standalone.{suite}"
+        assert (ROOT / "tests" / "standalone" / f"{suite}.py").exists()
+        assert not (ROOT / f"{suite}.py").exists()
+        assert module in runner
+        assert suite in workflow
+    assert "python -m" in workflow
+    assert "tests/standalone tests/legacy_browser" in config
+    assert (ROOT / "tests" / "legacy_browser" / "test_e1_browser.py").exists()
