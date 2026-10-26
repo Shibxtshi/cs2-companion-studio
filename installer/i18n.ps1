@@ -3,7 +3,7 @@ $script:Languages = [ordered]@{ EN = 'English'; FR = 'Français' }
 $script:InstallLanguage = 'EN'
 $script:Strings = @{
  EN = @{
-  intro='CS2 Companion Studio - V1P-E setup'; disclaimer='Uses official CS2 GSI only; requires Windows and Docker Desktop.'
+  intro='CS2 Companion Studio - v1.0.0 setup'; disclaimer='Uses official CS2 GSI only; requires Windows and Docker Desktop.'
   stage1='[1/4] Checking Docker Desktop...'; stage2='[2/4] Finding CS2 in Steam libraries...'; stage3='[3/4] Preparing personal configuration and GSI...'; stage4='[4/4] Building and starting the dashboard...'
   detected='CS2 config folder:'; existing_env='Existing .env found: your credentials are preserved.'; new_env='Unique PIN and token generated for this installation.'
   lan_warning='WARNING: LAN mode exposes an unencrypted HTTP service. Allow it only on your trusted private network; never forward its port to the Internet.'
@@ -30,7 +30,7 @@ $script:Strings = @{
   no_docker='Docker was not found. Install and start Docker Desktop.'; docker_down='Docker Desktop cannot be reached. Open Docker Desktop, then run docker info.'; no_compose='Docker Compose v2 is unavailable. Check docker compose version.'
  }
  FR = @{
-  intro='CS2 Companion Studio - installation V1P-E'; disclaimer='Utilise uniquement la GSI officielle CS2 ; nécessite Windows et Docker Desktop.'
+  intro='CS2 Companion Studio - installation v1.0.0'; disclaimer='Utilise uniquement la GSI officielle CS2 ; nécessite Windows et Docker Desktop.'
   stage1='[1/4] Vérification de Docker Desktop...'; stage2='[2/4] Recherche de CS2 dans les bibliothèques Steam...'; stage3='[3/4] Préparation de la configuration personnelle et du GSI...'; stage4='[4/4] Construction et démarrage du dashboard...'
   detected='Dossier de configuration CS2 :'; existing_env='Fichier .env existant : identifiants conservés.'; new_env='PIN et token personnels générés pour cette installation.'
   lan_warning='ATTENTION : le mode LAN expose un service HTTP non chiffré. Utilise-le uniquement sur ton réseau privé ; aucune redirection du port sur Internet.'
