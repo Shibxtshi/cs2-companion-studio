@@ -19,18 +19,30 @@ def get(url):
         return response.status, response.read().decode('utf-8')
 
 
-def run():
-    base = 'http://127.0.0.1:8080'
-    for attempt in range(40):
+def wait_for_health(base, timeout=60):
+    """Wait until the server is ready, including after a Compose restart.
+
+    Compose reports "Started" before the HTTP listener is necessarily ready.
+    A connection reset during this short window is expected, not a failure.
+    """
+    deadline = time.monotonic() + timeout
+    last_error = None
+    while time.monotonic() < deadline:
         try:
             code, data = get(base + '/health')
             if code == 200 and json.loads(data).get('version') == '1p-f':
-                break
-        except (HTTPError, URLError, TimeoutError):
-            pass
-        time.sleep(.25)
-    else:
-        raise RuntimeError('Docker service not healthy or wrong version')
+                return
+        except (URLError, OSError, ValueError) as exc:
+            # URLError: refused connections; OSError: resets/disconnects;
+            # ValueError: incomplete or invalid health JSON during startup.
+            last_error = exc
+        time.sleep(0.5)
+    raise RuntimeError('Docker service not healthy or wrong version after restart') from last_error
+
+
+def run():
+    base = 'http://127.0.0.1:8080'
+    wait_for_health(base)
     for path in ('/profiles', '/data/profiles.json', '/logs/support-summary.json'):
         try:
             status, _ = get(base + path)
