@@ -41,6 +41,7 @@ jobs:
       - name: Check JavaScript syntax
         if: runner.os == 'Linux'
         run: |
+          node --check static/widgets.js
           node --check static/studio.js
           node --check static/i18n.js
           node --check static/experience.js
