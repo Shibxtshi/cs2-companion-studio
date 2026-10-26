@@ -48,7 +48,7 @@ instance profiles, so use a strong unique PIN and restrict LAN access.
 - Runtime pins were upgraded for the initial security-audit candidate. An actual installation/audit with the new pins must run in CI and on the maintainer's Windows installation before public release. Do not describe this as penetration-tested or security-certified.
 - Private runtime directories and credentials remain excluded from the distributed source archive and Git.
 
-See `docs/QA_V1P_F.md` for the exact release blockers.
+See `docs/history/QA_V1P_F.md` for the historical quality checklist, and `docs/PUBLIC_RELEASE_CHECKLIST.md` for current release blockers.
 
 
 ## Step 9 repository preparation
