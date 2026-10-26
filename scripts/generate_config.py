@@ -12,8 +12,8 @@ GSI = ROOT / 'cs2_cfg' / 'gamestate_integration_companion.cfg'
 
 def main():
     if DOTENV.exists() or GSI.exists():
-        print('Configuration déjà présente. Aucune modification effectuée.')
-        print('Pour renouveler les identifiants, sauvegarde puis supprime les fichiers .env et GSI locaux.')
+        print('Local configuration already exists; no changes were made.')
+        print('To regenerate credentials, back up and remove the local .env and GSI configuration files first.')
         return 1
     pin = ''.join(str(secrets.randbelow(10)) for _ in range(10))
     token = secrets.token_urlsafe(36)
@@ -52,9 +52,9 @@ def main():
     if os.name != 'nt':
         DOTENV.chmod(0o600)
         GSI.chmod(0o600)
-    print('Configuration créée. PIN personnel : ' + pin)
-    print('Fichier GSI : ' + str(GSI))
-    print('Ne partage pas ces valeurs ni les fichiers générés.')
+    print('Local configuration created. Personal PIN: ' + pin)
+    print('GSI configuration file: ' + str(GSI))
+    print('Never share these values or the generated files.')
     return 0
 
 
