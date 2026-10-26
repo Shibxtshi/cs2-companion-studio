@@ -18,7 +18,7 @@ def test_local_env_is_not_an_error(tmp_path):
     for name in ('.gitignore', '.dockerignore', 'Dockerfile', 'compose.yaml'):
         shutil.copyfile(ROOT / name, tmp_path / name)
     (tmp_path / 'static').mkdir()
-    for name in ('index.html', 'studio.js', 'styles.css'):
+    for name in ('index.html', 'studio.js', 'widgets.js', 'styles.css'):
         shutil.copyfile(ROOT / 'static' / name, tmp_path / 'static' / name)
     (tmp_path / '.env').write_text('DASHBOARD_PIN=private-test-value\nGSI_TOKEN=private-test-value\n')
     (tmp_path / 'data').mkdir()
