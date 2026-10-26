@@ -60,3 +60,15 @@ def test_historical_docs_are_grouped_without_dropping_content():
         assert (history / name).is_file()
         assert not (ROOT / "docs" / name).exists()
     assert "docs/history/CHANGELOG_FONCTIONNEL.md" in read("CHANGELOG.md")
+
+
+def test_widget_catalog_module_and_script_load_order():
+    page = read("static/index.html")
+    assert page.index("i18n.js?v=1.0.0") < page.index("widgets.js?v=1.0.0")
+    assert page.index("widgets.js?v=1.0.0") < page.index("studio.js?v=1.0.0")
+    catalog = read("static/widgets.js")
+    script = read("static/studio.js")
+    assert catalog.count("size:") == 29
+    assert "window.CS2WidgetCatalog=Object.freeze(" in catalog
+    assert "const W=window.CS2WidgetCatalog" in script
+    assert "const W={" not in script
