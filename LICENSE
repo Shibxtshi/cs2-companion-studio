@@ -1,21 +1,63 @@
-MIT License
+CS2 Companion Studio Community No-Resale License
+DRAFT v0.1 — NOT YET APPROVED OR EFFECTIVE
 
-Copyright (c) 2026 [MAINTAINER COPYRIGHT HOLDER — REPLACE BEFORE PUBLIC RELEASE]
+Copyright (c) 2026 [RIGHTS HOLDER TO CONFIRM]
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+IMPORTANT: This draft is published only for review. It is not a finalized
+license and does not grant permissions until the rights holder approves it,
+the placeholder is replaced, and an effective final version is published.
+Seek qualified legal review before a public release.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
+1. Covered Software
+"Software" means the original CS2 Companion Studio source and binary code
+distributed under this license, and any modification or derivative work
+containing copyrightable parts of that Software. Separately licensed
+third-party components remain governed by their own licenses.
 
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
+2. Free permissions (once the final license becomes effective)
+Subject to these terms, the rights holder grants every recipient a
+non-exclusive, worldwide, royalty-free copyright license to use,
+reproduce, study, modify, create derivative works from, and redistribute
+the Software, in source or executable form, WITHOUT CHARGING FOR COPIES.
+Use for personal, academic, nonprofit, or business purposes is allowed,
+including internal use by a commercial organization.
+
+3. No resale
+No recipient may require a payment, subscription, fee, or other mandatory
+consideration in exchange for giving or licensing another person a copy
+of the Software or a modified/derivative version, whether as source code,
+an executable, a download, an installer, or a paid software bundle.
+A modified version must not be offered for sale either.
+Selling copies or licenses requires separate written authorization from
+the rights holder.
+
+This prohibition concerns the sale or paid transfer of the Software
+itself, NOT ordinary commercial use. A person may charge for independent
+services such as training, consulting, setup, hosting, maintenance, or
+custom development, provided the charge is not a condition for obtaining
+a copy or license of the Software (including modifications) and is not
+a disguised sale of the Software.
+
+4. Redistribution and modifications
+Recipients may redistribute unchanged or modified copies only free of
+charge, while preserving the copyright notices, this license, and an
+indication of material changes. Modified copies containing the Software
+must remain under these same no-resale conditions. Source code
+corresponding to any redistributed executable version of the Software
+must be offered at no charge to recipients.
+
+5. Names, trademarks and third-party rights
+This license does not grant trademark rights or authorization to imply
+affiliation or endorsement by the maintainer, Valve, FACEIT, or OpenAI.
+All separately licensed dependencies and assets retain their applicable
+license conditions.
+
+6. Disclaimer
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. TO THE EXTENT PERMITTED BY LAW,
+THE RIGHTS HOLDER SHALL NOT BE LIABLE FOR DAMAGES ARISING FROM USE OF
+THE SOFTWARE.
+
+This is a project-specific, source-available draft. It is NOT an
+Open Source Initiative approved open-source license.
