@@ -18,7 +18,7 @@ def run():
     app.last_game_seen = None
     with TestClient(app.app) as client:
         hp = client.get('/health')
-        assert hp.status_code == 200 and hp.json()['version'] == '1p-f'
+        assert hp.status_code == 200 and hp.json()['version'] == '1.0.0'
         html = client.get('/')
         assert 'profiles_save' in client.get('/static/studio.js').text
         assert html.status_code == 200
