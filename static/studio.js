@@ -31,7 +31,7 @@ const W={
  events:{title:'Journal de la partie',icon:'☷',cat:'Système',size:8,html:`<div class="event-list" data-list="events"></div><div class="tiny space">Événements déduits des données GSI reçues</div>`},
  provider:{title:'Version du jeu',icon:'⚙',cat:'Système',size:4,html:`<div class="medium" data-v="provider"></div><div class="tiny space">Donnée GSI provider</div>`}
 };
-const VERSION='1p-f', COLOR='#f3ac52', DEFAULT_IDS=['score','weapon','economy','stats','bomb'];
+const VERSION='1.0.0', COLOR='#f3ac52', DEFAULT_IDS=['score','weapon','economy','stats','bomb'];
 let profilesReady=false,profilesRevision=0,sessionId='',saveTimer=null,saveInFlight=false,saveQueued=false;
 let ws=null,modeDemo=false,last=null,anchor=null,pin='',currentView='default',editing=false,search='',category='all',openedSettings=new Set(),catalogOpen=false,profiles=[],activeProfile='',seq=1,notifyTimeout=null,dragId=null,pointerDrag=null;
 const WIDTHS=[3,4,6,8,12], STYLES=['solid','glass','outline'];
