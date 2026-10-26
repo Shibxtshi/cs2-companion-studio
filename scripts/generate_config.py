@@ -18,12 +18,12 @@ def main():
     pin = ''.join(str(secrets.randbelow(10)) for _ in range(10))
     token = secrets.token_urlsafe(36)
     content = (
-        '# Fichier local privé : ne jamais publier sur GitHub.\n'
+        '# Local private configuration: never publish to GitHub.\n'
         'GSI_TOKEN=' + token + '\n'
         'DASHBOARD_PIN=' + pin + '\n'
         'BOMB_TIMER_ENABLED=false\n'
         'BOMB_DURATION_SECONDS=40\n'
-        '# localhost par défaut. Pour le téléphone : BIND_HOST=0.0.0.0 et pare-feu LAN.\n'
+        '# Localhost by default. For phone access, use BIND_HOST=0.0.0.0 on a trusted LAN with firewall rules.\n'
         'BIND_HOST=127.0.0.1\n'
         'PORT=8080\n'
     )
