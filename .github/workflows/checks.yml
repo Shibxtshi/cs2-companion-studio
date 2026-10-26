@@ -1,4 +1,4 @@
-name: V1P quality gates
+name: CS2 Companion quality gates
 on:
   push:
   pull_request:
@@ -6,7 +6,7 @@ on:
 permissions:
   contents: read
 concurrency:
-  group: v1p-${{ github.workflow }}-${{ github.ref }}
+  group: cs2-companion-${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 jobs:
