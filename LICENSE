@@ -1,63 +1,106 @@
-CS2 Companion Studio Community No-Resale License
-DRAFT v0.1 — NOT YET APPROVED OR EFFECTIVE
+CS2 Companion Studio — Community No-Resale License
+DRAFT v0.2 — NOT YET APPROVED OR EFFECTIVE
 
 Copyright (c) 2026 Shibxtshi
 
-IMPORTANT: This draft is published only for review. It is not a finalized
-license and does not grant permissions until the rights holder approves it,
-the rights holder confirms this license, and an effective final version is published.
-Seek qualified legal review before a public release.
+IMPORTANT — WORKING DRAFT, NOT A LICENSE GRANT
+This document records the maintainer's intended terms for review. It is
+not the final, effective license and grants no rights on its own.
+A final version must be reviewed for legal enforceability, third-party
+rights and compatibility, approved by the rights holder, and published
+before any public software release. Do not distribute this draft as if
+it were a legally validated open-source license.
 
-1. Covered Software
-"Software" means the original CS2 Companion Studio source and binary code
-distributed under this license, and any modification or derivative work
-containing copyrightable parts of that Software. Separately licensed
-third-party components remain governed by their own licenses.
+1. Scope
+"Software" means CS2 Companion Studio source and executable code
+released under these terms, including modified versions and derivative
+works incorporating copyrightable portions of that code. Separately
+licensed third-party components remain subject to their own terms.
 
-2. Free permissions (once the final license becomes effective)
-Subject to these terms, the rights holder grants every recipient a
-non-exclusive, worldwide, royalty-free copyright license to use,
-reproduce, study, modify, create derivative works from, and redistribute
-the Software, in source or executable form, WITHOUT CHARGING FOR COPIES.
-Use for personal, academic, nonprofit, or business purposes is allowed,
-including internal use by a commercial organization.
+2. Permitted use and private modifications (in the eventual final license)
+The intended permission is worldwide, nonexclusive and royalty-free.
+Anyone may study, run, reproduce and modify the Software, including
+for personal, educational, nonprofit or professional/business purposes.
+Private and purely internal modifications need not be published.
 
-3. No resale
-No recipient may require a payment, subscription, fee, or other mandatory
-consideration in exchange for giving or licensing another person a copy
-of the Software or a modified/derivative version, whether as source code,
-an executable, a download, an installer, or a paid software bundle.
-A modified version must not be offered for sale either.
-Selling copies or licenses requires separate written authorization from
-the rights holder.
+Use during monetized streaming, sponsored content, professional esports
+training, paid coaching and similar activities is permitted; such use
+does not, by itself, count as selling a copy of the Software.
 
-This prohibition concerns the sale or paid transfer of the Software
-itself, NOT ordinary commercial use. A person may charge for independent
-services such as training, consulting, setup, hosting, maintenance, or
-custom development, provided the charge is not a condition for obtaining
-a copy or license of the Software (including modifications) and is not
-a disguised sale of the Software.
+3. Free sharing and code transparency
+Anyone may redistribute the unmodified Software or a modified version
+without charging for access, in source or executable form, provided
+they:
+- preserve the copyright notice and these license conditions;
+- clearly identify material modifications;
+- give recipients free access to the corresponding source code for
+  executable versions they redistribute; and
+- retain the same no-resale and source-disclosure obligations for
+  covered modified versions.
 
-4. Redistribution and modifications
-Recipients may redistribute unchanged or modified copies only free of
-charge, while preserving the copyright notices, this license, and an
-indication of material changes. Modified copies containing the Software
-must remain under these same no-resale conditions. Source code
-corresponding to any redistributed executable version of the Software
-must be offered at no charge to recipients.
+No duty to share source arises solely from private/internal use.
 
-5. Names, trademarks and third-party rights
-This license does not grant trademark rights or authorization to imply
-affiliation or endorsement by the maintainer, Valve, FACEIT, or OpenAI.
-All separately licensed dependencies and assets retain their applicable
-license conditions.
+4. Prohibition on selling the Software
+Recipients may not charge, require payment or impose a paid subscription
+as a condition of obtaining a copy or license of the Software, including
+a modified version. This applies to source downloads, executables,
+installers, paid "Pro" editions and bundles in which payment is required
+to obtain the covered Software.
 
-6. Disclaimer
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
-OR IMPLIED, INCLUDING WARRANTIES OF MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. TO THE EXTENT PERMITTED BY LAW,
-THE RIGHTS HOLDER SHALL NOT BE LIABLE FOR DAMAGES ARISING FROM USE OF
-THE SOFTWARE.
+Recipients must not provide paid-only access to the functionality of a
+hosted modified version of the Software as a substitute for selling it.
 
-This is a project-specific, source-available draft. It is NOT an
-Open Source Initiative approved open-source license.
+An entirely voluntary donation is allowed only when the same Software
+and all its covered functionality remain genuinely available for free,
+without a paywall or exclusive software benefits.
+
+Permission to sell copies or licenses may be granted separately only
+by the rights holder in writing.
+
+5. Paid work distinguished from sale of the Software
+Professional use does not become prohibited merely because a person
+earns income from an activity using the Software. Charging for coaching,
+training or separately commissioned programming work (including bug
+fixes, custom widgets and new features) is intended to be permitted.
+Such a payment must not be a disguised mandatory charge for obtaining
+or licensing the Software or a covered modified copy.
+
+If commissioned modifications are later distributed, the obligations
+in section 3 apply to those distributions.
+
+6. Hosted modified versions
+A person who makes a modified version available for interactive use
+over a network must offer users of that version the corresponding
+modified source code without charge, even when no executable copy is
+distributed. Solely private use does not create a public-disclosure
+obligation.
+
+7. Attribution, names and third-party rights
+The copyright notice and license conditions must accompany copies.
+Forks must not misrepresent themselves as the official CS2 Companion
+Studio project or claim endorsement from Shibxtshi, Valve, FACEIT,
+OpenAI or other unaffiliated organizations. No trademark rights are
+granted. All third-party assets and dependencies keep their own rights
+and licenses.
+
+8. Disclaimer
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A
+PARTICULAR PURPOSE AND NONINFRINGEMENT. TO THE EXTENT PERMITTED
+BY APPLICABLE LAW, THE RIGHTS HOLDER SHALL NOT BE LIABLE FOR DAMAGES
+ARISING FROM USE OF THE SOFTWARE.
+
+9. Open drafting questions — MUST BE RESOLVED BEFORE PUBLICATION
+- Draw a clear and enforceable line between separately billed setup,
+  hosting, maintenance and support services and a disguised software
+  paywall; some of these scenarios remain disputed.
+- Determine which obligations can legitimately apply to independent
+  tutorials, themes and third-party creations that copy no Software.
+- Review derivative-work boundaries, paid bundles, brand/fork naming,
+  network source disclosure and compatibility with third-party licenses.
+- Obtain a qualified intellectual-property legal review and approve
+  an operative final license.
+
+This is a CUSTOM SOURCE-AVAILABLE DRAFT, not an Open Source Initiative
+approved open-source license. The copyright holder's choice of a
+no-resale term means it cannot truthfully be marketed as OSI-open-source.
