@@ -16,7 +16,7 @@ import app
 def run():
     with tempfile.TemporaryDirectory() as folder:
         app.profile_store = ProfileStore(Path(folder) / 'data' / 'profiles.json')
-        app.diagnostics = Diagnostics(Path(folder) / 'logs', '1p-e.1')
+        app.diagnostics = Diagnostics(Path(folder) / 'logs', '1.0.0')
         with TestClient(app.app) as client:
             # Neither unauthenticated HTTP nor the open demo has any profile route.
             for route in ('/profiles', '/api/profiles', '/data/profiles.json', '/logs/support-summary.json'):
