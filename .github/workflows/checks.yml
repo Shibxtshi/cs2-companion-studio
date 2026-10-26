@@ -66,6 +66,11 @@ jobs:
   browsers:
     name: Real browser + WebSocket (${{ matrix.browser }})
     runs-on: ubuntu-latest
+    # Browser and Linux libraries are baked into this version-pinned image.
+    # Avoid "playwright install --with-deps" downloading 100+ Ubuntu packages
+    # from intermittently slow mirrors on every CI run.
+    container:
+      image: mcr.microsoft.com/playwright/python:v1.57.0-noble
     timeout-minutes: 20
     strategy:
       fail-fast: false
@@ -73,15 +78,8 @@ jobs:
         browser: [chromium, firefox, webkit]
     steps:
       - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-        with:
-          python-version: '3.12'
-          cache: pip
-          cache-dependency-path: requirements-dev.txt
-      - name: Install backend and browser automation
-        run: |
-          python -m pip install -r requirements-dev.txt playwright==1.57.0
-          python -m playwright install --with-deps ${{ matrix.browser }}
+      - name: Install backend and matching Playwright Python package
+        run: python -m pip install --disable-pip-version-check -r requirements-dev.txt playwright==1.57.0
       - name: Run desktop + mobile functional journey against real server
         run: python tests/test_live_browser.py --browser ${{ matrix.browser }}
 
