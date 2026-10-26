@@ -1,6 +1,6 @@
 # Changelog — user-visible changes
 
-Development-stage names are listed for clarity; **V1P is not yet a public stable release**.
+**Current release candidate:** 1.0.0. The previous V1P labels below record internal development milestones; no public release has been published yet.
 
 ## V1P-G — Step 9: public repository preparation
 
