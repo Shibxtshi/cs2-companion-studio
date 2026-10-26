@@ -17,7 +17,7 @@ Windows, Docker Desktop and CS2 installed via Steam for guided setup. LAN access
 
 ## License (draft — not yet effective)
 
-The intended Community No-Resale license would allow free access, use, modifications, free redistribution, and professional/internal use, while prohibiting sale of the software and its modified versions. Paid standalone services are intended to remain permitted. This would be **source-available, not OSI-approved open source**. Legal review and rights-holder confirmation remain mandatory before release.
+The intended Community No-Resale license would allow free access, use, modifications, free redistribution, and professional/internal use, while prohibiting sale of the software and its modified versions. Monetized use (including coaching) and paid commissioned development are intended to remain permitted; paid setup, hosting and support require further legal drafting. This would be **source-available, not OSI-approved open source**. Legal review and rights-holder confirmation remain mandatory before release.
 
 ## Transparency and limitations
 
