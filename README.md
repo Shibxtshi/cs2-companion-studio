@@ -1,6 +1,6 @@
 # CS2 Companion Studio
 
-**Personal, open-source dashboard project for Counter-Strike 2 (CS2)** — customizable widgets, live Game State Integration (GSI), and a responsive interface for phones, tablets, and PCs.
+**Personal, source-available dashboard project for Counter-Strike 2 (CS2)** — customizable widgets, live Game State Integration (GSI), and a responsive interface for phones, tablets, and PCs.
 
 > **Independent personal project, developed with AI assistance.** CS2 Companion Studio is shared by a solo maintainer and was developed iteratively with help from **ChatGPT by OpenAI**, including suggestions and generated code for the interface, backend, tests, and documentation. AI-assisted code can contain mistakes; this project has **not** received an independent security audit. Read the [full development disclosure](AI_DISCLOSURE.md).
 >
@@ -79,7 +79,7 @@ The CI configuration adds Windows/Linux tests, browser tests, PowerShell checks,
 
 ## License and credits
 
-**Proposed license: MIT.** The `LICENSE` file includes a maintainer-holder placeholder which **must be completed and confirmed before publishing**. Review third-party dependencies/assets and their licenses. Contributions may require appropriate attribution.
+**Proposed license: Community No-Resale (custom, draft).** You may use, modify, and redistribute the software free of charge, including for professional use, but may not sell copies or modified versions. Charging for separate services (such as installation or support) is permitted under the draft. This is **source-available, not OSI-approved open source**. The `LICENSE` draft is not effective yet; the rights holder, legal wording, and third-party compatibility must be confirmed before publication.
 
 Credits: independent maintainer and community contributors (once any exist); **OpenAI's ChatGPT** for substantial development assistance. OpenAI is **not** the owner, publisher or endorser of this project.
 
