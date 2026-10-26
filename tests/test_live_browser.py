@@ -38,7 +38,7 @@ def start_server():
             raise RuntimeError('Server crashed: ' + err)
         try:
             with urlopen(url + '/health', timeout=.3) as response:
-                if json.load(response)['version'] == '1p-f':
+                if json.load(response)['version'] == '1.0.0':
                     return runtime, proc, url
         except (URLError, TimeoutError, OSError):
             time.sleep(.1)
@@ -79,15 +79,15 @@ def run(browser_name):
             a.on('pageerror', lambda error: errors.append(str(error)))
             login(a, url)
             a.locator('#tab-custom').click()
-            a.on('dialog', lambda dialog: dialog.accept('Shared V1P-F setup'))
+            a.on('dialog', lambda dialog: dialog.accept('Shared v1.0.0 setup'))
             a.locator('#rename-profile').click()
-            expect(a.locator('#profile-select')).to_contain_text('Shared V1P-F setup', timeout=8000)
+            expect(a.locator('#profile-select')).to_contain_text('Shared v1.0.0 setup', timeout=8000)
 
             b = phone.new_page()
             b.on('pageerror', lambda error: errors.append(str(error)))
             login(b, url)
             b.locator('#tab-custom').click()
-            expect(b.locator('#profile-select')).to_contain_text('Shared V1P-F setup', timeout=8000)
+            expect(b.locator('#profile-select')).to_contain_text('Shared v1.0.0 setup', timeout=8000)
 
             # Observe the live status in the DOM instead of evaluating JS:
             # Firefox correctly enforces the app's restrictive CSP.
@@ -115,7 +115,7 @@ def run(browser_name):
             browser.close()
         # Data is server-side and persists after clients disconnect.
         store = json.loads((Path(runtime.name) / 'data' / 'profiles.json').read_text('utf-8'))
-        assert store['profiles'][0]['name'] == 'Shared V1P-F setup'
+        assert store['profiles'][0]['name'] == 'Shared v1.0.0 setup'
         print(f'OK: {browser_name} real server, demo isolation, auth, shared profiles, mobile, GSI propagation, bilingual search')
     finally:
         proc.terminate()
