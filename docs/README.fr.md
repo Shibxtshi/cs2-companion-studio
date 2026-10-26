@@ -1,6 +1,6 @@
 # CS2 Companion Studio v1.0.0 — présentation en français
 
-**Projet personnel indépendant, partagé en open source.** Le projet a été développé avec l'aide importante de **ChatGPT d'OpenAI** pour le code, l'interface, les tests, le dépannage et la documentation. Cette aide n'est pas dissimulée : voir la [déclaration détaillée (anglais)](../AI_DISCLOSURE.md).
+**Projet personnel indépendant, à code source accessible et modifiable.** Le projet a été développé avec l'aide importante de **ChatGPT d'OpenAI** pour le code, l'interface, les tests, le dépannage et la documentation. Cette aide n'est pas dissimulée : voir la [déclaration détaillée (anglais)](../AI_DISCLOSURE.md).
 
 **Aucune affiliation ni approbation** de Valve, Counter-Strike 2, FACEIT ou OpenAI. Les règles des plateformes compétitives restent applicables ; l'usage de GSI et l'absence d'injection ne garantissent pas qu'un outil est autorisé en compétition.
 
@@ -28,6 +28,6 @@
 
 Le réseau local utilise HTTP/WebSocket **sans chiffrement**. Ne pas ouvrir le port 8080 sur Internet. Les diagnostics conçus pour le support doivent tout de même être vérifiés avant partage.
 
-Les issues GitHub serviront aux bugs et suggestions ; les vulnérabilités doivent être signalées en privé selon [SECURITY.md](../SECURITY.md). La licence MIT est **proposée**, mais l'identité du titulaire doit être complétée dans `LICENSE` avant publication.
+Les issues GitHub serviront aux bugs et suggestions ; les vulnérabilités doivent être signalées en privé selon [SECURITY.md](../SECURITY.md). Une **licence communautaire interdisant la revente** est en préparation. Elle autoriserait l'utilisation et les modifications, y compris dans un cadre professionnel, ainsi que le partage gratuit des versions dérivées, mais pas la vente du logiciel. Le texte de `LICENSE` est un **brouillon sans effet**, à valider juridiquement et à compléter avec le titulaire des droits avant publication. Ce modèle n'est pas « open source » au sens de l'OSI.
 
 Le projet n'a pas fait l'objet d'un audit de sécurité indépendant ni d'une validation FACEIT. Lire le [README anglais](../README.md), le [guide de contribution](../CONTRIBUTING.md) et la [checklist de publication](PUBLIC_RELEASE_CHECKLIST.md).
