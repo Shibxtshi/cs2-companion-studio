@@ -1,4 +1,4 @@
-/* V1P-C.2 translations. Source strings in the legacy Studio UI are French.
+/* CS2 Companion Studio internationalization. UI source strings are French.
  * Add future languages under translations[CODE] and add a select option.
  * No dynamic HTML is generated from external input by this translator. */
 (()=>{'use strict';
@@ -64,7 +64,7 @@ const translations={
  'Ajouter':'Add','copie':'copy', 'ajouté':'added',
  'Historique insuffisant':'Insufficient history',
  'Bonus de défaite':'Loss bonus','Gagnant :':'Winner:','Armure :':'Armor:','Dernier paquet :':'Last update:',
- 'En attente de données':'Waiting for data','Redémarre Docker avec la version V1P-C.':'Restart Docker with V1P-C.2.',
+ 'En attente de données':'Waiting for data','Redémarre Docker avec la version 1.0.0.':'Restart Docker with version 1.0.0.',
  'Modèles':'Templates','Modèles de dashboard':'Dashboard templates','Compétitif compact':'Competitive compact',
  'Essentiel mobile':'Mobile essentials','Vue du match':'Match overview','Streaming / statistiques':'Streaming / statistics',
  'Page vide':'Blank canvas','Créer un profil':'Create profile','Profil créé':'Profile created',
