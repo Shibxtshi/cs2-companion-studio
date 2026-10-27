@@ -37,3 +37,5 @@ The historical runner is `python -m tests.legacy_browser.test_e1_browser`; it re
 All automated checks use synthetic data. They do not certify real CS2/UAC/LAN installation, anti-cheat approval or release readiness. See [architecture](../docs/development/architecture.md) and [release gates](../docs/releases/checklist.md).
 
 Edge cases include repeated health failures, authentication concurrency, malformed/Unicode inputs, JSON complexity, private archive variants and untranslated personal labels. Windows helper tests also inject a failed atomic write without touching Steam/CS2.
+
+Docker CI also runs `python scripts/test_docker_settings.py` **only against its disposable synthetic instance**. It toggles the bomb timer in a synthetic .env, recreates the container with --no-build/--pull never, verifies the same image ID and persisted profile bytes, and checks the timer flag over authenticated WebSocket. Do not run this destructive CI fixture against a personal installation. Windows helper tests mock Docker and cover EN/FR opt-in, preservation on reruns and apply-command failures.
