@@ -60,3 +60,7 @@ Profile backups and recovery files in data/ contain private layouts. They are ne
 ## Dashboard delivery
 
 Authenticated dashboard broadcasts run concurrently with serialized sends per peer and a two-second delivery deadline (including time waiting for that peer's previous broadcast). A failing or timed-out peer is removed and closed with a bounded best-effort close; healthy peers receive without waiting for it. This does not add multi-worker support or change authentication/protocol fields.
+
+## Audit hardening
+
+Credentials must be ASCII with bounded lengths; malformed values are rejected before comparison. JSON depth/complexity and non-finite constants are rejected. WebSocket admission reserves capacity before acknowledging authentication; the Docker entry point limits frame size/queue depth. Source archives reject runtime directories (apart from empty .gitkeep files), credential variants, backups and local assistant context. Source startup validates configuration before creating runtime files. These safeguards do not imply an independent security audit.

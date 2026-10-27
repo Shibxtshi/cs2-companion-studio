@@ -77,7 +77,7 @@ def test_widget_catalog_module_and_script_load_order():
 
     parser = Scripts()
     parser.feed(read('static/index.html'))
-    required = ['/static/js/i18n.js', '/static/js/widgets.js', '/static/js/profile-sync.js', '/static/js/studio.js']
+    required = ['/static/js/i18n.js', '/static/js/widgets.js', '/static/js/profile-sync.js', '/static/js/reconnect.js', '/static/js/studio.js']
     assert [source for source in parser.sources if source in required] == required
 
 

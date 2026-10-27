@@ -48,7 +48,8 @@ def validate_document(obj):
             raise ValueError('widgets_count')
         widgets, wids = [], set()
         for item in widgetsRaw:
-            if not isinstance(item, dict) or item.get('kind') not in PROFILE_KINDS:
+            if (not isinstance(item, dict) or not isinstance(item.get('kind'), str)
+                    or item['kind'] not in PROFILE_KINDS):
                 raise ValueError('widget_type')
             wid = _id(item.get('id'))
             if not wid or wid in wids:

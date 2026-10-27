@@ -23,3 +23,6 @@ DESINSTALLER_WINDOWS.cmd
 # Runtime data should never become part of the Docker build context
 data/
 logs/
+
+# Exclude interrupted atomic credential writes at any depth.
+**/.companion-write-*.tmp

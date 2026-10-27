@@ -3,7 +3,6 @@
 CS2 Companion Studio is a single-process FastAPI service with a browser dashboard. The repository groups files by responsibility while retaining the existing deployment entry points.
 
 ```text
-app.py                     Stable app:app compatibility entry point
 companion/                 Backend implementation
   server.py                Routes, authentication, GSI state and orchestration
   gsi_lifecycle.py          Pure GSI observations and economy projections
@@ -34,9 +33,9 @@ data/ and logs/            Private writable runtime state; never public assets
 
 The server composes the smaller backend modules. Economy inference, validation and delivery logic should remain independent of browser markup. The package initializer does not start the server; explicitly importing companion.server initializes the application.
 
-The root app.py resolves to the same server module, rather than copying its attributes. Existing app:app launches and Python callers therefore share one state object, including tests that patch app attributes. Internal imports use the companion namespace.
+The only ASGI entry point is companion.server:app. Internal imports use the companion namespace. There is no root-module compatibility bridge because the software has not been deployed. Configuration is validated before runtime directories are created.
 
-The browser loads translations, the widget catalog, the profile synchronization controller, then dashboard/experience code. Profile/WS payloads and widget IDs remain stable. The original /static/*.js and /static/styles.css URLs are served from an explicit fixed compatibility map; canonical files now live under js/ and css/. No user-provided filesystem path is accepted by that map.
+The browser loads translations, the widget catalog, profile synchronization, reconnect control, then dashboard/experience code. Canonical assets live under static/js/ and static/css/; old flat asset URLs are not served. The map phase field is map_phase. Personal names and custom widget titles are excluded from DOM translation.
 
 ## Stable operational paths
 
@@ -49,3 +48,13 @@ Do not put private runtime files under static/. Do not move data/, logs/ or .env
 Run [the tests](../../tests/README.md) and follow [code style](code-style.md). New code should join an existing responsibility before creating another layer. This structure does not introduce multi-worker support, a frontend build chain or a distribution packaging system.
 
 See the [documentation index](../README.md) and [maintenance commands](../../scripts/README.md) for entry points.
+
+## Reproducible environment
+
+Runtime and test dependency versions, including their current transitive sets, are pinned in requirements.txt and requirements-dev.txt for Python 3.12. Docker and Playwright images use the digests verified in CI. Refresh these as a reviewed set and rerun the dependency audit, both OS suites, Docker and all three browsers; do not remove pins merely to resolve an installation failure. Platform-specific uvloop is conditional.
+
+Native development entry point (after generating configuration):
+
+```bash
+python -m uvicorn companion.server:app --env-file .env --host 127.0.0.1 --port 8080 --ws-max-size 262144 --ws-max-queue 8
+```

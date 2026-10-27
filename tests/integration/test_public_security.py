@@ -16,7 +16,7 @@ os.environ['PROFILE_DATA_DIR'] = str(Path(_tmp.name) / 'data')
 os.environ['DIAGNOSTICS_DIR'] = str(Path(_tmp.name) / 'logs')
 os.environ['BOMB_TIMER_ENABLED'] = 'false'
 
-import app  # noqa: E402
+from companion import server as app  # noqa: E402
 from companion.profile_store import ProfileStore, MAX_STORE_BYTES  # noqa: E402
 from companion.security import same_origin  # noqa: E402
 

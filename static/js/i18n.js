@@ -177,6 +177,8 @@ const dictionaryText=(original,lang)=>{
 let code='EN'; try{const saved=localStorage.getItem(STORAGE);if(saved&&Object.prototype.hasOwnProperty.call(translations,saved))code=saved;}catch{}
 const seenText=new WeakMap(), seenAttrs=new WeakMap();
 function visit(node){
+ const owner=node.nodeType===1?node:node.parentElement;
+ if(owner?.closest('[translate="no"]'))return;
  if(node.nodeType===3){
    const existing=seenText.get(node),current=node.nodeValue;
    const original=existing && current===existing.rendered?existing.original:current;

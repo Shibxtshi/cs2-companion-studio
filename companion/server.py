@@ -9,7 +9,7 @@ import os
 import secrets
 import time
 from contextlib import asynccontextmanager
-from companion.security import LoginLimiter, same_origin
+from companion.security import LoginLimiter, same_origin, credential_matches, decode_message
 from companion.dashboard_delivery import broadcast_text
 from companion.gsi_lifecycle import EconomyObserver, cash_projection
 from companion.profile_store import ProfileStore
@@ -25,13 +25,11 @@ ROOT = Path(__file__).resolve().parents[1]
 VERSION = '1.0.0'
 DATA_DIR = Path(os.getenv('PROFILE_DATA_DIR', str(ROOT / 'data')))
 LOG_DIR = Path(os.getenv('DIAGNOSTICS_DIR', str(ROOT / 'logs')))
-profile_store = ProfileStore(DATA_DIR / 'profiles.json')
-diagnostics = Diagnostics(LOG_DIR, VERSION)
-diagnostics.write_summary(len(profile_store.data['profiles']))
 GSI_TOKEN = os.environ.get('GSI_TOKEN', '')
 DASHBOARD_PIN = os.environ.get('DASHBOARD_PIN', '').strip()
-if len(GSI_TOKEN) < 12 or len(DASHBOARD_PIN) < 6:
-    raise RuntimeError('Configure GSI_TOKEN (>=12 chars) and DASHBOARD_PIN (>=6 chars).')
+if (not 12 <= len(GSI_TOKEN) <= 256 or not 6 <= len(DASHBOARD_PIN) <= 256
+        or not GSI_TOKEN.isascii() or not DASHBOARD_PIN.isascii()):
+    raise RuntimeError('Configure ASCII GSI_TOKEN (12..256 chars) and DASHBOARD_PIN (6..256 chars).')
 
 # Disabled by default: do not use a timing aid on FACEIT without explicit permission.
 BOMB_TIMER_ENABLED = os.getenv('BOMB_TIMER_ENABLED', 'false').strip().lower() in ('true', '1', 'yes', 'on')
@@ -42,9 +40,14 @@ except ValueError as exc:
 if not 10 <= BOMB_DURATION <= 120:
     raise RuntimeError('BOMB_DURATION_SECONDS must be between 10 and 120')
 
+profile_store = ProfileStore(DATA_DIR / 'profiles.json')
+diagnostics = Diagnostics(LOG_DIR, VERSION)
+diagnostics.write_summary(len(profile_store.data['profiles']))
+
 connected: set[WebSocket] = set()
 limiter = LoginLimiter(limit=5, window=300, lockout=900)
 pending_logins = 0
+reserved_logins = 0
 MAX_WS_CLIENTS = 16
 MAX_PENDING_LOGINS = 32
 MAX_GSI_SIZE = 262144
@@ -156,7 +159,7 @@ def summary() -> dict[str, Any]:
         'age_seconds': None if last_seen is None else min(999, round(now - last_seen, 1)),
         'map': str(mp.get('name') or ''),
         'map_mode': str(mp.get('mode') or ''),
-        'mapPhase': str(mp.get('phase') or ''),
+        'map_phase': str(mp.get('phase') or ''),
         'round': number(mp.get('round')),
         'round_phase': str(rnd.get('phase') or ''),
         'round_winner': str(rnd.get('win_team') or ''),
@@ -221,26 +224,7 @@ async def lifespan(app: FastAPI):
 
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
-# Preserve the original asset URLs and StaticFiles HTTP semantics.
-_static_files = StaticFiles(directory=ROOT / 'static')
-_LEGACY_ASSETS = {
-    'styles.css': 'css/styles.css',
-    **{name: 'js/' + name for name in (
-        'studio.js', 'widgets.js', 'i18n.js', 'experience.js', 'profile-sync.js'
-    )},
-}
-
-
-def _legacy_asset(relativePath):
-    async def serve(request: Request):
-        return await _static_files.get_response(relativePath, request.scope)
-    return serve
-
-
-for assetName, relativePath in _LEGACY_ASSETS.items():
-    app.add_api_route('/static/' + assetName, _legacy_asset(relativePath), methods=['GET', 'HEAD'], include_in_schema=False)
-
-app.mount('/static', _static_files, name='static')
+app.mount('/static', StaticFiles(directory=ROOT / 'static'), name='static')
 
 @app.middleware('http')
 async def privacy_headers(request: Request, call_next):
@@ -419,15 +403,15 @@ async def gsi(request: Request):
             diagnostics.record('gsi_too_large')
             raise HTTPException(status_code=413, detail='Payload trop grand')
     try:
-        incoming = json.loads(body)
-    except (ValueError, UnicodeDecodeError):
+        incoming = decode_message(body)
+    except (ValueError, UnicodeDecodeError, RecursionError):
         diagnostics.record('gsi_bad_json')
         raise HTTPException(status_code=400, detail='JSON invalide')
     if not isinstance(incoming, dict) or not isinstance(incoming.get('auth'), dict):
         diagnostics.record('gsi_bad_token')
         raise HTTPException(status_code=401, detail='Jeton GSI invalide')
     token = incoming['auth'].get('token')
-    if not isinstance(token, str) or not secrets.compare_digest(token, GSI_TOKEN):
+    if not isinstance(token, str) or not credential_matches(token, GSI_TOKEN):
         diagnostics.record('gsi_bad_token')
         raise HTTPException(status_code=401, detail='Jeton GSI invalide')
     # GSI only needs these documented data roots in active-player mode.
@@ -450,7 +434,7 @@ async def gsi(request: Request):
 @app.websocket('/ws')
 async def ws(websocket: WebSocket):
     """Authenticate each same-origin WebSocket, including LAN phone browsers."""
-    global pending_logins
+    global pending_logins, reserved_logins
     # Require same-origin browsers; any explicit reverse proxy should preserve Host.
     if not same_origin(websocket.headers.get('origin'), websocket.headers.get('host'), secure=websocket.url.scheme == 'wss'):
         await websocket.close(code=1008)
@@ -460,12 +444,13 @@ async def ws(websocket: WebSocket):
         diagnostics.record('login_blocked')
         await websocket.close(code=1008)
         return
-    if len(connected) >= MAX_WS_CLIENTS or pending_logins >= MAX_PENDING_LOGINS:
+    if len(connected) + reserved_logins >= MAX_WS_CLIENTS or pending_logins >= MAX_PENDING_LOGINS:
         diagnostics.record('ws_capacity')
         await websocket.close(code=1013)
         return
     pending_logins += 1
     authenticated = False
+    capacityReserved = False
     try:
         await websocket.accept()
         raw = await asyncio.wait_for(websocket.receive_text(), timeout=8.0)
@@ -476,22 +461,30 @@ async def ws(websocket: WebSocket):
             await websocket.close(code=1008)
             return
         try:
-            received = json.loads(raw)
-        except json.JSONDecodeError:
+            received = decode_message(raw)
+        except (ValueError, RecursionError):
             received = None
         provided = received.get('pin') if isinstance(received, dict) and received.get('type') == 'auth' else None
-        if not isinstance(provided, str) or not secrets.compare_digest(provided.strip(), DASHBOARD_PIN):
+        if not isinstance(provided, str) or not credential_matches(provided.strip(), DASHBOARD_PIN):
             limiter.fail(ip, time.monotonic())
             diagnostics.record('login_failed')
             await websocket.send_json({'type': 'auth_error', 'message': 'Code PIN incorrect.'})
             await websocket.close(code=1008)
             return
+        if len(connected) + reserved_logins >= MAX_WS_CLIENTS:
+            diagnostics.record('ws_capacity')
+            await websocket.close(code=1013)
+            return
+        reserved_logins += 1
+        capacityReserved = True
         limiter.success(ip)
         diagnostics.record('login_success')
         sessionId = secrets.token_hex(8)
         await websocket.send_json({'type': 'auth_ok', 'version': VERSION, 'session': sessionId})
         authenticated = True
         connected.add(websocket)
+        reserved_logins -= 1
+        capacityReserved = False
         pending_logins -= 1
         await websocket.send_json(profile_store.snapshot())
         await websocket.send_text(json.dumps(summary(), ensure_ascii=False))
@@ -501,7 +494,7 @@ async def ws(websocket: WebSocket):
                 await websocket.close(code=1009)
                 break
             try:
-                command = json.loads(rawMsg)
+                command = decode_message(rawMsg)
             except (ValueError, UnicodeDecodeError):
                 continue
             if not isinstance(command, dict):
@@ -533,6 +526,8 @@ async def ws(websocket: WebSocket):
     except (WebSocketDisconnect, RuntimeError, asyncio.TimeoutError):
         pass
     finally:
+        if capacityReserved:
+            reserved_logins -= 1
         if authenticated:
             diagnostics.record('ws_disconnected')
         if not authenticated:

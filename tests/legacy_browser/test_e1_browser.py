@@ -30,7 +30,7 @@ with sync_playwright() as p:
       };
     }""")
     page.add_style_tag(content=(R/'static/css/styles.css').read_text())
-    for name in ('i18n.js','widgets.js','profile-sync.js','studio.js','experience.js'):
+    for name in ('i18n.js','widgets.js','profile-sync.js','reconnect.js','studio.js','experience.js'):
         page.add_script_tag(content=(R/'static/js'/name).read_text())
     page.evaluate("document.dispatchEvent(new Event('DOMContentLoaded'))")
     page.locator('#demo').click()

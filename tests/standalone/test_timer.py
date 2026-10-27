@@ -3,7 +3,7 @@ import os
 os.environ.setdefault('GSI_TOKEN', 'local-test-token-1234')
 os.environ.setdefault('DASHBOARD_PIN', '123456')
 os.environ['BOMB_TIMER_ENABLED'] = 'true'
-import app
+from companion import server as app
 
 
 def clear():
