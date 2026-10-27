@@ -134,6 +134,8 @@ jobs:
           PY
       - name: Build and start
         run: docker compose up -d --build --wait --wait-timeout 120
+      - name: Verify offline recovery command packaging
+        run: docker compose exec -T cs2-companion-studio python scripts/recover_profiles.py --help
       - name: Check HTTP and GSI with a synthetic payload
         run: python scripts/docker_smoke.py
       - name: Verify profiles persist on container restart
