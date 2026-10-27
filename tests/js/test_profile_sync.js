@@ -4,7 +4,7 @@ const fs=require('node:fs');
 const vm=require('node:vm');
 function harness(){
  const context=vm.createContext({window:{},structuredClone,setTimeout:()=>1,clearTimeout:()=>{}});
- vm.runInContext(fs.readFileSync('static/profile-sync.js','utf8'),context);
+ vm.runInContext(fs.readFileSync('static/js/profile-sync.js','utf8'),context);
  let document={activeProfile:'p',profiles:[{id:'p',name:'local'}]};
  const sent=[],states=[];
  const api=context.window.CS2ProfileSync({getDocument:()=>document,applyDocument:msg=>{document=structuredClone(msg);},

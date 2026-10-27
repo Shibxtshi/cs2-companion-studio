@@ -5,14 +5,14 @@ The step-9 archive is a **publication candidate**, not a published or security-c
 ## Ownership, licensing and openness — BLOCKING
 
 - [ ] **Finalize and approve the no-resale source-available license.** `LICENSE` is currently a **non-effective draft**: obtain qualified legal review, confirm the intended distinction between selling copies and permitted commercial use/services, and verify that the confirmed attribution `Copyright (c) 2026 Shibxtshi` correctly identifies the holder entitled to license all original contributions. Check compatibility with third-party dependencies/assets before publication.
-- [ ] Confirm the README labels the project **source-available**, not OSI-approved open source, and that [AI disclosure](../AI_DISCLOSURE.md) accurately describes its personal nature and significant ChatGPT contribution. Do **not** erase AI attribution.
+- [ ] Confirm the README labels the project **source-available**, not OSI-approved open source, and that [AI disclosure](../../AI_DISCLOSURE.md) accurately describes its personal nature and significant ChatGPT contribution. Do **not** erase AI attribution.
 - [ ] Confirm names/brands are used only for compatibility descriptions and no affiliation/approval is claimed.
 - [ ] Confirm no copied proprietary CS2 assets, Valve logos, FACEIT marks or third-party graphics are distributed without permission.
 
 ## Security and privacy — BLOCKING
 
-- [ ] Enable GitHub **Private Vulnerability Reporting** or publish a tested private security-contact mechanism; update [SECURITY.md](../SECURITY.md).
-- [ ] Configure a usable private conduct-reporting contact; update [CODE_OF_CONDUCT.md](../CODE_OF_CONDUCT.md).
+- [ ] Enable GitHub **Private Vulnerability Reporting** or publish a tested private security-contact mechanism; update [SECURITY.md](../../SECURITY.md).
+- [ ] Configure a usable private conduct-reporting contact; update [CODE_OF_CONDUCT.md](../../CODE_OF_CONDUCT.md).
 - [ ] Verify that `.env`, PIN, generated `.cfg`, `data/profiles.json`, `logs/` and `.installer-state/` are **not tracked** in Git or included in the public archive.
 - [ ] If a secret has ever been posted in public source or a release, **rotate it**; deleting the file from the tip is not enough to remove it from Git history.
 - [ ] Review the repository history and scan release artifacts for personal data and secrets.

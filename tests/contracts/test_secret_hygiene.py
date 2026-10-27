@@ -7,7 +7,7 @@ import zipfile
 
 import pytest
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = ROOT / 'scripts' / 'check_secrets.py'
 spec = importlib.util.spec_from_file_location('secret_checker', SCRIPT)
 checker = importlib.util.module_from_spec(spec)
@@ -17,9 +17,10 @@ spec.loader.exec_module(checker)
 def test_local_env_is_not_an_error(tmp_path):
     for name in ('.gitignore', '.dockerignore', 'Dockerfile', 'compose.yaml'):
         shutil.copyfile(ROOT / name, tmp_path / name)
-    (tmp_path / 'static').mkdir()
-    for name in ('index.html', 'studio.js', 'profile-sync.js', 'widgets.js', 'styles.css'):
-        shutil.copyfile(ROOT / 'static' / name, tmp_path / 'static' / name)
+    for name in ('static/index.html', 'static/js/studio.js', 'static/js/profile-sync.js', 'static/js/widgets.js', 'static/css/styles.css'):
+        destination = tmp_path / name
+        destination.parent.mkdir(parents=True, exist_ok=True)
+        shutil.copyfile(ROOT / name, destination)
     (tmp_path / '.env').write_text('DASHBOARD_PIN=private-test-value\nGSI_TOKEN=private-test-value\n')
     (tmp_path / 'data').mkdir()
     (tmp_path / 'data' / 'profiles.json').write_text('{"profiles": []}')

@@ -1,6 +1,6 @@
 """Deterministic fan-out tests: events establish order without timing guesses."""
 import asyncio
-from dashboard_delivery import broadcast_text
+from companion.dashboard_delivery import broadcast_text
 
 
 class Peer:

@@ -6,7 +6,7 @@
 >
 > **Not affiliated with or endorsed by Valve, Counter-Strike 2, FACEIT, or OpenAI.** The game and company names are used solely to describe compatibility. Use of GSI or an external display does **not** mean any competitive platform has approved the tool. Check applicable rules before competitive use.
 
-**Software version:** `1.0.0` (first-release candidate). A source version does not mean that the GitHub release has been published; check [GitHub Releases](https://github.com/Shibxtshi/cs2-companion-studio/releases) for published packages. Before public launch, the maintainer must complete the license and private-reporting requirements in the [release checklist](docs/PUBLIC_RELEASE_CHECKLIST.md).
+**Software version:** `1.0.0` (first-release candidate). A source version does not mean that the GitHub release has been published; check [GitHub Releases](https://github.com/Shibxtshi/cs2-companion-studio/releases) for published packages. Before public launch, the maintainer must complete the license and private-reporting requirements in the [release checklist](docs/releases/checklist.md).
 
 **Languages:** English (default), French (available). [Documentation en français](docs/README.fr.md).
 
@@ -32,7 +32,7 @@
 5. Restart CS2 if a GSI config was newly installed; start a training match. Open **`http://localhost:8080`** and enter your PIN.
 6. To use your phone, opt into trusted-LAN mode during setup. Connect the phone to the same private Wi-Fi and open `http://YOUR-PC-LAN-IP:8080`.
 
-The installer does not silently install Docker, alter the Windows firewall, or guarantee anti-cheat compatibility. Administrative elevation should only be requested if needed for filesystem access. Detailed instructions: [Windows installation](docs/INSTALLATION_WINDOWS.md).
+The installer does not silently install Docker, alter the Windows firewall, or guarantee anti-cheat compatibility. Administrative elevation should only be requested if needed for filesystem access. Detailed instructions: [Windows installation](docs/guides/windows-installation.md).
 
 ### Manual installation (advanced)
 
@@ -53,7 +53,7 @@ docker compose up -d --build
 - The `/health` endpoint reports service health, not your private match state. Never post `.env`, live GSI tokens, `data/profiles.json`, or raw Docker logs to a GitHub issue.
 - Economy predictions and bomb timing are **estimates** and may be unavailable or inaccurate. The bomb timer is a training/authorized-environment feature, not an approved FACEIT aid.
 
-See [SECURITY.md](SECURITY.md), [technical security notes](docs/SECURITY.md), and [rules/limitations](docs/USAGE_AND_AFFILIATION.md).
+See [SECURITY.md](SECURITY.md), [technical security notes](docs/security/technical-notes.md), and [rules/limitations](docs/guides/usage-and-affiliation.md).
 
 ## Troubleshooting and reporting bugs
 
@@ -75,7 +75,7 @@ python -m pip install -r requirements-dev.txt pytest
 python scripts/run_checks.py
 ```
 
-The CI configuration adds Windows/Linux tests, browser tests, PowerShell checks, a Docker smoke test and a dependency audit. See [GitHub Actions](https://github.com/Shibxtshi/cs2-companion-studio/actions) for the current result; earlier successful runs do not validate newer commits. See [release checklist](docs/PUBLIC_RELEASE_CHECKLIST.md).
+The CI configuration adds Windows/Linux tests, browser tests, PowerShell checks, a Docker smoke test and a dependency audit. See [GitHub Actions](https://github.com/Shibxtshi/cs2-companion-studio/actions) for the current result; earlier successful runs do not validate newer commits. See [release checklist](docs/releases/checklist.md).
 
 ## License and credits
 
@@ -83,4 +83,8 @@ The CI configuration adds Windows/Linux tests, browser tests, PowerShell checks,
 
 Credits: independent maintainer and community contributors (once any exist); **OpenAI's ChatGPT** for substantial development assistance. OpenAI is **not** the owner, publisher or endorser of this project.
 
-[Functional changelog](CHANGELOG.md) · [Windows setup](docs/INSTALLATION_WINDOWS.md) · [Roadmap](docs/ROADMAP.md) · [Release preparation](docs/PUBLIC_RELEASE_CHECKLIST.md)
+[Functional changelog](CHANGELOG.md) · [Windows setup](docs/guides/windows-installation.md) · [Roadmap](docs/ROADMAP.md) · [Release preparation](docs/releases/checklist.md)
+
+## Project layout
+
+The backend lives in `companion/`, web assets in `static/css/` and `static/js/`, and automated checks in `tests/`. Root `app.py`, Docker/Compose and Windows launchers remain stable entry points. Start with the [documentation index](docs/README.md) or the [architecture guide](docs/development/architecture.md) to find the relevant component.

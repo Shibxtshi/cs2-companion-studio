@@ -25,4 +25,4 @@ AI-assisted implementation and automated tests are not an independent security a
 
 ## Before publishing
 
-Complete docs/PUBLIC_RELEASE_CHECKLIST.md. In particular, legally finalize and approve the draft license, enable private vulnerability reporting, review the code/assets and fresh screenshots, run all CI checks, and verify archive contents. Do not tag or publish until these are complete.
+Complete docs/releases/checklist.md. In particular, legally finalize and approve the draft license, enable private vulnerability reporting, review the code/assets and fresh screenshots, run all CI checks, and verify archive contents. Do not tag or publish until these are complete.

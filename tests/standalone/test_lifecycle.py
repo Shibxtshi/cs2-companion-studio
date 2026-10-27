@@ -6,7 +6,7 @@ os.environ['BOMB_TIMER_ENABLED'] = 'true'
 
 from fastapi.testclient import TestClient
 import app
-from gsi_lifecycle import history_loss_level, cash_projection, EconomyObserver
+from companion.gsi_lifecycle import history_loss_level, cash_projection, EconomyObserver
 
 
 def reset():

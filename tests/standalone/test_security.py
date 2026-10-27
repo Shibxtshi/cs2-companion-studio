@@ -6,7 +6,7 @@ os.environ['BOMB_TIMER_ENABLED'] = 'false'
 
 from fastapi.testclient import TestClient
 from starlette.websockets import WebSocketDisconnect
-from security import LoginLimiter, same_origin
+from companion.security import LoginLimiter, same_origin
 import app
 
 
@@ -28,8 +28,8 @@ def run():
         assert r.headers['x-frame-options'] == 'DENY'
         assert "script-src 'self'" in r.headers['content-security-policy']
         assert 'gsi_online' not in r.text
-        assert client.get('/static/studio.js').status_code == 200
-        assert client.get('/static/styles.css').status_code == 200
+        assert client.get('/static/js/studio.js').status_code == 200
+        assert client.get('/static/css/styles.css').status_code == 200
         try:
             with client.websocket_connect('/ws', headers={'origin': 'http://evil.test'}):
                 raise AssertionError('Cross origin unexpectedly accepted')

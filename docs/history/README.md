@@ -1,6 +1,6 @@
 # Historical project notes
 
-This folder preserves the internal V1P development history and earlier quality baselines. These notes are not the current public release instructions. For current information, start with [the main README](../../README.md), [Windows installation](../INSTALLATION_WINDOWS.md), and [the release checklist](../PUBLIC_RELEASE_CHECKLIST.md).
+This folder preserves the internal V1P development history and earlier quality baselines. These notes are not the current public release instructions. For current information, start with [the main README](../../README.md), [Windows installation](../guides/windows-installation.md), and [the release checklist](../releases/checklist.md).
 
 - [Initial baseline](BASELINE.md)
 - [Historical functional changelog (French)](CHANGELOG_FONCTIONNEL.md)

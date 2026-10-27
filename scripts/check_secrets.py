@@ -79,7 +79,7 @@ def check_git_index(root):
 def check_embedded_credentials(root):
     # Only shipped SOURCE files are inspected, never personal config files.
     for name in ('Dockerfile', 'compose.yaml', 'static/index.html',
-                 'static/studio.js', 'static/profile-sync.js', 'static/widgets.js', 'static/styles.css'):
+                 'static/js/studio.js', 'static/js/profile-sync.js', 'static/js/widgets.js', 'static/css/styles.css'):
         content = (root / name).read_text(encoding='utf-8')
         if re.search(r'(?im)^\s*(?:GSI_TOKEN|DASHBOARD_PIN)\s*=\s*\S+', content):
             raise HygieneError('Embedded credentials found in source: ' + name)

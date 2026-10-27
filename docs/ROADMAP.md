@@ -18,7 +18,7 @@ No public publication is implied by this development snapshot.
 
 ## v1.0.0 preparation — final step
 
-The public-facing README, AI disclosure, code of conduct, support instructions, issue/PR templates, custom no-resale source-available license draft and publication checklist are drafted. This is **not yet a public release**; the license holder/private contact and all CI release gates must be completed before step 10. See [`PUBLIC_RELEASE_CHECKLIST.md`](PUBLIC_RELEASE_CHECKLIST.md).
+The public-facing README, AI disclosure, code of conduct, support instructions, issue/PR templates, custom no-resale source-available license draft and publication checklist are drafted. This is **not yet a public release**; the license holder/private contact and all CI release gates must be completed before step 10. See [release checklist](releases/checklist.md).
 
 ## Development quality follow-up
 
