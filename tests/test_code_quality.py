@@ -63,15 +63,37 @@ def test_historical_docs_are_grouped_without_dropping_content():
 
 
 def test_widget_catalog_module_and_script_load_order():
-    page = read("static/index.html")
-    assert page.index("i18n.js?v=1.0.0") < page.index("widgets.js?v=1.0.0")
-    assert page.index("widgets.js?v=1.0.0") < page.index("studio.js?v=1.0.0")
-    catalog = read("static/widgets.js")
-    script = read("static/studio.js")
-    assert catalog.count("size:") == 29
-    assert "window.CS2WidgetCatalog=Object.freeze(" in catalog
-    assert "const W=window.CS2WidgetCatalog" in script
-    assert "const W={" not in script
+    from html.parser import HTMLParser
+
+    class Scripts(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.sources = []
+
+        def handle_starttag(self, tag, attrs):
+            if tag == 'script':
+                source = dict(attrs).get('src', '').split('?')[0]
+                self.sources.append(source)
+
+    parser = Scripts()
+    parser.feed(read('static/index.html'))
+    required = ['/static/i18n.js', '/static/widgets.js', '/static/profile-sync.js', '/static/studio.js']
+    assert [source for source in parser.sources if source in required] == required
+
+
+def test_frontend_widget_kinds_match_server_validation():
+    import json
+    import shutil
+    import subprocess
+    import pytest
+    from profile_store import PROFILE_KINDS
+
+    node = shutil.which('node')
+    if not node:
+        pytest.skip('Node.js is required to execute the widget catalog; CI checks it')
+    script = 'global.window={};require("./static/widgets.js");console.log(JSON.stringify(Object.keys(window.CS2WidgetCatalog)))'
+    result = subprocess.run([node, '-e', script], cwd=ROOT, capture_output=True, text=True, check=True)
+    assert set(json.loads(result.stdout)) == PROFILE_KINDS
 
 
 def test_standalone_suites_are_isolated_and_grouped():

@@ -15,8 +15,8 @@ Scope: FastAPI receiver, WebSocket, LAN, browser layout import and Docker image.
 
 - LAN access currently uses **HTTP + WS without TLS**: suitable only for a trusted local network. Strongly advise against direct Internet exposure. Same-origin checks do not replace TLS or authentication.
 - PIN lockout is per-process and per-peer IP; restarting Docker resets it. Reverse-proxy installations need separate authentication and proxy-aware network controls.
-- No device revocation/session management, central settings store or automated backup yet.
-- Dependency audit, SBOM and automated end-to-end browser tests should be added before public release.
+- No device revocation/session management or general central settings store. Profiles have a private one-generation backup and explicit offline recovery; broader backup retention remains outside the current scope.
+- Dependency audit, SBOM and three-browser end-to-end tests are implemented in CI. Check the exact revision; a fresh release build and real Windows/CS2 validation remain required.
 - A PIN-protected screen is not evidence of FACEIT anti-cheat approval. Automated bomb timing might be disallowed: disable until written approval.
 - Secrets from any older archive that was posted publicly must be rotated, including the in-game GSI token.
 
@@ -44,8 +44,8 @@ instance profiles, so use a strong unique PIN and restrict LAN access.
 
 - Added a stronger WS Origin check, including the browser page's HTTP/HTTPS scheme. A TLS-terminating reverse proxy should be retested separately; localhost and LAN remain the documented supported setup.
 - Added synthetic security regression tests for missing/forged Origin, unauthenticated WS access, bad PINs, invalid GSI object shapes, request size limits, profile injection payloads and private-path isolation.
-- Added full GitHub CI tests (Windows, Linux, Chromium, Firefox, WebKit, Docker) and dependency-vulnerability audit with CycloneDX SBOM. **These checks have not yet run on GitHub**.
-- Runtime pins were upgraded for the initial security-audit candidate. An actual installation/audit with the new pins must run in CI and on the maintainer's Windows installation before public release. Do not describe this as penetration-tested or security-certified.
+- Added full GitHub CI tests (Windows, Linux, Chromium, Firefox, WebKit, Docker) and dependency-vulnerability audit with CycloneDX SBOM. **The eight CI jobs passed on main 3db5d855605e7285a534db16bfdcd57c7e737b6c after PR #7. New changes and release artifacts require their own checks**.
+- Runtime pins were upgraded for the initial security-audit candidate. The pinned runtime passed that main CI run. The maintainer reports local PC operation, without a fully specified fresh-install/upgrade/LAN validation matrix; those release checks remain pending. Do not describe this as penetration-tested or security-certified.
 - Private runtime directories and credentials remain excluded from the distributed source archive and Git.
 
 See `docs/history/QA_V1P_F.md` for the historical quality checklist, and `docs/PUBLIC_RELEASE_CHECKLIST.md` for current release blockers.
@@ -56,3 +56,7 @@ See `docs/history/QA_V1P_F.md` for the historical quality checklist, and `docs/P
 The public security-reporting policy is at [`../SECURITY.md`](../SECURITY.md). Ensure a private reporting channel is actually enabled before making the repository public. An independent security audit has **not** occurred.
 
 Profile backups and recovery files in data/ contain private layouts. They are never static assets and must not be distributed. See INSTALLATION_WINDOWS.md for explicit offline restoration.
+
+## Dashboard delivery
+
+Authenticated dashboard broadcasts run concurrently with serialized sends per peer and a two-second delivery deadline (including time waiting for that peer's previous broadcast). A failing or timed-out peer is removed and closed with a bounded best-effort close; healthy peers receive without waiting for it. This does not add multi-worker support or change authentication/protocol fields.
