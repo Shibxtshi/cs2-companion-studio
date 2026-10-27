@@ -33,10 +33,12 @@
    try{const r=await fetch('/health',{cache:'no-store',credentials:'same-origin',signal:AbortSignal.timeout(5000)});if(!r.ok)throw Error('health');const d=await r.json();healthState=d?.service==='ok'?'ok':'bad';}catch{healthState='bad';}
    checking=false;btn.disabled=false;render();
  }
- document.addEventListener('cs2:status',ev=>{const msg=ev.detail?.message||'';
-  if(/Connexion…/.test(msg))socketState='connecting';
-  else if(/PIN incorrect|Code incorrect|Erreur réseau|Hors ligne|Mise à jour requise/.test(msg))socketState='error';
-  else if(/Reconnexion|Déconnecté/.test(msg))socketState='lost';
+ document.addEventListener('cs2:status',ev=>{
+  // Use machine-readable state rather than parsing translated display text.
+  const code=ev.detail?.code;
+  if(code==='connecting')socketState='connecting';
+  else if(code==='error')socketState='error';
+  else if(code==='lost')socketState='lost';
   render();
  });
  document.addEventListener('cs2:authenticated',()=>{socketState='authenticated';healthState='ok';render();});

@@ -1,4 +1,4 @@
-"""Simple offline regression tests: run with `python test_timer.py`."""
+"""Simple offline regression tests: run with `python -m tests.standalone.test_timer`."""
 import os
 os.environ.setdefault('GSI_TOKEN', 'local-test-token-1234')
 os.environ.setdefault('DASHBOARD_PIN', '123456')

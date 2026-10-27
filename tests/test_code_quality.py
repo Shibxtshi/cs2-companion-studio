@@ -60,3 +60,46 @@ def test_historical_docs_are_grouped_without_dropping_content():
         assert (history / name).is_file()
         assert not (ROOT / "docs" / name).exists()
     assert "docs/history/CHANGELOG_FONCTIONNEL.md" in read("CHANGELOG.md")
+
+
+def test_widget_catalog_module_and_script_load_order():
+    page = read("static/index.html")
+    assert page.index("i18n.js?v=1.0.0") < page.index("widgets.js?v=1.0.0")
+    assert page.index("widgets.js?v=1.0.0") < page.index("studio.js?v=1.0.0")
+    catalog = read("static/widgets.js")
+    script = read("static/studio.js")
+    assert catalog.count("size:") == 29
+    assert "window.CS2WidgetCatalog=Object.freeze(" in catalog
+    assert "const W=window.CS2WidgetCatalog" in script
+    assert "const W={" not in script
+
+
+def test_standalone_suites_are_isolated_and_grouped():
+    runner = read("scripts/run_checks.py")
+    workflow = read(".github/workflows/checks.yml")
+    config = read("pytest.ini")
+    suites = (
+        "test_economy", "test_timer", "test_studio", "test_security",
+        "test_lifecycle", "test_profiles_and_diagnostics",
+    )
+    for suite in suites:
+        module = f"tests.standalone.{suite}"
+        assert (ROOT / "tests" / "standalone" / f"{suite}.py").exists()
+        assert not (ROOT / f"{suite}.py").exists()
+        assert module in runner
+        assert suite in workflow
+    assert "python -m" in workflow
+    assert "tests/standalone tests/legacy_browser" in config
+    assert (ROOT / "tests" / "legacy_browser" / "test_e1_browser.py").exists()
+
+
+def test_connection_states_do_not_depend_on_localized_messages():
+    studio = read("static/studio.js")
+    experience = read("static/experience.js")
+    assert "detail:{message:msg,kind,code}" in studio
+    assert "setStatus('Connexion…','','connecting')" in studio
+    assert "const code=ev.detail?.code;" in experience
+    assert "if(code==='connecting')" in experience
+    assert "else if(code==='error')" in experience
+    assert "else if(code==='lost')" in experience
+    assert "if(/Connexion…/.test(msg))" not in experience

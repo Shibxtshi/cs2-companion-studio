@@ -1,4 +1,4 @@
-"""First public-security regression checks. Run: python test_security.py"""
+"""First public-security regression checks. Run: python -m tests.standalone.test_security"""
 import os
 os.environ['GSI_TOKEN'] = 'v1p-test-token-example-not-real'
 os.environ['DASHBOARD_PIN'] = '1234567890'

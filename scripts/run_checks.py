@@ -5,14 +5,20 @@ import subprocess
 import sys
 
 ROOT = Path(__file__).resolve().parents[1]
-TESTS = ['test_economy.py','test_timer.py','test_studio.py','test_security.py',
-         'test_lifecycle.py','test_profiles_and_diagnostics.py']
+TEST_MODULES = [
+    "tests.standalone.test_economy",
+    "tests.standalone.test_timer",
+    "tests.standalone.test_studio",
+    "tests.standalone.test_security",
+    "tests.standalone.test_lifecycle",
+    "tests.standalone.test_profiles_and_diagnostics",
+]
 
 
 def run():
-    for test in TESTS:
-        print('Running:', test, flush=True)
-        subprocess.run([sys.executable, str(ROOT/test)], cwd=ROOT, check=True)
+    for testModule in TEST_MODULES:
+        print('Running:', testModule, flush=True)
+        subprocess.run([sys.executable, '-m', testModule], cwd=ROOT, check=True)
     print('Running: public security and persistence regressions', flush=True)
     subprocess.run([sys.executable, '-m', 'pytest', '-q', 'tests/test_public_security.py', 'tests/test_secret_hygiene.py', 'tests/test_public_docs.py', 'tests/test_release_version.py', 'tests/test_code_quality.py'], cwd=ROOT, check=True)
     subprocess.run([sys.executable, 'scripts/check_secrets.py'], cwd=ROOT, check=True)

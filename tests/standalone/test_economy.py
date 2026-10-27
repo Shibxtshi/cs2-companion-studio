@@ -1,4 +1,4 @@
-"""Offline tests: python test_economy.py. No CS2 or Docker required."""
+"""Offline tests: python -m tests.standalone.test_economy. No CS2 or Docker required."""
 import os
 os.environ.setdefault('GSI_TOKEN','local-test-token-1234')
 os.environ.setdefault('DASHBOARD_PIN','123456')

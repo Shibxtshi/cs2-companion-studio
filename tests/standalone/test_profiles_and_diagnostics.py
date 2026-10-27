@@ -1,4 +1,4 @@
-"""Run with: python test_profiles_and_diagnostics.py (offline, no CS2 required)."""
+"""Run with: python -m tests.standalone.test_profiles_and_diagnostics (offline, no CS2 required)."""
 import json
 import os
 import tempfile

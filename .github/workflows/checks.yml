@@ -35,12 +35,13 @@ jobs:
         shell: bash
         run: |
           set -e
-          for t in test_economy.py test_timer.py test_studio.py test_security.py test_lifecycle.py test_profiles_and_diagnostics.py; do python "$t"; done
+          for t in test_economy test_timer test_studio test_security test_lifecycle test_profiles_and_diagnostics; do python -m "tests.standalone.$t"; done
       - name: Test public security contract
         run: python -m pytest -q tests/test_public_security.py tests/test_secret_hygiene.py tests/test_public_docs.py tests/test_release_version.py tests/test_code_quality.py
       - name: Check JavaScript syntax
         if: runner.os == 'Linux'
         run: |
+          node --check static/widgets.js
           node --check static/studio.js
           node --check static/i18n.js
           node --check static/experience.js

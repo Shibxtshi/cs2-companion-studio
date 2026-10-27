@@ -1,0 +1,34 @@
+/* Built-in widget catalog. Preserve widget IDs and HTML data attributes. */
+(()=>{'use strict';
+window.CS2WidgetCatalog=Object.freeze({
+ score:{title:'Score',icon:'🏆',cat:'Partie',size:12,html:`<div class="flex"><div><div class="smallish" data-v="map"></div><div class="muted" data-v="round"></div></div><div class="score-side"><span class="team-ct" data-v="ct"></span><span class="muted">:</span><span class="team-t" data-v="t"></span></div></div>`},
+ map:{title:'Carte',icon:'🗺',cat:'Partie',size:4,html:`<div class="big" data-v="map"></div><div class="muted space" data-v="map_mode"></div>`},
+ round:{title:'Manche',icon:'◷',cat:'Partie',size:4,html:`<div class="big" data-v="round_number"></div><div class="muted space" data-v="round_phase"></div><div class="tiny" data-v="round_winner"></div>`},
+ score_split:{title:'Score détaillé',icon:'⚔',cat:'Partie',size:6,html:`<div class="stat-tiles"><div><span class="tiny">CT</span><b class="team-ct" data-v="ct"></b></div><div><span class="tiny">T</span><b class="team-t" data-v="t"></b></div></div><div class="tiny space" data-v="round"></div>`},
+ match_phase:{title:'Phase du match',icon:'⏳',cat:'Partie',size:4,html:`<div class="medium" data-v="map_phase"></div><div class="muted space" data-v="round_phase"></div>`},
+ round_history:{title:'Historique des manches',icon:'▥',cat:'Partie',size:6,html:`<div class="history-list" data-list="wins"></div><div class="tiny space">Disponible selon les données envoyées par CS2</div>`},
+ weapon:{title:'Arme équipée',icon:'⌖',cat:'Armement',size:4,html:`<div class="weapon-text" data-v="weapon"></div><div class="rowgap space"><span class="big" data-v="ammo_clip"></span><span class="muted" data-v="ammo_reserve"></span></div>`},
+ ammo:{title:'Munitions',icon:'▰',cat:'Armement',size:4,html:`<div class="rowgap"><div class="big" data-v="ammo_clip"></div><div class="muted" data-v="ammo_reserve"></div></div><div class="bar"><div class="bar-fill" data-p="ammo"></div></div><div class="tiny space" data-v="weapon"></div>`},
+ inventory:{title:'Inventaire',icon:'▦',cat:'Armement',size:8,html:`<div class="inventory-list" data-list="weapons"></div>`},
+ grenades:{title:'Grenades possédées',icon:'✳',cat:'Armement',size:6,html:`<div class="inventory-list" data-list="grenades"></div><div class="tiny space">Inventaire personnel uniquement</div>`},
+ equip_value:{title:'Valeur d’équipement',icon:'▣',cat:'Armement',size:4,html:`<div class="big" data-v="equip_value"></div><div class="muted space">Valeur rapportée par CS2</div>`},
+ gear:{title:'Équipement',icon:'⬡',cat:'Armement',size:4,html:`<div class="rowgap"><span class="tag" data-v="helmet"></span><span class="tag" data-v="kit"></span></div><div class="tiny space" data-v="armor_line"></div>`},
+ economy:{title:'Économie',icon:'＄',cat:'Économie',size:8,html:`<div class="flex"><div><div class="big accent" data-v="money"></div><div class="muted">Argent disponible</div></div><div style="text-align:right"><div class="medium" data-v="nextmoney"></div><div class="muted">Si défaite · estimation</div></div></div><div class="divider"></div><div class="flex tiny"><span data-v="lossbonus"></span><span data-v="econ_note"></span></div>`},
+ cash:{title:'Argent actuel',icon:'＄',cat:'Économie',size:4,html:`<div class="big accent" data-v="money"></div><div class="muted space">Disponible</div>`},
+ forecast:{title:'Prochain round',icon:'↗',cat:'Économie',size:6,html:`<div class="big" data-v="nextmoney"></div><div class="muted space" data-v="lossbonus"></div><div class="tiny space" data-v="econ_note"></div>`},
+ stats:{title:'Statistiques K / A / D',icon:'✦',cat:'Statistiques',size:12,html:`<div class="stat-tiles"><div><span class="tiny">Éliminations</span><b data-v="kills"></b></div><div><span class="tiny">Assists</span><b data-v="assists"></b></div><div><span class="tiny">Morts</span><b data-v="deaths"></b></div></div>`},
+ kd:{title:'Ratio K / D',icon:'◎',cat:'Statistiques',size:4,html:`<div class="big" data-v="kd"></div><div class="muted space">Éliminations / morts</div>`},
+ mvp:{title:'MVP',icon:'★',cat:'Statistiques',size:4,html:`<div class="big" data-v="mvps"></div><div class="muted space">Étoiles MVP</div>`},
+ personal_score:{title:'Score personnel',icon:'♛',cat:'Statistiques',size:4,html:`<div class="big" data-v="personal_score"></div><div class="muted space">Points au scoreboard</div>`},
+ round_stats:{title:'Statistiques du round',icon:'◉',cat:'Statistiques',size:8,html:`<div class="stat-tiles"><div><span class="tiny">Kills</span><b data-v="round_kills"></b></div><div><span class="tiny">Headshots</span><b data-v="round_hs"></b></div><div><span class="tiny">Dégâts</span><b data-v="round_damage"></b></div></div>`},
+ health:{title:'Santé',icon:'♥',cat:'Joueur',size:4,html:`<div class="big" data-v="health"></div><div class="bar"><div class="bar-fill" data-p="health"></div></div>`},
+ armor:{title:'Armure',icon:'⬟',cat:'Joueur',size:4,html:`<div class="big" data-v="armor"></div><div class="bar"><div class="bar-fill" data-p="armor"></div></div>`},
+ effects:{title:'Effets subis',icon:'☀',cat:'Joueur',size:6,html:`<div class="stat-tiles"><div><span class="tiny">Flash</span><b data-v="flash"></b></div><div><span class="tiny">Smoke</span><b data-v="smoke"></b></div><div><span class="tiny">Feu</span><b data-v="fire"></b></div></div><div class="tiny space">Intensité rapportée par CS2 · 0–255</div>`},
+ player:{title:'Joueur',icon:'◈',cat:'Joueur',size:6,html:`<div class="medium" data-v="name"></div><div class="rowgap space"><span class="pill" data-v="team"></span><span class="pill" data-v="activity"></span></div>`},
+ bomb:{title:'Bombe',icon:'◉',cat:'Bombe',size:12,html:`<div class="flex"><span class="smallish" data-v="bomb_state"></span><span class="pill">Chrono estimé</span></div><div class="bomb-clock" data-bomb-clock>--.- s</div><div class="bomb-track"><div class="bomb-fill" data-bomb-fill></div></div><div class="bomb-legend" data-bomb-msg>En attente</div><div class="demo-controls hidden" data-demo-controls><button class="btn small" data-demo="40">40 s</button><button class="btn small" data-demo="9">9 s</button><button class="btn small" data-demo="4">4 s</button><button class="btn small" data-demo="stop">Stop</button></div>`},
+ bomb_state:{title:'État de la bombe',icon:'●',cat:'Bombe',size:4,html:`<div class="medium" data-v="bomb_state"></div><div class="tiny space" data-v="round_phase"></div>`},
+ connection:{title:'Connexion GSI',icon:'◌',cat:'Système',size:4,html:`<div class="medium" data-v="connection"></div><div class="muted space" data-v="lastpacket"></div>`},
+ events:{title:'Journal de la partie',icon:'☷',cat:'Système',size:8,html:`<div class="event-list" data-list="events"></div><div class="tiny space">Événements déduits des données GSI reçues</div>`},
+ provider:{title:'Version du jeu',icon:'⚙',cat:'Système',size:4,html:`<div class="medium" data-v="provider"></div><div class="tiny space">Donnée GSI provider</div>`}
+});
+})();

@@ -2,7 +2,7 @@
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 import re
-R=Path(__file__).parent
+R=Path(__file__).resolve().parents[2]
 html=re.sub(r'<script defer[^>]*></script>', '', (R/'static/index.html').read_text())
 html=re.sub(r'<link rel="stylesheet"[^>]*>', '', html)
 
@@ -30,7 +30,7 @@ with sync_playwright() as p:
       };
     }""")
     page.add_style_tag(content=(R/'static/styles.css').read_text())
-    for name in ('i18n.js','studio.js','experience.js'):
+    for name in ('i18n.js','widgets.js','studio.js','experience.js'):
         page.add_script_tag(content=(R/'static'/name).read_text())
     page.evaluate("document.dispatchEvent(new Event('DOMContentLoaded'))")
     page.locator('#demo').click()

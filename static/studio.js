@@ -1,36 +1,7 @@
 (()=>{'use strict';
 const tr=text=>window.CS2I18N?.translate(text)||text,$=id=>document.getElementById(id), isNum=x=>typeof x==='number'&&Number.isFinite(x),v=(x,none='—')=>x===null||x===undefined||x===''?none:String(x),cash=x=>isNum(x)?x.toLocaleString(window.CS2I18N?.locale()==='FR'?'fr-FR':'en-US')+' $':'—',fmt=x=>isNum(x)?x.toLocaleString(window.CS2I18N?.locale()==='FR'?'fr-FR':'en-US'):'—',pct=x=>isNum(x)?Math.max(0,Math.min(100,x))+'%':'0%',weaponName=x=>v(x).replace(/^weapon_/,'').replaceAll('_',' ').toUpperCase(),capitalize=s=>v(s).replace(/^./,x=>x.toUpperCase());
-const W={
- score:{title:'Score',icon:'🏆',cat:'Partie',size:12,html:`<div class="flex"><div><div class="smallish" data-v="map"></div><div class="muted" data-v="round"></div></div><div class="score-side"><span class="team-ct" data-v="ct"></span><span class="muted">:</span><span class="team-t" data-v="t"></span></div></div>`},
- map:{title:'Carte',icon:'🗺',cat:'Partie',size:4,html:`<div class="big" data-v="map"></div><div class="muted space" data-v="map_mode"></div>`},
- round:{title:'Manche',icon:'◷',cat:'Partie',size:4,html:`<div class="big" data-v="round_number"></div><div class="muted space" data-v="round_phase"></div><div class="tiny" data-v="round_winner"></div>`},
- score_split:{title:'Score détaillé',icon:'⚔',cat:'Partie',size:6,html:`<div class="stat-tiles"><div><span class="tiny">CT</span><b class="team-ct" data-v="ct"></b></div><div><span class="tiny">T</span><b class="team-t" data-v="t"></b></div></div><div class="tiny space" data-v="round"></div>`},
- match_phase:{title:'Phase du match',icon:'⏳',cat:'Partie',size:4,html:`<div class="medium" data-v="map_phase"></div><div class="muted space" data-v="round_phase"></div>`},
- round_history:{title:'Historique des manches',icon:'▥',cat:'Partie',size:6,html:`<div class="history-list" data-list="wins"></div><div class="tiny space">Disponible selon les données envoyées par CS2</div>`},
- weapon:{title:'Arme équipée',icon:'⌖',cat:'Armement',size:4,html:`<div class="weapon-text" data-v="weapon"></div><div class="rowgap space"><span class="big" data-v="ammo_clip"></span><span class="muted" data-v="ammo_reserve"></span></div>`},
- ammo:{title:'Munitions',icon:'▰',cat:'Armement',size:4,html:`<div class="rowgap"><div class="big" data-v="ammo_clip"></div><div class="muted" data-v="ammo_reserve"></div></div><div class="bar"><div class="bar-fill" data-p="ammo"></div></div><div class="tiny space" data-v="weapon"></div>`},
- inventory:{title:'Inventaire',icon:'▦',cat:'Armement',size:8,html:`<div class="inventory-list" data-list="weapons"></div>`},
- grenades:{title:'Grenades possédées',icon:'✳',cat:'Armement',size:6,html:`<div class="inventory-list" data-list="grenades"></div><div class="tiny space">Inventaire personnel uniquement</div>`},
- equip_value:{title:'Valeur d’équipement',icon:'▣',cat:'Armement',size:4,html:`<div class="big" data-v="equip_value"></div><div class="muted space">Valeur rapportée par CS2</div>`},
- gear:{title:'Équipement',icon:'⬡',cat:'Armement',size:4,html:`<div class="rowgap"><span class="tag" data-v="helmet"></span><span class="tag" data-v="kit"></span></div><div class="tiny space" data-v="armor_line"></div>`},
- economy:{title:'Économie',icon:'＄',cat:'Économie',size:8,html:`<div class="flex"><div><div class="big accent" data-v="money"></div><div class="muted">Argent disponible</div></div><div style="text-align:right"><div class="medium" data-v="nextmoney"></div><div class="muted">Si défaite · estimation</div></div></div><div class="divider"></div><div class="flex tiny"><span data-v="lossbonus"></span><span data-v="econ_note"></span></div>`},
- cash:{title:'Argent actuel',icon:'＄',cat:'Économie',size:4,html:`<div class="big accent" data-v="money"></div><div class="muted space">Disponible</div>`},
- forecast:{title:'Prochain round',icon:'↗',cat:'Économie',size:6,html:`<div class="big" data-v="nextmoney"></div><div class="muted space" data-v="lossbonus"></div><div class="tiny space" data-v="econ_note"></div>`},
- stats:{title:'Statistiques K / A / D',icon:'✦',cat:'Statistiques',size:12,html:`<div class="stat-tiles"><div><span class="tiny">Éliminations</span><b data-v="kills"></b></div><div><span class="tiny">Assists</span><b data-v="assists"></b></div><div><span class="tiny">Morts</span><b data-v="deaths"></b></div></div>`},
- kd:{title:'Ratio K / D',icon:'◎',cat:'Statistiques',size:4,html:`<div class="big" data-v="kd"></div><div class="muted space">Éliminations / morts</div>`},
- mvp:{title:'MVP',icon:'★',cat:'Statistiques',size:4,html:`<div class="big" data-v="mvps"></div><div class="muted space">Étoiles MVP</div>`},
- personal_score:{title:'Score personnel',icon:'♛',cat:'Statistiques',size:4,html:`<div class="big" data-v="personal_score"></div><div class="muted space">Points au scoreboard</div>`},
- round_stats:{title:'Statistiques du round',icon:'◉',cat:'Statistiques',size:8,html:`<div class="stat-tiles"><div><span class="tiny">Kills</span><b data-v="round_kills"></b></div><div><span class="tiny">Headshots</span><b data-v="round_hs"></b></div><div><span class="tiny">Dégâts</span><b data-v="round_damage"></b></div></div>`},
- health:{title:'Santé',icon:'♥',cat:'Joueur',size:4,html:`<div class="big" data-v="health"></div><div class="bar"><div class="bar-fill" data-p="health"></div></div>`},
- armor:{title:'Armure',icon:'⬟',cat:'Joueur',size:4,html:`<div class="big" data-v="armor"></div><div class="bar"><div class="bar-fill" data-p="armor"></div></div>`},
- effects:{title:'Effets subis',icon:'☀',cat:'Joueur',size:6,html:`<div class="stat-tiles"><div><span class="tiny">Flash</span><b data-v="flash"></b></div><div><span class="tiny">Smoke</span><b data-v="smoke"></b></div><div><span class="tiny">Feu</span><b data-v="fire"></b></div></div><div class="tiny space">Intensité rapportée par CS2 · 0–255</div>`},
- player:{title:'Joueur',icon:'◈',cat:'Joueur',size:6,html:`<div class="medium" data-v="name"></div><div class="rowgap space"><span class="pill" data-v="team"></span><span class="pill" data-v="activity"></span></div>`},
- bomb:{title:'Bombe',icon:'◉',cat:'Bombe',size:12,html:`<div class="flex"><span class="smallish" data-v="bomb_state"></span><span class="pill">Chrono estimé</span></div><div class="bomb-clock" data-bomb-clock>--.- s</div><div class="bomb-track"><div class="bomb-fill" data-bomb-fill></div></div><div class="bomb-legend" data-bomb-msg>En attente</div><div class="demo-controls hidden" data-demo-controls><button class="btn small" data-demo="40">40 s</button><button class="btn small" data-demo="9">9 s</button><button class="btn small" data-demo="4">4 s</button><button class="btn small" data-demo="stop">Stop</button></div>`},
- bomb_state:{title:'État de la bombe',icon:'●',cat:'Bombe',size:4,html:`<div class="medium" data-v="bomb_state"></div><div class="tiny space" data-v="round_phase"></div>`},
- connection:{title:'Connexion GSI',icon:'◌',cat:'Système',size:4,html:`<div class="medium" data-v="connection"></div><div class="muted space" data-v="lastpacket"></div>`},
- events:{title:'Journal de la partie',icon:'☷',cat:'Système',size:8,html:`<div class="event-list" data-list="events"></div><div class="tiny space">Événements déduits des données GSI reçues</div>`},
- provider:{title:'Version du jeu',icon:'⚙',cat:'Système',size:4,html:`<div class="medium" data-v="provider"></div><div class="tiny space">Donnée GSI provider</div>`}
-};
+const W=window.CS2WidgetCatalog;
+if(!W)throw new Error('Widget catalog must load before studio.js');
 const VERSION='1.0.0', COLOR='#f3ac52', DEFAULT_IDS=['score','weapon','economy','stats','bomb'];
 let profilesReady=false,profilesRevision=0,sessionId='',saveTimer=null,saveInFlight=false,saveQueued=false;
 let ws=null,modeDemo=false,last=null,anchor=null,pin='',currentView='default',editing=false,search='',category='all',openedSettings=new Set(),catalogOpen=false,profiles=[],activeProfile='',seq=1,notifyTimeout=null,dragId=null,pointerDrag=null;
@@ -85,7 +56,7 @@ function clearPrivateProfiles(){
  currentView='default';editing=false;catalogOpen=false;
 }
 function toast(message){const t=$('toast');t.textContent=message;t.classList.remove('hidden');clearTimeout(notifyTimeout);notifyTimeout=setTimeout(()=>t.classList.add('hidden'),3000);}
-function setStatus(msg,kind=''){const x=$('status');x.textContent=msg;x.className='badge '+kind;document.dispatchEvent(new CustomEvent('cs2:status',{detail:{message:msg,kind}}));}
+function setStatus(msg,kind='',code=''){const x=$('status');x.textContent=msg;x.className='badge '+kind;document.dispatchEvent(new CustomEvent('cs2:status',{detail:{message:msg,kind,code}}));}
 function setOnline(s){if(modeDemo)setStatus('Mode démo','ok');else setStatus(s?.online?'Partie connectée':s?.gsi_connected?'GSI actif · en attente de partie':'CS2 hors ligne',s?.online?'ok':'bad');$('notice').classList.toggle('hidden',!!s?.online&&!modeDemo);$('notice').textContent=modeDemo?'Données simulées':(!s?.online?'En attente de données de partie CS2.':'');document.dispatchEvent(new CustomEvent('cs2:state',{detail:{online:!!s?.online,gsi_connected:!!s?.gsi_connected,demo:modeDemo}}));}
 function updateProfiles(){const x=$('profile-select');x.replaceChildren();for(const p of profiles){const o=document.createElement('option');o.value=p.id;o.textContent=p.name;x.append(o);}x.value=activeProfile;$('accent').value=profile()?.accent||COLOR;$('density').value=profile()?.density||'normal';$('delete-profile').disabled=profiles.length<=1;document.documentElement.style.setProperty('--accent',currentView==='custom'?profile()?.accent||COLOR:COLOR);}
 function updateChrome(){const custom=currentView==='custom'&&!modeDemo&&profilesReady;$('tab-custom').classList.toggle('hidden',modeDemo||!profilesReady);$('tab-default').classList.toggle('active',!custom);$('tab-custom').classList.toggle('active',custom);$('tab-default').setAttribute('aria-selected',String(!custom));$('tab-custom').setAttribute('aria-selected',String(custom));$('tab-default').tabIndex=custom?-1:0;$('tab-custom').tabIndex=custom?0:-1;$('custom-tools').classList.toggle('hidden',!custom);$('edit').classList.toggle('hidden',!custom);$('add').classList.toggle('hidden',!custom);$('edit').textContent=editing?'✓ Terminer':'✎ Personnaliser';$('edit').setAttribute('aria-pressed',String(editing));$('add').disabled=!editing;$('catalog').classList.toggle('hidden',!custom||!editing||!catalogOpen);$('edit-hint').classList.toggle('hidden',!custom||!editing);updateProfiles();}
@@ -155,9 +126,9 @@ function paintBomb(){if(!last)return;let left=null,kind='',message='En attente',
  else if(timer.status==='expired'){left=0;kind='red';message='Explosion estimée';}else if(timer.status==='disabled'){message='Minuteur désactivé';}else if(timer.status==='stale')message='Données interrompues';else if(timer.status==='unknown_start')message='Heure de pose inconnue';else if(last.bomb_state==='defused')message='Bombe désamorcée';else if(last.bomb_state==='exploded')message='Bombe explosée';else message='En attente d’une pose';
  for(const card of document.querySelectorAll('.widget.w-bomb')){const clock=card.querySelector('[data-bomb-clock]'),bar=card.querySelector('[data-bomb-fill]'),msg=card.querySelector('[data-bomb-msg]');if(!clock||!bar||!msg)continue;clock.textContent=left===null?'--.- s':left.toFixed(1)+' s';clock.className='bomb-clock '+kind;bar.style.width=left===null?'0%':pct(100*left/(timer.duration||40));bar.className='bomb-fill '+kind;msg.textContent=message;}}
 function renderData(s){last=s;anchor=s.bomb_timer?.status==='active'&&isNum(s.bomb_timer.remaining)?{at:performance.now(),left:s.bomb_timer.remaining}:null;$('login').classList.add('hidden');$('view').classList.remove('hidden');setOnline(s);updateValues();}
-async function login(){modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerror').textContent='';$('pin').setAttribute('aria-invalid','false');if(pin.length<6){$('loginerror').textContent='Code PIN trop court.';$('pin').setAttribute('aria-invalid','true');return;}if(ws){ws.onclose=null;ws.close();ws=null;}setStatus('Connexion…');
- try{const res=await fetch('/health',{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const health=await res.json();if(health.version!==VERSION){$('loginerror').textContent='Redémarre Docker avec la version 1.0.0.';setStatus('Mise à jour requise','bad');return;}}
- catch(err){$('loginerror').textContent='Serveur indisponible : '+err.message;setStatus('Hors ligne','bad');return;}
+async function login(){modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerror').textContent='';$('pin').setAttribute('aria-invalid','false');if(pin.length<6){$('loginerror').textContent='Code PIN trop court.';$('pin').setAttribute('aria-invalid','true');return;}if(ws){ws.onclose=null;ws.close();ws=null;}setStatus('Connexion…','','connecting');
+ try{const res=await fetch('/health',{cache:'no-store'});if(!res.ok)throw Error('HTTP '+res.status);const health=await res.json();if(health.version!==VERSION){$('loginerror').textContent='Redémarre Docker avec la version 1.0.0.';setStatus('Mise à jour requise','bad','error');return;}}
+ catch(err){$('loginerror').textContent='Serveur indisponible : '+err.message;setStatus('Hors ligne','bad','error');return;}
  const url=(location.protocol==='https:'?'wss:':'ws:')+'//'+location.host+'/ws',socket=new WebSocket(url);ws=socket;let authorized=false,failed=false;
  socket.onopen=()=>socket.send(JSON.stringify({type:'auth',pin}));
  socket.onmessage=e=>{
@@ -168,7 +139,7 @@ async function login(){modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerr
    failed=true;
    $('loginerror').textContent=msg.message||'Code incorrect.';
    $('pin').setAttribute('aria-invalid','true');
-   setStatus('PIN incorrect','bad');
+   setStatus('PIN incorrect','bad','error');
    return;
   }
   if(msg.type==='auth_ok'){
@@ -201,7 +172,7 @@ async function login(){modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerr
   if(msg.type==='state'&&authorized)renderData(msg);
  };
  socket.onerror=()=>{
-  if(!failed)setStatus('Erreur réseau','bad');
+  if(!failed)setStatus('Erreur réseau','bad','error');
   document.dispatchEvent(new Event('cs2:network-error'));
  };
  socket.onclose=()=>{
@@ -210,10 +181,10 @@ async function login(){modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerr
   saveQueued=true;
   if(!authorized){
    if(!failed)$('loginerror').textContent='Impossible de se connecter au WebSocket.';
-   setStatus('Déconnecté','bad');
+   setStatus('Déconnecté','bad','lost');
    return;
   }
-  setStatus('Reconnexion…','bad');
+  setStatus('Reconnexion…','bad','lost');
   document.dispatchEvent(new CustomEvent('cs2:connection-lost'));
   anchor=null;
   if(last){

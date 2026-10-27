@@ -1,4 +1,4 @@
-"""Run from project directory: python test_studio.py (needs local requirements installed)."""
+"""Run from project directory: python -m tests.standalone.test_studio (needs local requirements installed)."""
 import os
 os.environ['GSI_TOKEN'] = 'studio-gsi-token-local-test'
 os.environ['DASHBOARD_PIN'] = '123456'
@@ -24,7 +24,10 @@ def run():
         assert html.status_code == 200
         assert 'Mon dashboard' in html.text
         js = client.get('/static/studio.js').text
-        assert all(t in js for t in ['catalog-items', 'data-bomb-clock'])
+        assert 'catalog-items' in js
+        widgetSource = client.get('/static/widgets.js')
+        assert widgetSource.status_code == 200
+        assert 'data-bomb-clock' in widgetSource.text
         with client.websocket_connect('/ws', headers={'origin':'http://testserver'}) as ws:
             ws.send_json({'type': 'auth', 'pin': '123456'})
             assert ws.receive_json()['type'] == 'auth_ok'
