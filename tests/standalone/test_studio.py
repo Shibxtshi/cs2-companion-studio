@@ -20,7 +20,7 @@ def run():
         hp = client.get('/health')
         assert hp.status_code == 200 and hp.json()['version'] == '1.0.0'
         html = client.get('/')
-        assert 'profiles_save' in client.get('/static/studio.js').text
+        assert client.get('/static/profile-sync.js').status_code == 200
         assert html.status_code == 200
         assert 'Mon dashboard' in html.text
         js = client.get('/static/studio.js').text

@@ -42,6 +42,7 @@ jobs:
         if: runner.os == 'Linux'
         run: |
           node tests/test_profile_sync.js
+          node --check static/profile-sync.js
           node --check static/widgets.js
           node --check static/studio.js
           node --check static/i18n.js

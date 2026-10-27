@@ -3,7 +3,7 @@ const tr=text=>window.CS2I18N?.translate(text)||text,$=id=>document.getElementBy
 const W=window.CS2WidgetCatalog;
 if(!W)throw new Error('Widget catalog must load before studio.js');
 const VERSION='1.0.0', COLOR='#f3ac52', DEFAULT_IDS=['score','weapon','economy','stats','bomb'];
-let profilesReady=false,profilesRevision=0,sessionId='',saveTimer=null,saveInFlight=false,saveQueued=false;
+let profilesReady=false;
 let ws=null,modeDemo=false,last=null,anchor=null,pin='',currentView='default',editing=false,search='',category='all',openedSettings=new Set(),catalogOpen=false,profiles=[],activeProfile='',seq=1,notifyTimeout=null,dragId=null,pointerDrag=null;
 const WIDTHS=[3,4,6,8,12], STYLES=['solid','glass','outline'];
 const TEMPLATES={
@@ -23,70 +23,29 @@ function safeOpacity(x){return Number.isFinite(x)&&x>=60&&x<=100&&x%5===0?x:100;
 function safeStyle(x){return STYLES.includes(x)?x:'solid';}
 function safeColor(x){return typeof x==='string'&&/^#[0-9a-fA-F]{6}$/.test(x)?x:'';}
 function sanitizeWidget(w){if(!w||typeof w!=='object'||!W[w.kind])return null;return {id:freshId(),kind:w.kind,span:WIDTHS.includes(w.span)?w.span:W[w.kind].size,title:typeof w.title==='string'?w.title.slice(0,36):'',color:safeColor(w.color),background:safeColor(w.background),opacity:safeOpacity(w.opacity),style:safeStyle(w.style)};}
-// Server is authoritative; pending edits stay in memory until explicitly resolved.
-let saveBlocked=false,latestServerProfiles=null;
-function showSaveState(message){
- const panel=$('profile-save-panel');
- if(!panel)return;
- panel.hidden=!message||modeDemo||!profilesReady;
- $('profile-save-message').textContent=message;
- $('profile-save-retry').hidden=!saveBlocked||!latestServerProfiles;
- $('profile-save-discard').hidden=!saveBlocked||!latestServerProfiles;
+// Profile synchronization is isolated from dashboard rendering and translated text.
+function showSaveState(code){
+ const panel=$('profile-save-panel');if(!panel)return;
+ panel.hidden=!code||modeDemo||!profilesReady;
+ $('profile-save-message').textContent=window.CS2I18N.message('profile.'+code);
+ $('profile-save-retry').hidden=!profileSync.resolvable;
+ $('profile-save-discard').hidden=!profileSync.resolvable;
 }
-function save(){
- if(!profilesReady||modeDemo)return;
- saveQueued=true;
- clearTimeout(saveTimer);
- showSaveState(saveBlocked?'Modifications non enregistrées. Choisis une action.':'Modifications non enregistrées.');
- if(!saveInFlight&&!saveBlocked)saveTimer=setTimeout(flushSave,180);
-}
-function flushSave(){
- if(!saveQueued||saveInFlight||saveBlocked||!profilesReady||modeDemo||!ws||ws.readyState!==WebSocket.OPEN)return;
- saveInFlight=true;saveQueued=false;
- showSaveState('Enregistrement…');
- try{ws.send(JSON.stringify({type:'profiles_save',revision:profilesRevision,document:{profiles,activeProfile}}));}
- catch{saveInFlight=false;saveQueued=true;saveBlocked=true;showSaveState('Modifications non enregistrées. Connexion interrompue.');}
-}
+const profileSync=window.CS2ProfileSync({
+ getDocument:()=>({profiles,activeProfile}),
+ applyDocument:message=>{profiles=structuredClone(message.profiles||[]);activeProfile=message.activeProfile||profiles[0]?.id||'';profilesReady=true;renderBoard();},
+ canSave:()=>profilesReady&&!modeDemo&&ws?.readyState===WebSocket.OPEN,
+ send:command=>ws.send(JSON.stringify(command)),
+ onStatus:showSaveState
+});
 const profile=()=>profiles.find(p=>p.id===activeProfile)||profiles[0]||newProfile('Demo');
-function applyServerProfiles(msg){
- profilesRevision=msg.revision;
- profiles=structuredClone(Array.isArray(msg.profiles)?msg.profiles:[]);
- activeProfile=msg.activeProfile||profiles[0]?.id||'';
- profilesReady=true;
- renderBoard();
-}
-function acceptServerProfiles(msg){
- if(modeDemo||!sessionId)return;
- latestServerProfiles=structuredClone(msg);
- if(msg.source===sessionId&&saveInFlight){
-   profilesRevision=msg.revision;saveInFlight=false;
-   if(saveQueued){flushSave();}else{applyServerProfiles(msg);showSaveState('');}
-   return;
- }
- if(saveInFlight)return;
- if(saveQueued||saveBlocked){
-   saveBlocked=true;
-   showSaveState('Modifications non enregistrées. Le serveur a une autre version.');
-   return;
- }
- applyServerProfiles(msg);showSaveState('');
-}
-function resolveSave(useLocal){
- if(!latestServerProfiles||saveInFlight)return;
- saveBlocked=false;
- profilesRevision=latestServerProfiles.revision;
- if(useLocal){saveQueued=true;flushSave();}
- else{saveQueued=false;applyServerProfiles(latestServerProfiles);showSaveState('');}
-}
+function save(){if(profilesReady&&!modeDemo)profileSync.changed();}
 function clearPrivateProfiles(){
- clearTimeout(saveTimer);profiles=[];activeProfile='';profilesRevision=0;
- profilesReady=false;saveQueued=false;saveInFlight=false;sessionId='';
- saveBlocked=false;latestServerProfiles=null;
+ profiles=[];activeProfile='';profilesReady=false;profileSync.clear();
  currentView='default';editing=false;catalogOpen=false;
- showSaveState('');
 }
 function allowDiscardPending(){
- return !(saveQueued||saveInFlight||saveBlocked)||confirm(tr('Des modifications ne sont pas enregistrées. Les abandonner ?'));
+ return !profileSync.dirty||confirm(window.CS2I18N.message('profile.discardPrompt'));
 }
 function toast(message){const t=$('toast');t.textContent=message;t.classList.remove('hidden');clearTimeout(notifyTimeout);notifyTimeout=setTimeout(()=>t.classList.add('hidden'),3000);}
 function setStatus(msg,kind='',code=''){const x=$('status');x.textContent=msg;x.className='badge '+kind;document.dispatchEvent(new CustomEvent('cs2:status',{detail:{message:msg,kind,code}}));}
@@ -177,7 +136,7 @@ async function login(){modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerr
   }
   if(msg.type==='auth_ok'){
    authorized=true;
-   sessionId=msg.session||'';
+   profileSync.authenticate(msg.session||'');
    profilesReady=true;
    $('pin').value='';
    $('download-support').classList.remove('hidden');
@@ -185,14 +144,8 @@ async function login(){modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerr
    document.dispatchEvent(new Event('cs2:authenticated'));
    return;
   }
-  if(msg.type==='profiles_state'&&authorized){acceptServerProfiles(msg);return;}
-  if(msg.type==='profiles_error'&&authorized){
-   saveInFlight=false;
-   saveQueued=true;saveBlocked=true;
-   showSaveState(msg.code==='conflict'?'Modifications non enregistrées. Le serveur a une autre version.':'Enregistrement impossible. Vérifie le stockage du serveur.');
-   toast(msg.code==='conflict'?tr('Profils modifiés sur un autre appareil : actualisation.'):tr('Enregistrement impossible. Vérifie le stockage du serveur.'));
-   return;
-  }
+  if(msg.type==='profiles_state'&&authorized){profileSync.receive(msg);return;}
+  if(msg.type==='profiles_error'&&authorized){profileSync.failed(msg.code);return;}
   if(msg.type==='diagnostics_data'&&authorized){
    const blob=new Blob([JSON.stringify(msg.report,null,2)],{type:'application/json'});
    const downloadUrl=URL.createObjectURL(blob);
@@ -211,10 +164,7 @@ async function login(){modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerr
  };
  socket.onclose=()=>{
   if(modeDemo||ws!==socket)return;
-  latestServerProfiles=null;
-  const pending=saveInFlight||saveQueued;
-  saveInFlight=false;saveQueued=pending;saveBlocked=pending||saveBlocked;
-  if(pending)showSaveState('Modifications non enregistrées. Connexion interrompue.');
+  profileSync.disconnected();
   if(!authorized){
    if(!failed)$('loginerror').textContent='Impossible de se connecter au WebSocket.';
    setStatus('Déconnecté','bad','lost');
@@ -252,7 +202,7 @@ $('download-support').addEventListener('click',()=>{if(!modeDemo&&profilesReady&
 $('connect').addEventListener('click',login);$('pin').addEventListener('keydown',e=>{if(e.key==='Enter')login();});$('demo').addEventListener('click',demo);$('demoagain').addEventListener('click',demo);
 $('board').addEventListener('click',e=>{const b=e.target.closest('[data-demo]');if(b&&modeDemo){const n=b.dataset.demo;demoBomb(n==='stop'?'stop':Number(n));}});
 $('logout').addEventListener('click',()=>{if(!allowDiscardPending())return;clearPrivateProfiles();pin='';$('pin').value='';$('download-support').classList.add('hidden');document.dispatchEvent(new Event('cs2:logout'));modeDemo=false;if(ws){ws.onclose=null;ws.close();ws=null;}last=null;anchor=null;$('view').classList.add('hidden');$('login').classList.remove('hidden');setStatus('Non connecté');});
-$('locale-select').addEventListener('change',()=>setTimeout(renderCatalog,0));
+$('locale-select').addEventListener('change',()=>setTimeout(()=>{renderCatalog();showSaveState(profileSync.status);},0));
 // Repaint the countdown only while it is running and the tab is visible.
 setInterval(()=>{
  if(!document.hidden&&last?.bomb_timer?.status==='active')paintBomb();
@@ -260,9 +210,9 @@ setInterval(()=>{
 const savePanel=document.createElement('section');
 savePanel.id='profile-save-panel';savePanel.hidden=true;savePanel.className='notice';
 const saveMessage=document.createElement('p');saveMessage.id='profile-save-message';saveMessage.setAttribute('role','status');
-const retrySave=makeBtn('Enregistrer ma version','Remplacer la version du serveur par mes modifications',()=>resolveSave(true));retrySave.id='profile-save-retry';
-const discardSave=makeBtn('Charger la version du serveur','Abandonner mes modifications non enregistrées',()=>resolveSave(false));discardSave.id='profile-save-discard';
+const retrySave=makeBtn('Enregistrer ma version','Remplacer la version du serveur par mes modifications',()=>profileSync.resolve(true));retrySave.id='profile-save-retry';
+const discardSave=makeBtn('Charger la version du serveur','Abandonner mes modifications non enregistrées',()=>profileSync.resolve(false));discardSave.id='profile-save-discard';
 savePanel.append(saveMessage,retrySave,discardSave);$('custom-tools').after(savePanel);
-window.addEventListener('beforeunload',event=>{if(saveQueued||saveInFlight||saveBlocked){event.preventDefault();event.returnValue='';}});
+window.addEventListener('beforeunload',event=>{if(profileSync.dirty){event.preventDefault();event.returnValue='';}});
 initialize();
 })();
