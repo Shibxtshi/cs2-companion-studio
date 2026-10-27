@@ -17,3 +17,5 @@ python -m pytest -q
 A single standalone test can run with `python -m tests.standalone.test_security`. The legacy Chromium check is `python -m tests.legacy_browser.test_e1_browser` and requires a local `/usr/bin/chromium` plus the Playwright Python package.
 
 Do not run standalone backend suites as ordinary pytest modules: they configure process-wide synthetic credentials and in-memory global GSI state.
+
+Profile synchronization behavior can also be checked without a browser: `node tests/test_profile_sync.js`. Profile recovery/disk-failure tests are included in the Python quality gate.

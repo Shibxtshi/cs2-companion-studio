@@ -54,3 +54,5 @@ See `docs/history/QA_V1P_F.md` for the historical quality checklist, and `docs/P
 ## Step 9 repository preparation
 
 The public security-reporting policy is at [`../SECURITY.md`](../SECURITY.md). Ensure a private reporting channel is actually enabled before making the repository public. An independent security audit has **not** occurred.
+
+Profile backups and recovery files in data/ contain private layouts. They are never static assets and must not be distributed. See INSTALLATION_WINDOWS.md for explicit offline restoration.

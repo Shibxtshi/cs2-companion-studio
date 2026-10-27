@@ -136,6 +136,16 @@ const translations={
  'Signal GSI reçu, partie en attente':'GSI signal received, waiting for match',
  'Aucune donnée récente de CS2':'No recent CS2 data',
  'Quitter le mode démo':'Exit demo mode',
+ "Modifications non enregistrées. Choisis une action.":"Unsaved changes. Choose an action.",
+ "Modifications non enregistrées.":"Unsaved changes.",
+ "Enregistrement…":"Saving…",
+ "Modifications non enregistrées. Connexion interrompue.":"Unsaved changes. Connection interrupted.",
+ "Modifications non enregistrées. Le serveur a une autre version.":"Unsaved changes. The server has another version.",
+ "Enregistrer ma version":"Save my version",
+ "Remplacer la version du serveur par mes modifications":"Replace the server version with my changes",
+ "Charger la version du serveur":"Load the server version",
+ "Abandonner mes modifications non enregistrées":"Discard my unsaved changes",
+ "Des modifications ne sont pas enregistrées. Les abandonner ?":"Some changes are not saved. Discard them?",
  },FR:{}
 };
 const formatDynamic=(s,lang)=>{
