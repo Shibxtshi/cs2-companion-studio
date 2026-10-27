@@ -1,59 +1,46 @@
-/* Behavioral profile synchronization checks; no browser or personal data. */
-const assert = require('node:assert/strict');
-const fs = require('node:fs');
-const vm = require('node:vm');
-const source = fs.readFileSync('static/studio.js', 'utf8');
-const start = source.indexOf('// Server is authoritative');
-const end = source.indexOf('function toast(');
+/* Behavioral tests of profile synchronization using its public controller API. */
+const assert=require('node:assert/strict');
+const fs=require('node:fs');
+const vm=require('node:vm');
 function harness(){
- const elements=new Map();
- const context=vm.createContext({structuredClone,JSON,WebSocket:{OPEN:1},
-   setTimeout:()=>1,clearTimeout:()=>{},confirm:()=>true,tr:x=>x,
-   $:id=>{if(!elements.has(id))elements.set(id,{hidden:false,textContent:''});return elements.get(id);},
-   renderBoard:()=>{},newProfile:()=>({}),modeDemo:false,profilesReady:true,
-   profilesRevision:1,sessionId:'a',saveTimer:null,saveInFlight:false,saveQueued:false,
-   profiles:[{id:'p',name:'local'}],activeProfile:'p',currentView:'custom',
-   editing:false,catalogOpen:false,ws:{readyState:1,send:raw=>context.sent.push(JSON.parse(raw))},sent:[]});
- vm.runInContext(source.slice(start,end),context);
- return {run:code=>vm.runInContext(code,context),context};
+ const context=vm.createContext({window:{},structuredClone,setTimeout:()=>1,clearTimeout:()=>{}});
+ vm.runInContext(fs.readFileSync('static/profile-sync.js','utf8'),context);
+ let document={activeProfile:'p',profiles:[{id:'p',name:'local'}]};
+ const sent=[],states=[];
+ const api=context.window.CS2ProfileSync({getDocument:()=>document,applyDocument:msg=>{document=structuredClone(msg);},
+  canSave:()=>true,send:cmd=>sent.push(structuredClone(cmd)),onStatus:code=>states.push(code)});
+ api.authenticate('a');
+ return {api,sent,states,get document(){return document;}};
 }
 const snapshot=(revision,name,source=null)=>({revision,source,activeProfile:'p',profiles:[{id:'p',name}]});
 {
- const h=harness();h.run('save();flushSave()');
- assert.equal(h.context.sent.length,1);
- h.run('profiles[0].name="newer";save()');
- h.context.msg=snapshot(2,'local','a');h.run('acceptServerProfiles(msg)');
- assert.equal(h.context.sent.length,2);
- assert.equal(h.context.sent[1].document.profiles[0].name,'newer');
- assert.equal(h.context.sent[1].revision,2);
- h.context.msg=snapshot(3,'newer','a');h.run('acceptServerProfiles(msg)');
- assert.equal(h.run('saveInFlight||saveQueued'),false);
+ const h=harness();h.api.changed();h.api.flush();
+ h.document.profiles[0].name='newer';h.api.changed();
+ h.api.receive(snapshot(2,'local','a'));
+ assert.equal(h.sent.length,2);assert.equal(h.sent[1].document.profiles[0].name,'newer');assert.equal(h.sent[1].revision,2);
+ h.api.receive(snapshot(3,'newer','a'));assert.equal(h.api.dirty,false);
 }
 {
- const h=harness();h.run('save()');h.context.msg=snapshot(2,'remote','b');
- h.run('acceptServerProfiles(msg);flushSave()');
- assert.equal(h.context.sent.length,0);
- assert.equal(h.run('profiles[0].name'),'local');
- assert.equal(h.run('saveBlocked'),true);
- h.run('resolveSave(true)');
- assert.equal(h.context.sent[0].revision,2);
- assert.equal(h.context.sent[0].document.profiles[0].name,'local');
+ const h=harness();h.api.changed();h.api.receive(snapshot(2,'remote','b'));h.api.flush();
+ assert.equal(h.sent.length,0);assert.equal(h.document.profiles[0].name,'local');assert.equal(h.api.resolvable,true);
+ h.api.resolve(true);assert.equal(h.sent[0].revision,2);assert.equal(h.sent[0].document.profiles[0].name,'local');
 }
 {
- const h=harness();h.run('save()');h.context.msg=snapshot(5,'remote');
- h.run('acceptServerProfiles(msg);resolveSave(false)');
- assert.equal(h.run('profiles[0].name'),'remote');
- assert.equal(h.context.sent.length,0);
- assert.equal(h.run('saveQueued||saveBlocked'),false);
+ const h=harness();h.api.changed();h.api.receive(snapshot(5,'remote'));h.api.resolve(false);
+ assert.equal(h.document.profiles[0].name,'remote');assert.equal(h.sent.length,0);assert.equal(h.api.dirty,false);
 }
 {
- const h=harness();h.run('save()');h.context.ws.send=()=>{throw Error('closed');};
- h.run('flushSave()');
- assert.equal(h.run('saveQueued&&saveBlocked&&!saveInFlight'),true);
- h.context.msg=snapshot(1,'after-restart');h.run('acceptServerProfiles(msg)');
- assert.equal(h.run('profiles[0].name'),'local');
- h.run('clearPrivateProfiles()');
- assert.equal(h.run('profiles.length'),0);
- assert.equal(h.run('latestServerProfiles'),null);
+ const h=harness();h.api.receive(snapshot(10,'initial'));h.api.changed();h.api.flush();
+ h.api.disconnected();assert.equal(h.api.dirty,true);assert.equal(h.api.resolvable,false);
+ h.api.resolve(true);assert.equal(h.sent.length,1);
+ h.api.authenticate('new-session');h.api.receive(snapshot(1,'after-restart'));
+ assert.equal(h.document.profiles[0].name,'initial');assert.equal(h.api.resolvable,true);
+ h.api.resolve(true);assert.equal(h.sent[1].revision,1);
+ h.api.failed('disk');assert.equal(h.api.dirty,true);assert.equal(h.api.status,'error');
+ h.api.clear();assert.equal(h.api.dirty,false);assert.equal(h.api.resolvable,false);
 }
-console.log('OK: queued edits, acknowledgements, concurrent conflict, explicit resolution, send failure and privacy reset');
+{
+ const h=harness();h.api.disconnected();h.api.authenticate('new-session');h.api.receive(snapshot(2,'remote'));
+ assert.equal(h.api.dirty,false);assert.equal(h.document.profiles[0].name,'remote');
+}
+console.log('OK: queued edits, conflicts, explicit resolution, reconnect revision reset, disk failure and privacy reset');

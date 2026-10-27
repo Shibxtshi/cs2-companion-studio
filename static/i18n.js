@@ -205,7 +205,16 @@ function setLocale(next){if(!Object.prototype.hasOwnProperty.call(translations,n
  const select=document.getElementById('locale-select');if(select)select.value=code;const label=document.querySelector('.language-label');if(label)label.textContent=code==='FR'?'Langue':'Language';
  enqueue(document.body);
 }
-window.CS2I18N={locale:()=>code, translate:s=>dictionaryText(s,code),setLocale,available:()=>Object.keys(translations)};
+const messages={
+ 'profile.pending':'Modifications non enregistrées.',
+ 'profile.choose':'Modifications non enregistrées. Choisis une action.',
+ 'profile.saving':'Enregistrement…',
+ 'profile.disconnected':'Modifications non enregistrées. Connexion interrompue.',
+ 'profile.conflict':'Modifications non enregistrées. Le serveur a une autre version.',
+ 'profile.error':'Enregistrement impossible. Vérifie le stockage du serveur.',
+ 'profile.discardPrompt':'Des modifications ne sont pas enregistrées. Les abandonner ?'
+};
+window.CS2I18N={message:key=>dictionaryText(messages[key]||'',code),locale:()=>code, translate:s=>dictionaryText(s,code),setLocale,available:()=>Object.keys(translations)};
 document.addEventListener('DOMContentLoaded',()=>{
  const select=document.getElementById('locale-select');if(select){select.value=code;select.addEventListener('change',e=>setLocale(e.target.value));}
  setLocale(code);

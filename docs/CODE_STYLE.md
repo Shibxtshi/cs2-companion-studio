@@ -28,3 +28,5 @@ These conventions guide incremental refactors; existing public interfaces remain
 ## Quality gates
 
 Run `python scripts/run_checks.py`, GitHub Actions on Windows and Linux, browser tests (Chromium, Firefox, WebKit), Docker smoke tests and dependency auditing before merging substantive changes.
+
+Profile synchronization belongs in static/profile-sync.js. It emits stable state codes; UI text is resolved by the translation API. Exercise the controller behavior with node tests/test_profile_sync.js before changing save/conflict behavior.
