@@ -19,3 +19,5 @@ A single standalone test can run with `python -m tests.standalone.test_security`
 Do not run standalone backend suites as ordinary pytest modules: they configure process-wide synthetic credentials and in-memory global GSI state.
 
 Profile synchronization behavior can also be checked without a browser: `node tests/test_profile_sync.js`. Profile recovery/disk-failure tests are included in the Python quality gate.
+
+Dashboard delivery regressions use synthetic peers and asyncio events to verify prompt delivery to healthy clients, timeout isolation and ordering of concurrent broadcasts. They are included in scripts/run_checks.py.
