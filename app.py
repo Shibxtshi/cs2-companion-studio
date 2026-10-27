@@ -10,6 +10,7 @@ import secrets
 import time
 from contextlib import asynccontextmanager
 from security import LoginLimiter, same_origin
+from dashboard_delivery import broadcast_text
 from gsi_lifecycle import EconomyObserver, cash_projection
 from profile_store import ProfileStore
 from support_diagnostics import Diagnostics
@@ -201,14 +202,7 @@ async def send_state() -> None:
     if not connected:
         return
     msg = json.dumps(summary(), ensure_ascii=False)
-    gone = []
-    for ws in tuple(connected):
-        try:
-            await ws.send_text(msg)
-        except Exception:
-            gone.append(ws)
-    for ws in gone:
-        connected.discard(ws)
+    await broadcast_text(connected, msg)
 
 
 @asynccontextmanager
@@ -513,11 +507,7 @@ async def ws(websocket: WebSocket):
                     diagnostics.record('profiles_saved')
                     diagnostics.write_summary(len(profile_store.data['profiles']))
                     snapshot = profile_store.snapshot(source=sessionId)
-                    for client in tuple(connected):
-                        try:
-                            await client.send_json(snapshot)
-                        except Exception:
-                            connected.discard(client)
+                    await broadcast_text(connected, json.dumps(snapshot, ensure_ascii=False))
             elif command.get('type') == 'diagnostics_request':
                 await websocket.send_json({'type': 'diagnostics_data',
                                           'report': diagnostics.snapshot(len(profile_store.data['profiles']))})
