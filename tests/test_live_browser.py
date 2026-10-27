@@ -104,7 +104,8 @@ def run(browser_name):
             a.route_web_socket('**/ws', route_socket)
             login(a, url)
             a.locator('#tab-custom').click()
-            a.on('dialog', lambda dialog: dialog.accept('Shared v1.0.0 setup'))
+            initial_dialog = lambda dialog: dialog.accept('Shared v1.0.0 setup')
+            a.on('dialog', initial_dialog)
             a.locator('#rename-profile').click()
             expect(a.locator('#profile-select')).to_contain_text('Shared v1.0.0 setup', timeout=8000)
 
@@ -150,7 +151,7 @@ def run(browser_name):
             expect(a.locator('#profile-save-panel')).to_be_hidden()
 
             # Real server rejects a stale revision/invalid document; local edits survive.
-            a.remove_all_listeners('dialog')
+            a.remove_listener('dialog', initial_dialog)
             rename = {'value': ''}
             a.on('dialog', lambda dialog: dialog.accept(rename['value']))
             for fault in ('conflict', 'invalid', 'disconnect'):

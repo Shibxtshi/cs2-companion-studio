@@ -211,6 +211,7 @@ async function login(){modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerr
  };
  socket.onclose=()=>{
   if(modeDemo||ws!==socket)return;
+  latestServerProfiles=null;
   const pending=saveInFlight||saveQueued;
   saveInFlight=false;saveQueued=pending;saveBlocked=pending||saveBlocked;
   if(pending)showSaveState('Modifications non enregistrées. Connexion interrompue.');
