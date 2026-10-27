@@ -77,9 +77,35 @@ def run(browser_name):
 
             a = desktop.new_page()
             a.on('pageerror', lambda error: errors.append(str(error)))
+            faults = {'next': None}
+
+            def route_socket(socket):
+                server = socket.connect_to_server()
+                server.on_message(socket.send)
+
+                def forward(message):
+                    command = json.loads(message)
+                    if command.get('type') == 'profiles_save' and faults['next']:
+                        fault = faults['next']
+                        faults['next'] = None
+                        if fault == 'disconnect':
+                            socket.close(code=1012, reason='Synthetic reconnect test')
+                            server.close()
+                            return
+                        if fault == 'conflict':
+                            command['revision'] = -1
+                        else:
+                            command['document'] = {}
+                        server.send(json.dumps(command))
+                    else:
+                        server.send(message)
+                socket.on_message(forward)
+
+            a.route_web_socket('**/ws', route_socket)
             login(a, url)
             a.locator('#tab-custom').click()
-            a.on('dialog', lambda dialog: dialog.accept('Shared v1.0.0 setup'))
+            initial_dialog = lambda dialog: dialog.accept('Shared v1.0.0 setup')
+            a.on('dialog', initial_dialog)
             a.locator('#rename-profile').click()
             expect(a.locator('#profile-select')).to_contain_text('Shared v1.0.0 setup', timeout=8000)
 
@@ -111,6 +137,56 @@ def run(browser_name):
             a.locator('#locale-select').select_option('FR')
             a.locator('#search-widgets').fill('carte')
             assert a.locator('#catalog-items .catalog-item').count() >= 1
+            assert not errors, errors
+            # Complete an actual widget edit and a JSON export/import round trip.
+            before = a.locator('#board .widget').count()
+            a.locator('#catalog-items .catalog-item').first.click()
+            expect(a.locator('#board .widget')).to_have_count(before + 1)
+            expect(a.locator('#profile-save-panel')).to_be_hidden()
+            a.locator('#board .widget').last.locator('.resize-grip').press('ArrowRight')
+            expect(a.locator('#board .widget').last.locator('.resize-grip')).to_have_attribute('aria-valuetext', '6 / 12')
+            expect(a.locator('#profile-save-panel')).to_be_hidden()
+            with a.expect_download() as download_info:
+                a.locator('#export').click()
+            exported = Path(download_info.value.path()).read_bytes()
+            a.locator('#import-file').set_input_files({'name': 'synthetic-layout.json', 'mimeType': 'application/json', 'buffer': exported})
+            expect(a.locator('#profile-select option')).to_have_count(2)
+            expect(a.locator('#profile-save-panel')).to_be_hidden()
+
+            a.locator('#board .widget').last.locator('.remove').click()
+            expect(a.locator('#board .widget')).to_have_count(before)
+            expect(a.locator('#profile-save-panel')).to_be_hidden()
+
+            # Real server rejects a stale revision/invalid document; local edits survive.
+            a.remove_listener('dialog', initial_dialog)
+            rename = {'value': ''}
+            a.on('dialog', lambda dialog: dialog.accept(rename['value']))
+            for fault in ('conflict', 'invalid', 'disconnect'):
+                faults['next'] = fault
+                rename['value'] = 'Retained ' + fault
+                a.locator('#rename-profile').click()
+                expect(a.locator('#profile-save-panel')).to_be_visible()
+                expect(a.locator('#profile-select')).to_contain_text(rename['value'])
+                expect(a.locator('#profile-save-retry')).to_be_visible(timeout=12000)
+                # For reconnect, wait until the new authenticated snapshot arrives.
+                if fault == 'disconnect':
+                    expect(a.locator('#profile-save-message')).to_contain_text('serveur', timeout=12000)
+                if fault == 'conflict':
+                    a.locator('#locale-select').select_option('EN')
+                    expect(a.locator('#profile-save-message')).to_contain_text('Unsaved changes')
+                    a.locator('#locale-select').select_option('FR')
+                    expect(a.locator('#profile-save-message')).to_contain_text('Modifications non enregistrées')
+                a.locator('#profile-save-retry').click()
+                expect(a.locator('#profile-save-panel')).to_be_hidden(timeout=10000)
+                expect(b.locator('#profile-select')).to_contain_text(rename['value'])
+            # Explicitly loading the server version discards only after user action.
+            faults['next'] = 'conflict'
+            rename['value'] = 'Discard this local edit'
+            a.locator('#rename-profile').click()
+            expect(a.locator('#profile-save-discard')).to_be_visible()
+            a.locator('#profile-save-discard').click()
+            expect(a.locator('#profile-select')).to_contain_text('Retained disconnect')
+            expect(a.locator('#profile-save-panel')).to_be_hidden()
             assert not errors, errors
             browser.close()
         # Data is server-side and persists after clients disconnect.

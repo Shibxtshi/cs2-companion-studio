@@ -5,6 +5,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 COPY app.py security.py gsi_lifecycle.py profile_store.py support_diagnostics.py ./
 COPY static ./static
+COPY scripts/recover_profiles.py ./scripts/recover_profiles.py
 RUN mkdir -p /app/data /app/logs && chown -R 10001:10001 /app/data /app/logs
 USER 10001:10001
 EXPOSE 8080

@@ -6,7 +6,7 @@ import tempfile
 from pathlib import Path
 
 PROFILE_KINDS = frozenset('score map round score_split match_phase round_history weapon ammo inventory grenades equip_value gear economy cash forecast stats kd mvp personal_score round_stats health armor effects player bomb bomb_state events connection provider'.split())
-# Keep this list in sync with static/studio.js's widget catalog.
+# Keep this list in sync with static/widgets.js's widget catalog.
 COLORS = re.compile(r'^#[0-9a-fA-F]{6}$')
 IDS = re.compile(r'^[a-zA-Z0-9_-]{1,64}$')
 DEFAULT_COLOR = '#f3ac52'
@@ -78,18 +78,46 @@ def validate_document(obj):
     return {'profiles': profiles, 'activeProfile': active}
 
 
+def atomic_write(path: Path, content: bytes):
+    """Replace one private file atomically; leave the previous file on failure."""
+    path = Path(path)
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, filename = tempfile.mkstemp(prefix='.profiles-', suffix='.tmp', dir=str(path.parent))
+    try:
+        if os.name != 'nt':
+            os.fchmod(fd, 0o600)
+        with os.fdopen(fd, 'wb') as file:
+            file.write(content)
+            file.flush()
+            os.fsync(file.fileno())
+        os.replace(filename, path)
+    finally:
+        if os.path.exists(filename):
+            os.unlink(filename)
+
+
+def read_document(path: Path):
+    raw = Path(path).read_bytes()
+    if len(raw) > MAX_STORE_BYTES:
+        raise ValueError('Profile storage exceeds size limit')
+    loaded = json.loads(raw)
+    cleaned = validate_document(loaded)
+    revision = loaded.get('revision', 0)
+    if type(revision) is not int or revision < 0:
+        raise ValueError('Invalid profile revision')
+    return cleaned, revision
+
+
 class ProfileStore:
     def __init__(self, path: Path):
         self.path = Path(path)
         self.data = {'profiles': [], 'activeProfile': ''}
         self.revision = 0
         if self.path.exists():
-            raw = self.path.read_bytes()
-            if len(raw) > MAX_STORE_BYTES:
-                raise RuntimeError('Profile storage exceeds size limit')
-            loaded = json.loads(raw)
-            self.data = validate_document(loaded)
-            self.revision = max(0, int(loaded.get('revision', 0)))
+            try:
+                self.data, self.revision = read_document(self.path)
+            except (ValueError, UnicodeError) as exc:
+                raise RuntimeError('Invalid profile storage. Preserve the file and use scripts/recover_profiles.py --restore with a validated backup.') from exc
         else:
             self.put({'activeProfile': 'p-default', 'profiles': [{'id': 'p-default',
                 'name': 'My dashboard', 'accent': DEFAULT_COLOR, 'density': 'normal',
@@ -110,20 +138,12 @@ class ProfileStore:
         packed = json.dumps({**cleaned, 'revision': nextRev}, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
         if len(packed) > MAX_STORE_BYTES:
             raise ValueError('too_large')
-        self.path.parent.mkdir(parents=True, exist_ok=True)
-        # Atomic replacement ensures partial writes do not destroy profiles.
-        fd, filename = tempfile.mkstemp(prefix='.profiles-', suffix='.tmp', dir=str(self.path.parent))
-        try:
-            if os.name != 'nt':
-                os.fchmod(fd, 0o600)
-            with os.fdopen(fd, 'wb') as file:
-                file.write(packed)
-                file.flush()
-                os.fsync(file.fileno())
-            os.replace(filename, self.path)
-        finally:
-            if os.path.exists(filename):
-                os.unlink(filename)
+        # Keep the last accepted document before replacing the current file.
+        # Failed writes leave the in-memory revision and existing main file intact.
+        previous = {**self.data, 'revision': self.revision} if self.data['profiles'] else {**cleaned, 'revision': nextRev}
+        backup = json.dumps(previous, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
+        atomic_write(self.path.with_suffix(self.path.suffix + '.bak'), backup)
+        atomic_write(self.path, packed)
         self.data = cleaned
         self.revision = nextRev
         return True

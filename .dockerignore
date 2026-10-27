@@ -6,7 +6,8 @@ cs2_cfg/
 .github/
 tests/
 test_*.py
-scripts/
+scripts/*
+!scripts/recover_profiles.py
 docs/
 __pycache__/
 *.pyc

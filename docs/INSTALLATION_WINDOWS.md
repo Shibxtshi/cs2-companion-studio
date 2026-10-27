@@ -122,3 +122,17 @@ powershell -NoProfile -ExecutionPolicy Bypass -File .\installer\install.ps1 -Lan
   votre dossier `data/` si vous souhaitez retrouver vos nouveaux profils centralisés.
 - En cas de création des dossiers manquants, Windows avec Docker Desktop les montera
   automatiquement. Sur Linux, vérifier les droits en écriture pour l'utilisateur 10001.
+
+## Profile save and recovery
+
+Pending edits remain in browser memory after a conflict, connection loss or save error. The persistent notice lets the authenticated user explicitly save their local version or load the latest server version. Reloading/closing the page or deliberately leaving the private session can discard unsaved edits; no private draft is written to browser storage.
+
+The server keeps the previous accepted profile document in private data/profiles.json.bak. It never silently resets invalid storage. To recover, stop the service and validate/restore the backup explicitly:
+
+```powershell
+docker compose stop
+docker compose run --rm --no-deps cs2-companion-studio python scripts/recover_profiles.py --restore
+docker compose up -d
+```
+
+For native development: stop the server, then run `python scripts/recover_profiles.py --restore` (or specify `--data-dir`). Restoration validates the backup before writing and preserves the previous current file under a unique profiles.json.corrupt-* name. The backup is one generation, not a full archive. Keep backups and preserved files private; never attach them to issues.
