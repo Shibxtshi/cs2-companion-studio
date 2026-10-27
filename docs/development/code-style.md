@@ -21,12 +21,14 @@ These conventions guide incremental refactors; existing public interfaces remain
 - Keep WebSocket/authentication, profiles and game-state lifecycle boundaries explicit; add tests before moving entry points or persisted data paths.
 - Avoid timers or DOM refreshes without work to perform; preserve timer accuracy and the default-disabled setting.
 - Treat Windows `.cmd` launchers, the top-level `app.py`, Docker entry points and CI commands as compatibility surfaces; relocate them only with explicit tests and updated documentation.
-- Place historical development documentation in `docs/history/`, and active product documentation at the root of `docs/`.
-- Keep ordinary pytest tests in `tests/`, isolated CLI regression suites in `tests/standalone/`, and historical offline browser tests in `tests/legacy_browser/`. See `tests/README.md` for the different invocation methods.
-- Keep widget template definitions in `static/widgets.js` and ensure it loads before `static/studio.js`.
+- Place historical development documentation in `docs/history/`; use the current guide, development, security and release sections indexed by `docs/README.md`.
+- Keep pytest tests in `tests/unit/`, `tests/integration/` and `tests/contracts/`; browser journeys in `tests/browser/`; JavaScript tests in `tests/js/`; isolated CLI regressions in `tests/standalone/`; historical checks in `tests/legacy_browser/`. See `tests/README.md` for the different invocation methods.
+- Keep widget template definitions in `static/js/widgets.js` and ensure it loads before `static/js/studio.js`.
 
 ## Quality gates
 
 Run `python scripts/run_checks.py`, GitHub Actions on Windows and Linux, browser tests (Chromium, Firefox, WebKit), Docker smoke tests and dependency auditing before merging substantive changes.
 
-Profile synchronization belongs in static/profile-sync.js. It emits stable state codes; UI text is resolved by the translation API. Exercise the controller behavior with node tests/test_profile_sync.js before changing save/conflict behavior.
+Profile synchronization belongs in static/js/profile-sync.js. It emits stable state codes; UI text is resolved by the translation API. Exercise the controller behavior with node tests/js/test_profile_sync.js before changing save/conflict behavior.
+
+Keep backend implementations inside companion/. The root app.py is a compatibility bridge, not a second application. Keep Windows launchers, Compose, requirements and the documented scripts at their stable entry paths. See [architecture](architecture.md) for ownership and compatibility rules.

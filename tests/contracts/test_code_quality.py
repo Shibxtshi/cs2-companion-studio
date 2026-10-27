@@ -3,7 +3,7 @@ import ast
 from pathlib import Path
 
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 
 
 def read(path: str) -> str:
@@ -24,13 +24,13 @@ def test_example_configuration_comments_are_english():
 
 def test_refactored_python_locals_use_camel_case():
     previous_locals = {
-        "app.py": {
+        "companion/server.py": {
             "old_map", "old_round", "incoming_map", "incoming_player",
             "fresh_match", "changed_round", "prev_health", "prev_kills",
             "new_bomb_state", "session_id", "raw_msg",
         },
-        "gsi_lifecycle.py": {"half_start", "half_end", "team_data"},
-        "profile_store.py": {"widgets_raw", "next_rev"},
+        "companion/gsi_lifecycle.py": {"half_start", "half_end", "team_data"},
+        "companion/profile_store.py": {"widgets_raw", "next_rev"},
         "scripts/check_secrets.py": {"repo_root"},
         "scripts/docker_smoke.py": {"last_error"},
     }
@@ -41,8 +41,8 @@ def test_refactored_python_locals_use_camel_case():
 
 
 def test_snapshot_and_countdown_skip_idle_rendering():
-    backend = read("app.py")
-    frontend = read("static/studio.js")
+    backend = read("companion/server.py")
+    frontend = read("static/js/studio.js")
     assert "async def send_state() -> None:\n    # Do not serialize" in backend
     assert "if not connected:\n        return" in backend
     assert "if(!document.hidden&&last?.bomb_timer?.status==='active')paintBomb();" in frontend
@@ -77,7 +77,7 @@ def test_widget_catalog_module_and_script_load_order():
 
     parser = Scripts()
     parser.feed(read('static/index.html'))
-    required = ['/static/i18n.js', '/static/widgets.js', '/static/profile-sync.js', '/static/studio.js']
+    required = ['/static/js/i18n.js', '/static/js/widgets.js', '/static/js/profile-sync.js', '/static/js/studio.js']
     assert [source for source in parser.sources if source in required] == required
 
 
@@ -86,12 +86,12 @@ def test_frontend_widget_kinds_match_server_validation():
     import shutil
     import subprocess
     import pytest
-    from profile_store import PROFILE_KINDS
+    from companion.profile_store import PROFILE_KINDS
 
     node = shutil.which('node')
     if not node:
         pytest.skip('Node.js is required to execute the widget catalog; CI checks it')
-    script = 'global.window={};require("./static/widgets.js");console.log(JSON.stringify(Object.keys(window.CS2WidgetCatalog)))'
+    script = 'global.window={};require("./static/js/widgets.js");console.log(JSON.stringify(Object.keys(window.CS2WidgetCatalog)))'
     result = subprocess.run([node, '-e', script], cwd=ROOT, capture_output=True, text=True, check=True)
     assert set(json.loads(result.stdout)) == PROFILE_KINDS
 
@@ -116,8 +116,8 @@ def test_standalone_suites_are_isolated_and_grouped():
 
 
 def test_connection_states_do_not_depend_on_localized_messages():
-    studio = read("static/studio.js")
-    experience = read("static/experience.js")
+    studio = read("static/js/studio.js")
+    experience = read("static/js/experience.js")
     assert "detail:{message:msg,kind,code}" in studio
     assert "setStatus('Connexion…','','connecting')" in studio
     assert "const code=ev.detail?.code;" in experience

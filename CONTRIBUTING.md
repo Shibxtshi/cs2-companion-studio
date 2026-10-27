@@ -25,3 +25,7 @@ Thank you for considering a contribution to this **solo-maintained personal proj
 - Was AI used substantially, and what was manually verified?
 
 This repository is maintained on a best-effort, personal-time basis, with no guaranteed response time.
+
+## Finding your way
+
+Read the [architecture and repository map](docs/development/architecture.md), [code conventions](docs/development/code-style.md), and [test guide](tests/README.md). Add backend code to companion/, browser assets to static/js/ or static/css/, and tests to the appropriate execution category. Keep runtime files and local assistant context out of commits and archives.

@@ -8,8 +8,8 @@ os.environ['GSI_TOKEN'] = 'fake-dev-only-gsi-token'
 os.environ['DASHBOARD_PIN'] = '1234567890'
 from fastapi.testclient import TestClient
 from starlette.websockets import WebSocketDisconnect
-from profile_store import ProfileStore
-from support_diagnostics import Diagnostics
+from companion.profile_store import ProfileStore
+from companion.support_diagnostics import Diagnostics
 import app
 
 

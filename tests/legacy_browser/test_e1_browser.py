@@ -29,9 +29,9 @@ with sync_playwright() as p:
         close(){this.readyState=3;}
       };
     }""")
-    page.add_style_tag(content=(R/'static/styles.css').read_text())
+    page.add_style_tag(content=(R/'static/css/styles.css').read_text())
     for name in ('i18n.js','widgets.js','profile-sync.js','studio.js','experience.js'):
-        page.add_script_tag(content=(R/'static'/name).read_text())
+        page.add_script_tag(content=(R/'static/js'/name).read_text())
     page.evaluate("document.dispatchEvent(new Event('DOMContentLoaded'))")
     page.locator('#demo').click()
     assert not page.locator('#tab-custom').is_visible(), 'custom tab exposed to demo'

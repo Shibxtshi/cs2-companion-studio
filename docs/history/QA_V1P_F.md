@@ -29,10 +29,10 @@ For a real web/WS E2E against an ephemeral local server:
 ```powershell
 python -m pip install playwright==1.57.0
 python -m playwright install chromium
-python tests/test_live_browser.py --browser chromium
+python tests/browser/test_live_browser.py --browser chromium
 ```
 
-`tests/test_live_browser.py` binds only to `127.0.0.1` and creates disposable test profiles/credentials under a temporary directory. No real `.env`, CS2 installation or match is needed. On systems restricting browser-to-localhost access, this test must run in CI or on an unrestricted development machine.
+`tests/browser/test_live_browser.py` binds only to `127.0.0.1` and creates disposable test profiles/credentials under a temporary directory. No real `.env`, CS2 installation or match is needed. On systems restricting browser-to-localhost access, this test must run in CI or on an unrestricted development machine.
 
 To test the Docker image manually on a trusted machine, start the app normally using **your private `.env`**, verify `/health`, perform a GSI demo in a bot/training session, then restart the container and check that your stored dashboards remain. Keep `data/` and `.env` during upgrades.
 
@@ -55,4 +55,4 @@ PIN + WebSocket protect profiles from casual local guests, but **HTTP and WS on 
 The bomb timer remains optional and disabled by default. GSI use and absence of injections **do not imply FACEIT approval**. This remains an independent project not affiliated with Valve, Counter-Strike 2, or FACEIT.
 
 
-**Step 9 note:** Root `SECURITY.md`, README, historical MIT license proposal (now superseded by the no-resale draft), AI disclosure and contribution templates now exist. License holder, private contacts and GitHub CI execution remain **publication blockers**; see [`PUBLIC_RELEASE_CHECKLIST.md`](../PUBLIC_RELEASE_CHECKLIST.md).
+**Step 9 note:** Root `SECURITY.md`, README, historical MIT license proposal (now superseded by the no-resale draft), AI disclosure and contribution templates now exist. License holder, private contacts and GitHub CI execution remain **publication blockers**; see [`PUBLIC_RELEASE_CHECKLIST.md`](../releases/checklist.md).

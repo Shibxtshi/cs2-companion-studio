@@ -17,7 +17,7 @@ This document is for the personal project maintainer preparing the **first publi
 4. Make a **private repository** on GitHub first; avoid pushing real secrets or machine-local data.
 5. Inspect `git status --ignored` and `git ls-files` to confirm secrets are not staged or tracked.
 6. Commit and push the source; let GitHub Actions run. Investigate every failing check and dependency-audit advisory.
-7. Test Docker and installer on a Windows machine, as in [PUBLIC_RELEASE_CHECKLIST.md](../PUBLIC_RELEASE_CHECKLIST.md).
+7. Test Docker and installer on a Windows machine, as in [PUBLIC_RELEASE_CHECKLIST.md](../releases/checklist.md).
 8. When ready, add up-to-date screenshots, publish the repository and create the first tagged release.
 
 This project is explicitly independent and developed with ChatGPT assistance; maintain visible attribution in README and AI_DISCLOSURE.md.

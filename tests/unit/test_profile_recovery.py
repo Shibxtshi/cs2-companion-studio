@@ -6,9 +6,9 @@ from unittest.mock import patch
 
 import pytest
 
-from profile_store import ProfileStore, read_document
+from companion.profile_store import ProfileStore, read_document
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location('recover_profiles', ROOT / 'scripts/recover_profiles.py')
 recovery = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(recovery)
@@ -47,7 +47,7 @@ def test_failed_replace_keeps_current_revision_and_file(tmp_path):
     revision = store.revision
     document = {key: copy.deepcopy(store.data[key]) for key in ('profiles', 'activeProfile')}
     document['profiles'][0]['name'] = 'Unsaved'
-    import profile_store
+    from companion import profile_store
     realReplace = profile_store.os.replace
 
     def replace(source, destination):
@@ -55,7 +55,7 @@ def test_failed_replace_keeps_current_revision_and_file(tmp_path):
             raise OSError('synthetic disk failure')
         return realReplace(source, destination)
 
-    with patch('profile_store.os.replace', side_effect=replace):
+    with patch('companion.profile_store.os.replace', side_effect=replace):
         with pytest.raises(OSError):
             store.put(document, revision)
     assert store.path.read_bytes() == before

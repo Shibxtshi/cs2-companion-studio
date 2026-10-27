@@ -1,4 +1,4 @@
-"""Real HTTP + WebSocket E2E. Usage: python tests/test_live_browser.py --browser chromium|firefox|webkit"""
+"""Real HTTP + WebSocket E2E. Usage: python tests/browser/test_live_browser.py --browser chromium|firefox|webkit"""
 from __future__ import annotations
 import argparse
 import json
@@ -14,7 +14,7 @@ from urllib.error import URLError
 
 from playwright.sync_api import expect, sync_playwright
 
-ROOT = Path(__file__).resolve().parents[1]
+ROOT = Path(__file__).resolve().parents[2]
 PIN = 'e2e-pin-239840'
 TOKEN = 'e2e-synthetic-gsi-token-very-long'
 

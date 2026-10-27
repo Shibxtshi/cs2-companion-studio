@@ -6,7 +6,7 @@ import tempfile
 from pathlib import Path
 
 PROFILE_KINDS = frozenset('score map round score_split match_phase round_history weapon ammo inventory grenades equip_value gear economy cash forecast stats kd mvp personal_score round_stats health armor effects player bomb bomb_state events connection provider'.split())
-# Keep this list in sync with static/widgets.js's widget catalog.
+# Keep this list in sync with static/js/widgets.js's widget catalog.
 COLORS = re.compile(r'^#[0-9a-fA-F]{6}$')
 IDS = re.compile(r'^[a-zA-Z0-9_-]{1,64}$')
 DEFAULT_COLOR = '#f3ac52'

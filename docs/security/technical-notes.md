@@ -48,14 +48,14 @@ instance profiles, so use a strong unique PIN and restrict LAN access.
 - Runtime pins were upgraded for the initial security-audit candidate. The pinned runtime passed that main CI run. The maintainer reports local PC operation, without a fully specified fresh-install/upgrade/LAN validation matrix; those release checks remain pending. Do not describe this as penetration-tested or security-certified.
 - Private runtime directories and credentials remain excluded from the distributed source archive and Git.
 
-See `docs/history/QA_V1P_F.md` for the historical quality checklist, and `docs/PUBLIC_RELEASE_CHECKLIST.md` for current release blockers.
+See `docs/history/QA_V1P_F.md` for the historical quality checklist, and `docs/releases/checklist.md` for current release blockers.
 
 
 ## Step 9 repository preparation
 
-The public security-reporting policy is at [`../SECURITY.md`](../SECURITY.md). Ensure a private reporting channel is actually enabled before making the repository public. An independent security audit has **not** occurred.
+The public security-reporting policy is at [security policy](../../SECURITY.md). Ensure a private reporting channel is actually enabled before making the repository public. An independent security audit has **not** occurred.
 
-Profile backups and recovery files in data/ contain private layouts. They are never static assets and must not be distributed. See INSTALLATION_WINDOWS.md for explicit offline restoration.
+Profile backups and recovery files in data/ contain private layouts. They are never static assets and must not be distributed. See the [Windows guide](../guides/windows-installation.md) for explicit offline restoration.
 
 ## Dashboard delivery
 

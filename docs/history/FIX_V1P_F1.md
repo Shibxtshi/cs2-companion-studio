@@ -17,7 +17,7 @@ reports `1p-f`).
 
 Replace only `scripts/check_secrets.py` with the file from this update. If you
 also want the additional tests, update `scripts/run_checks.py` and add
-`tests/test_secret_hygiene.py`. **Do not delete `.env`, `data/`, or `logs/`.**
+`tests/contracts/test_secret_hygiene.py`. **Do not delete `.env`, `data/`, or `logs/`.**
 
 Run `python scripts/run_checks.py` from the project root. No Docker rebuild or
 CS2 restart is required for this maintenance fix.

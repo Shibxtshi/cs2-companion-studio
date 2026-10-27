@@ -1,4 +1,4 @@
-"""Public-release security regressions. Run: python -m pytest -q tests/test_public_security.py."""
+"""Public-release security regressions. Run: python -m pytest -q tests/integration/test_public_security.py."""
 import json
 import os
 import tempfile
@@ -17,8 +17,8 @@ os.environ['DIAGNOSTICS_DIR'] = str(Path(_tmp.name) / 'logs')
 os.environ['BOMB_TIMER_ENABLED'] = 'false'
 
 import app  # noqa: E402
-from profile_store import ProfileStore, MAX_STORE_BYTES  # noqa: E402
-from security import same_origin  # noqa: E402
+from companion.profile_store import ProfileStore, MAX_STORE_BYTES  # noqa: E402
+from companion.security import same_origin  # noqa: E402
 
 
 def test_public_routes_and_headers():
@@ -108,7 +108,7 @@ def test_profiles_validation_persistence_and_safe_diagnostics(tmp_path):
 
 
 def test_packaged_docker_default_is_loopback():
-    compose = (Path(__file__).parents[1] / 'compose.yaml').read_text('utf-8')
+    compose = (Path(__file__).parents[2] / 'compose.yaml').read_text('utf-8')
     assert '${BIND_HOST:-127.0.0.1}' in compose
     assert 'no-new-privileges:true' in compose
     assert 'cap_drop:' in compose

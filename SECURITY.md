@@ -24,4 +24,4 @@ When reporting privately, include affected version, reproduction steps with synt
 - No assurance of FACEIT permission. The bomb timer is optional, estimated and disabled by default.
 - Project is **not affiliated with Valve, CS2, FACEIT, or OpenAI**.
 
-See [technical security details](docs/SECURITY.md) and [release checks](docs/PUBLIC_RELEASE_CHECKLIST.md).
+See [technical security details](docs/security/technical-notes.md) and [release checks](docs/releases/checklist.md).
