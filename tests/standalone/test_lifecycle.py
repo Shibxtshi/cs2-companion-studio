@@ -5,7 +5,7 @@ os.environ['DASHBOARD_PIN'] = '654321'
 os.environ['BOMB_TIMER_ENABLED'] = 'true'
 
 from fastapi.testclient import TestClient
-import app
+from companion import server as app
 from companion.gsi_lifecycle import history_loss_level, cash_projection, EconomyObserver
 
 

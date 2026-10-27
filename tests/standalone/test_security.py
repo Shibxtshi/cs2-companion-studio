@@ -7,7 +7,7 @@ os.environ['BOMB_TIMER_ENABLED'] = 'false'
 from fastapi.testclient import TestClient
 from starlette.websockets import WebSocketDisconnect
 from companion.security import LoginLimiter, same_origin
-import app
+from companion import server as app
 
 
 def run():

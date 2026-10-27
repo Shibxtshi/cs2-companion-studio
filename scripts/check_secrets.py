@@ -19,9 +19,9 @@ class HygieneError(Exception):
 def assert_ignored_patterns(root):
     required = {
         '.gitignore': ('.env', '.env.*', 'PIN.txt', 'cs2_cfg/*.cfg',
-                       '.installer-state/', 'data/*', 'logs/*'),
+                       '.installer-state/', 'data/*', 'logs/*', '.companion-write-*.tmp'),
         '.dockerignore': ('.env', 'PIN.txt', 'cs2_cfg/', '.installer-state/',
-                          'data/', 'logs/'),
+                          'data/', 'logs/', '**/.companion-write-*.tmp'),
     }
     for filename, patterns in required.items():
         path = root / filename
@@ -39,6 +39,10 @@ def is_private_git_path(path):
     pieces = path.split('/')
     name = pieces[-1]
     if name == '.env' or (name.startswith('.env.') and name != '.env.example'):
+        return True
+    if name in {'AGENTS.md', 'PROJECT_CONTEXT.md', 'DECISIONS.md', 'LOCAL_WORK_PLAN.md', 'LOCAL_AUDIT_FIX_GUIDE.md'}:
+        return True
+    if name.startswith('.companion-write-'):
         return True
     if name == 'PIN.txt':
         return True
@@ -78,9 +82,12 @@ def check_git_index(root):
 
 def check_embedded_credentials(root):
     # Only shipped SOURCE files are inspected, never personal config files.
-    for name in ('Dockerfile', 'compose.yaml', 'static/index.html',
-                 'static/js/studio.js', 'static/js/profile-sync.js', 'static/js/widgets.js', 'static/css/styles.css'):
-        content = (root / name).read_text(encoding='utf-8')
+    sources = [root / 'Dockerfile', root / 'compose.yaml']
+    sources.extend(path for path in (root / 'static').rglob('*')
+                   if path.is_file() and path.suffix in {'.html', '.js', '.css'})
+    for path in sources:
+        name = path.relative_to(root).as_posix()
+        content = path.read_text(encoding='utf-8')
         if re.search(r'(?im)^\s*(?:GSI_TOKEN|DASHBOARD_PIN)\s*=\s*\S+', content):
             raise HygieneError('Embedded credentials found in source: ' + name)
 

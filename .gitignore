@@ -28,3 +28,6 @@ data/*
 !data/.gitkeep
 logs/*
 !logs/.gitkeep
+
+# Atomic installer writes may contain credentials until committed.
+.companion-write-*.tmp

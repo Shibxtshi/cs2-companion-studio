@@ -87,4 +87,4 @@ Credits: independent maintainer and community contributors (once any exist); **O
 
 ## Project layout
 
-The backend lives in `companion/`, web assets in `static/css/` and `static/js/`, and automated checks in `tests/`. Root `app.py`, Docker/Compose and Windows launchers remain stable entry points. Start with the [documentation index](docs/README.md) or the [architecture guide](docs/development/architecture.md) to find the relevant component.
+The backend lives in `companion/`, web assets in `static/css/` and `static/js/`, and automated checks in `tests/`. The server entry point is `companion.server:app`; Docker/Compose and Windows launchers start it. Start with the [documentation index](docs/README.md) or the [architecture guide](docs/development/architecture.md) to find the relevant component.

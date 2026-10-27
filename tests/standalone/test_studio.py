@@ -4,7 +4,7 @@ os.environ['GSI_TOKEN'] = 'studio-gsi-token-local-test'
 os.environ['DASHBOARD_PIN'] = '123456'
 os.environ['BOMB_TIMER_ENABLED'] = 'false'
 from fastapi.testclient import TestClient
-import app
+from companion import server as app
 
 
 def run():

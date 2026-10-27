@@ -28,8 +28,8 @@ def start_server():
                PROFILE_DATA_DIR=str(Path(runtime.name) / 'data'),
                DIAGNOSTICS_DIR=str(Path(runtime.name) / 'logs'),
                BOMB_TIMER_ENABLED='false')
-    proc = subprocess.Popen([sys.executable, '-m', 'uvicorn', 'app:app',
-                             '--host', '127.0.0.1', '--port', str(port), '--no-access-log'],
+    proc = subprocess.Popen([sys.executable, '-m', 'uvicorn', 'companion.server:app',
+                             '--host', '127.0.0.1', '--port', str(port), '--no-access-log', '--ws-max-size', '262144', '--ws-max-queue', '8'],
                             cwd=ROOT, env=env, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE)
     url = f'http://127.0.0.1:{port}'
     for _ in range(80):
@@ -75,9 +75,32 @@ def run(browser_name):
             assert not public.locator('#tab-custom').is_visible()
             assert public.locator('#download-support').is_hidden()
 
+            # A late failed health response cannot overwrite a deliberate demo switch.
+            late = guest.new_page()
+            pending_health = []
+            late.route('**/health', lambda route: pending_health.append(route))
+            late.goto(url)
+            late.locator('#pin').fill(PIN)
+            with late.expect_request('**/health'):
+                late.locator('#connect').click()
+            late.locator('#demo').click()
+            for pending in pending_health:
+                pending.fulfill(status=503, body='synthetic late failure')
+            expect(late.locator('#status')).to_have_text('Demo mode')
+            late.close()
+
             a = desktop.new_page()
             a.on('pageerror', lambda error: errors.append(str(error)))
             faults = {'next': None}
+            healthFailures = {'remaining': 0}
+
+            def route_health(route):
+                if healthFailures['remaining']:
+                    healthFailures['remaining'] -= 1
+                    route.fulfill(status=503, body='synthetic outage')
+                else:
+                    route.continue_()
+            a.route('**/health', route_health)
 
             def route_socket(socket):
                 server = socket.connect_to_server()
@@ -122,7 +145,7 @@ def run(browser_name):
                 'map': {'name': 'de_mirage', 'phase': 'live', 'round': 3,
                         'team_ct': {'score': 2}, 'team_t': {'score': 1}},
                 'round': {'phase': 'live'},
-                'player': {'name': 'Synthetic test player', 'team': 'CT',
+                'player': {'name': 'Carte', 'team': 'CT',
                            'state': {'health': 77, 'money': 2600}}}).encode()
             with urlopen(Request(url+'/gsi', body, {'Content-Type': 'application/json'}, method='POST'), timeout=5) as r:
                 assert r.status == 200
@@ -132,6 +155,12 @@ def run(browser_name):
             # Search must work in either language, and no JS runtime errors.
             a.locator('#edit').click()
             a.locator('#add').click()
+            a.locator('#search-widgets').fill('player')
+            a.locator('#catalog-items [data-kind="player"]').click()
+            expect(a.locator('.w-player [data-v="name"]')).to_have_text('Carte')
+            a.locator('#search-widgets').fill('match phase')
+            a.locator('#catalog-items .catalog-item').first.click()
+            expect(a.locator('.w-match_phase [data-v="map_phase"]')).to_have_text('Live')
             a.locator('#search-widgets').fill('map')
             assert a.locator('#catalog-items .catalog-item').count() >= 1
             a.locator('#locale-select').select_option('FR')
@@ -149,6 +178,9 @@ def run(browser_name):
             with a.expect_download() as download_info:
                 a.locator('#export').click()
             exported = Path(download_info.value.path()).read_bytes()
+            imported_document = json.loads(exported)
+            imported_document['profile']['widgets'].append({'kind': '__proto__', 'span': 12})
+            exported = json.dumps(imported_document).encode()
             a.locator('#import-file').set_input_files({'name': 'synthetic-layout.json', 'mimeType': 'application/json', 'buffer': exported})
             expect(a.locator('#profile-select option')).to_have_count(2)
             expect(a.locator('#profile-save-panel')).to_be_hidden()
@@ -163,11 +195,13 @@ def run(browser_name):
             a.on('dialog', lambda dialog: dialog.accept(rename['value']))
             for fault in ('conflict', 'invalid', 'disconnect'):
                 faults['next'] = fault
+                if fault == 'disconnect':
+                    healthFailures['remaining'] = 2
                 rename['value'] = 'Retained ' + fault
                 a.locator('#rename-profile').click()
                 expect(a.locator('#profile-save-panel')).to_be_visible()
                 expect(a.locator('#profile-select')).to_contain_text(rename['value'])
-                expect(a.locator('#profile-save-retry')).to_be_visible(timeout=12000)
+                expect(a.locator('#profile-save-retry')).to_be_visible(timeout=20000)
                 # For reconnect, wait until the new authenticated snapshot arrives.
                 if fault == 'disconnect':
                     expect(a.locator('#profile-save-message')).to_contain_text('serveur', timeout=12000)
@@ -187,6 +221,20 @@ def run(browser_name):
             a.locator('#profile-save-discard').click()
             expect(a.locator('#profile-select')).to_contain_text('Retained disconnect')
             expect(a.locator('#profile-save-panel')).to_be_hidden()
+            # Data which coincides with a translated UI word must remain unchanged.
+            rename['value'] = 'Carte'
+            a.locator('#rename-profile').click()
+            expect(a.locator('#profile-save-panel')).to_be_hidden()
+            a.locator('#board .widget').first.locator('.edit-controls button').nth(3).click()
+            title_input = a.locator('#board .widget').first.locator('.details input[type="text"]')
+            title_input.fill('Carte')
+            title_input.press('Tab')
+            expect(a.locator('#profile-save-panel')).to_be_hidden()
+            for locale in ('EN', 'FR'):
+                a.locator('#locale-select').select_option(locale)
+                expect(a.locator('#profile-select option:checked')).to_have_text('Carte')
+                expect(a.locator('#board .widget').first.locator('.widget-heading')).to_have_text('Carte')
+                expect(a.locator('.w-player [data-v="name"]')).to_have_text('Carte')
             assert not errors, errors
             browser.close()
         # Data is server-side and persists after clients disconnect.

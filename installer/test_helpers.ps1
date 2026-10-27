@@ -54,3 +54,26 @@ New-Item -ItemType Directory -Path $scratch | Out-Null
 try { Assert-True (Test-GsiFolderWritable $scratch) 'Writeability probe on temporary folder failed' }
 finally { Remove-Item -LiteralPath $scratch -Recurse -Force -ErrorAction SilentlyContinue }
 Write-Host 'OK: EN/FR language registry, Y/N and O/N confirmations, no default consent, folder probe.'
+
+# Failure-path checks operate only on an isolated synthetic directory.
+$atomicScratch = Join-Path ([System.IO.Path]::GetTempPath()) ('cs2studio-atomic-' + [guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $atomicScratch | Out-Null
+try {
+    $destination = Join-Path $atomicScratch 'synthetic.env'
+    Write-Utf8File $destination 'first'
+    Write-Utf8File $destination 'second'
+    Assert-True ([System.IO.File]::ReadAllText($destination) -eq 'second') 'Atomic replacement failed'
+    Assert-True (([System.IO.File]::ReadAllBytes($destination))[0] -ne 0xEF) 'Unexpected UTF-8 BOM'
+    $blocked = Join-Path $atomicScratch 'blocked'
+    New-Item -ItemType Directory -Path $blocked | Out-Null
+    $sentinel = Join-Path $blocked 'preserve.txt'
+    [System.IO.File]::WriteAllText($sentinel, 'keep')
+    $failed = $false
+    try { Write-Utf8File $blocked 'must fail' } catch { $failed = $true }
+    Assert-True $failed 'Replacing a directory must fail'
+    Assert-True ([System.IO.File]::ReadAllText($sentinel) -eq 'keep') 'Failed write altered existing contents'
+    Assert-True (@(Get-ChildItem -LiteralPath $atomicScratch -Filter '.companion-write-*.tmp').Count -eq 0) 'Temporary credential file leaked'
+} finally {
+    Remove-Item -LiteralPath $atomicScratch -Recurse -Force -ErrorAction SilentlyContinue
+}
+Write-Host 'OK: atomic UTF-8 writes, safe failure and temporary-file cleanup.'

@@ -7,8 +7,23 @@ $script:StateFile = Join-Path $script:StateDir 'install.json'
 $script:GsiName = 'gamestate_integration_companion.cfg'
 
 function Write-Utf8File([string] $Path, [string] $Text) {
+    # Write beside the destination so replacement stays on the same filesystem.
+    $destination = [System.IO.Path]::GetFullPath($Path)
+    $directory = [System.IO.Path]::GetDirectoryName($destination)
+    $temporary = Join-Path $directory ('.companion-write-' + [guid]::NewGuid().ToString('N') + '.tmp')
     $utf8 = [System.Text.UTF8Encoding]::new($false)
-    [System.IO.File]::WriteAllText($Path, $Text, $utf8)
+    try {
+        [System.IO.File]::WriteAllText($temporary, $Text, $utf8)
+        if ([System.IO.File]::Exists($destination)) {
+            [System.IO.File]::Replace($temporary, $destination, [NullString]::Value)
+        } else {
+            [System.IO.File]::Move($temporary, $destination)
+        }
+    } finally {
+        if ([System.IO.File]::Exists($temporary)) {
+            [System.IO.File]::Delete($temporary)
+        }
+    }
 }
 
 function Read-EnvValues([string] $Path) {

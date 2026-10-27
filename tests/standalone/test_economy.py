@@ -4,7 +4,7 @@ os.environ.setdefault('GSI_TOKEN','local-test-token-1234')
 os.environ.setdefault('DASHBOARD_PIN','123456')
 
 from fastapi.testclient import TestClient
-import app
+from companion import server as app
 
 
 def run():

@@ -10,7 +10,7 @@ from fastapi.testclient import TestClient
 from starlette.websockets import WebSocketDisconnect
 from companion.profile_store import ProfileStore
 from companion.support_diagnostics import Diagnostics
-import app
+from companion import server as app
 
 
 def run():

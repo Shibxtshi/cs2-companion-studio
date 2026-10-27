@@ -1,6 +1,9 @@
 """Small, dependency-free security helpers for the V1P LAN-only application."""
 from __future__ import annotations
 
+import json
+import math
+import secrets
 from collections import deque
 from urllib.parse import urlsplit
 
@@ -58,3 +61,31 @@ class LoginLimiter:
     def success(self, ip: str) -> None:
         self._tries.pop(ip, None)
         self._locked.pop(ip, None)
+
+
+def credential_matches(provided, expected):
+    """Reject malformed/non-ASCII inputs before constant-time comparison."""
+    return (isinstance(provided, str) and len(provided) <= 256 and provided.isascii()
+            and secrets.compare_digest(provided, expected))
+
+
+def decode_message(raw):
+    """Bound nested structures and reject non-standard JSON numeric constants."""
+    def invalid_constant(value):
+        raise ValueError('Non-finite JSON number')
+    try:
+        document = json.loads(raw, parse_constant=invalid_constant)
+    except RecursionError as exc:
+        raise ValueError('JSON nesting limit') from exc
+    pending = [(document, 0)]
+    visited = 0
+    while pending:
+        value, depth = pending.pop()
+        visited += 1
+        if depth > 32 or visited > 20000:
+            raise ValueError('JSON complexity limit')
+        if isinstance(value, float) and not math.isfinite(value):
+            raise ValueError('Non-finite JSON number')
+        children = value.values() if isinstance(value, dict) else value if isinstance(value, list) else ()
+        pending.extend((child, depth + 1) for child in children)
+    return document
