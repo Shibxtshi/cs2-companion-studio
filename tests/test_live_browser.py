@@ -143,11 +143,18 @@ def run(browser_name):
             a.locator('#catalog-items .catalog-item').first.click()
             expect(a.locator('#board .widget')).to_have_count(before + 1)
             expect(a.locator('#profile-save-panel')).to_be_hidden()
+            a.locator('#board .widget').last.locator('.resize-grip').press('ArrowRight')
+            expect(a.locator('#board .widget').last.locator('.resize-grip')).to_have_attribute('aria-valuetext', '6 / 12')
+            expect(a.locator('#profile-save-panel')).to_be_hidden()
             with a.expect_download() as download_info:
                 a.locator('#export').click()
             exported = Path(download_info.value.path()).read_bytes()
             a.locator('#import-file').set_input_files({'name': 'synthetic-layout.json', 'mimeType': 'application/json', 'buffer': exported})
             expect(a.locator('#profile-select option')).to_have_count(2)
+            expect(a.locator('#profile-save-panel')).to_be_hidden()
+
+            a.locator('#board .widget').last.locator('.remove').click()
+            expect(a.locator('#board .widget')).to_have_count(before)
             expect(a.locator('#profile-save-panel')).to_be_hidden()
 
             # Real server rejects a stale revision/invalid document; local edits survive.
@@ -164,6 +171,11 @@ def run(browser_name):
                 # For reconnect, wait until the new authenticated snapshot arrives.
                 if fault == 'disconnect':
                     expect(a.locator('#profile-save-message')).to_contain_text('serveur', timeout=12000)
+                if fault == 'conflict':
+                    a.locator('#locale-select').select_option('EN')
+                    expect(a.locator('#profile-save-message')).to_contain_text('Unsaved changes')
+                    a.locator('#locale-select').select_option('FR')
+                    expect(a.locator('#profile-save-message')).to_contain_text('Modifications non enregistrées')
                 a.locator('#profile-save-retry').click()
                 expect(a.locator('#profile-save-panel')).to_be_hidden(timeout=10000)
                 expect(b.locator('#profile-select')).to_contain_text(rename['value'])
