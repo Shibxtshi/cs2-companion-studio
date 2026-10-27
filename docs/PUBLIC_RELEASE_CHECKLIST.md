@@ -42,3 +42,7 @@ The step-9 archive is a **publication candidate**, not a published or security-c
 - [ ] Make repository public once ready; verify links and downloadable archive again.
 
 Uncompleted items are **release blockers**, not warnings to silently ignore.
+
+## Evidence recorded on 2026-10-27
+
+All eight CI jobs passed for main 3db5d855605e7285a534db16bfdcd57c7e737b6c (PR #7). The maintainer reports the existing application works on their local PC. This records evidence, not completion of the fresh-install/UAC, upgrade, LAN, licensing/contact or final-artifact gates above. Recheck CI on the exact final release revision.
