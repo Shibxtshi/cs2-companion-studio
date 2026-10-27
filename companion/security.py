@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import json
+import math
 import secrets
 from collections import deque
 from urllib.parse import urlsplit
@@ -83,6 +84,8 @@ def decode_message(raw):
         visited += 1
         if depth > 32 or visited > 20000:
             raise ValueError('JSON complexity limit')
+        if isinstance(value, float) and not math.isfinite(value):
+            raise ValueError('Non-finite JSON number')
         children = value.values() if isinstance(value, dict) else value if isinstance(value, list) else ()
         pending.extend((child, depth + 1) for child in children)
     return document

@@ -132,7 +132,7 @@ def test_simultaneous_authentication_respects_capacity(runtime_server):
     asyncio.run(scenario())
 
 
-@pytest.mark.parametrize('raw', ['NaN', 'Infinity', '[' * 40 + '0' + ']' * 40])
+@pytest.mark.parametrize('raw', ['NaN', 'Infinity', '1e400', '[' * 40 + '0' + ']' * 40])
 def test_json_complexity_and_non_finite_numbers_are_rejected(raw):
     with pytest.raises(ValueError):
         decode_message(raw)
