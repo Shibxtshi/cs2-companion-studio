@@ -178,6 +178,9 @@ def run(browser_name):
             with a.expect_download() as download_info:
                 a.locator('#export').click()
             exported = Path(download_info.value.path()).read_bytes()
+            imported_document = json.loads(exported)
+            imported_document['profile']['widgets'].append({'kind': '__proto__', 'span': 12})
+            exported = json.dumps(imported_document).encode()
             a.locator('#import-file').set_input_files({'name': 'synthetic-layout.json', 'mimeType': 'application/json', 'buffer': exported})
             expect(a.locator('#profile-select option')).to_have_count(2)
             expect(a.locator('#profile-save-panel')).to_be_hidden()

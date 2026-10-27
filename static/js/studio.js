@@ -22,7 +22,7 @@ function safeDensity(x){return x==='compact'?'compact':'normal';}
 function safeOpacity(x){return Number.isFinite(x)&&x>=60&&x<=100&&x%5===0?x:100;}
 function safeStyle(x){return STYLES.includes(x)?x:'solid';}
 function safeColor(x){return typeof x==='string'&&/^#[0-9a-fA-F]{6}$/.test(x)?x:'';}
-function sanitizeWidget(w){if(!w||typeof w!=='object'||!W[w.kind])return null;return {id:freshId(),kind:w.kind,span:WIDTHS.includes(w.span)?w.span:W[w.kind].size,title:typeof w.title==='string'?w.title.slice(0,36):'',color:safeColor(w.color),background:safeColor(w.background),opacity:safeOpacity(w.opacity),style:safeStyle(w.style)};}
+function sanitizeWidget(w){if(!w||typeof w!=='object'||typeof w.kind!=='string'||!Object.hasOwn(W,w.kind))return null;return {id:freshId(),kind:w.kind,span:WIDTHS.includes(w.span)?w.span:W[w.kind].size,title:typeof w.title==='string'?w.title.slice(0,36):'',color:safeColor(w.color),background:safeColor(w.background),opacity:safeOpacity(w.opacity),style:safeStyle(w.style)};}
 // Profile synchronization is isolated from dashboard rendering and translated text.
 function showSaveState(code){
  const panel=$('profile-save-panel');if(!panel)return;
@@ -129,7 +129,7 @@ async function connectSocket(isCurrent){
  if(!isCurrent())return;
  setStatus('Connexion…','','connecting');
  try{const res=await fetch('/health',{cache:'no-store',signal:AbortSignal.timeout(5000)});if(!res.ok)throw Error('HTTP '+res.status);const health=await res.json();if(!isCurrent())return;if(health.version!==VERSION){$('loginerror').textContent='Redémarre Docker avec la version 1.0.0.';setStatus('Mise à jour requise','bad','error');throw Error('version');}}
- catch(err){if(!isCurrent())return;$('loginerror').textContent='Serveur indisponible : '+err.message;setStatus('Hors ligne','bad','error');throw err;}
+ catch(err){if(!isCurrent())return;if(err.message!=='version'){$('loginerror').textContent='Serveur indisponible : '+err.message;setStatus('Hors ligne','bad','error');}throw err;}
  if(!isCurrent())return;
  const url=(location.protocol==='https:'?'wss:':'ws:')+'//'+location.host+'/ws',socket=new WebSocket(url);ws=socket;let authorized=false,failed=false;
  socket.onopen=()=>{if(isCurrent()&&ws===socket)socket.send(JSON.stringify({type:'auth',pin}));};
