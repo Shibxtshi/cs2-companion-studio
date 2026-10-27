@@ -107,6 +107,7 @@ Set-InstallLanguage 'EN'
 # Mock Docker: no real daemon, private settings, or installation is accessed.
 $settingsScratch = Join-Path ([System.IO.Path]::GetTempPath()) ('cs2studio-settings-' + [guid]::NewGuid().ToString('N'))
 New-Item -ItemType Directory -Path $settingsScratch | Out-Null
+$previousDockerExit = if (Test-Path Variable:global:LASTEXITCODE) { $global:LASTEXITCODE } else { 0 }
 $script:composeCalls = @()
 $script:composeConfigExit = 0
 $script:composeUpExit = 0
@@ -142,6 +143,7 @@ try {
     Assert-True $startFailed 'Failed restart reported success'
     Assert-True ((Get-Location).Path -eq $originalLocation) 'Apply did not restore working directory'
 } finally {
+    $global:LASTEXITCODE = $previousDockerExit
     Remove-Item Function:docker -ErrorAction SilentlyContinue
     Remove-Item -LiteralPath $settingsScratch -Recurse -Force -ErrorAction SilentlyContinue
 }
