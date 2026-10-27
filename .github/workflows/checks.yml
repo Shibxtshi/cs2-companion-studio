@@ -148,6 +148,8 @@ jobs:
           docker compose up -d --wait --wait-timeout 120
           python scripts/docker_smoke.py
           test -s data/profiles.json
+      - name: Verify settings reload without rebuilding the image
+        run: python scripts/test_docker_settings.py
       - name: Verify unprivileged container
         run: test "$(docker compose exec -T cs2-companion-studio id -u)" = '10001'
       - name: Cleanup

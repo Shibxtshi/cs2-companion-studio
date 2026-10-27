@@ -2,6 +2,11 @@
 
 **Current release candidate:** 1.0.0. The previous V1P labels below record internal development milestones; no public release has been published yet.
 
+## Unreleased
+
+- Fresh Windows installs ask whether to enable the estimated bomb countdown (disabled by default); reruns preserve existing settings.
+- Apply local .env changes with APPLIQUER_REGLAGES_WINDOWS.cmd, recreating the container with its existing image and preserving saved profiles.
+
 ## 1.0.0 — First release candidate (publication pending)
 
 - CS2 GSI dashboard with 29 customizable widgets and EN/FR interface.

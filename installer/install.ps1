@@ -82,6 +82,7 @@ try {
             }
         }
     }
+    $envText = Select-BombTimerSetting $envText $createdEnv ([bool]$NonInteractive)
     $tmpValues = @{}
     foreach ($line in ($envText -split "`r?`n")) {
         if ($line -match '^([A-Za-z_][A-Za-z0-9_]*)=(.*)$') { $tmpValues[$Matches[1]] = $Matches[2].Trim() }

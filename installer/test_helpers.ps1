@@ -77,3 +77,72 @@ try {
     Remove-Item -LiteralPath $atomicScratch -Recurse -Force -ErrorAction SilentlyContinue
 }
 Write-Host 'OK: atomic UTF-8 writes, safe failure and temporary-file cleanup.'
+
+# Exercise consent and preservation with synthetic settings only.
+$script:bombAnswers = 0
+$script:bombAnswer = ''
+function Read-Host([string] $Prompt) {
+    $script:bombAnswers++
+    return $script:bombAnswer
+}
+try {
+    foreach ($locale in @('EN', 'FR')) {
+        Set-InstallLanguage $locale
+        $script:bombAnswer = ''
+        $declined = Select-BombTimerSetting $envText $true $false
+        Assert-True ($declined.Contains('BOMB_TIMER_ENABLED=false')) 'Empty answer enabled timer'
+        $script:bombAnswer = if ($locale -eq 'FR') { 'O' } else { 'Y' }
+        $accepted = Select-BombTimerSetting $envText $true $false
+        Assert-True ($accepted.Contains('BOMB_TIMER_ENABLED=true')) 'Explicit opt-in failed'
+        Assert-True ($accepted.Contains('GSI_TOKEN=' + $token1)) 'Timer choice altered credentials'
+        $beforeAnswers = $script:bombAnswers
+        Assert-True ((Select-BombTimerSetting $accepted $false $false) -eq $accepted) 'Rerun changed existing enabled timer'
+        Assert-True ((Select-BombTimerSetting $envText $false $false) -eq $envText) 'Rerun changed existing disabled timer'
+        Assert-True ((Select-BombTimerSetting $envText $true $true) -eq $envText) 'Noninteractive setup enabled timer'
+        Assert-True ($script:bombAnswers -eq $beforeAnswers) 'Existing/noninteractive setup prompted'
+    }
+} finally { Remove-Item Function:Read-Host -ErrorAction SilentlyContinue }
+Set-InstallLanguage 'EN'
+
+# Mock Docker: no real daemon, private settings, or installation is accessed.
+$settingsScratch = Join-Path ([System.IO.Path]::GetTempPath()) ('cs2studio-settings-' + [guid]::NewGuid().ToString('N'))
+New-Item -ItemType Directory -Path $settingsScratch | Out-Null
+$script:composeCalls = @()
+$script:composeConfigExit = 0
+$script:composeUpExit = 0
+function docker {
+    $script:composeCalls += ,@($args)
+    if ($args -contains 'config') { $global:LASTEXITCODE = $script:composeConfigExit }
+    else { $global:LASTEXITCODE = $script:composeUpExit }
+}
+try {
+    $originalLocation = (Get-Location).Path
+    $missingFailed = $false
+    try { Invoke-ComposeSettings $settingsScratch } catch { $missingFailed = $true }
+    Assert-True $missingFailed 'Missing .env must fail before Docker'
+    Assert-True ($script:composeCalls.Count -eq 0) 'Docker called without .env'
+    $syntheticEnv = Join-Path $settingsScratch '.env'
+    Write-Utf8File $syntheticEnv $envText
+    Invoke-ComposeSettings $settingsScratch
+    Assert-True ($script:composeCalls.Count -eq 2) 'Expected validation and recreation'
+    Assert-True (($script:composeCalls[0] -join '|').EndsWith('config|--quiet')) 'Validation must not print credentials'
+    $expectedUp = 'up|-d|--no-build|--pull|never|--force-recreate|--wait|--wait-timeout|120|cs2-companion-studio'
+    Assert-True (($script:composeCalls[1] -join '|').EndsWith($expectedUp)) 'Unsafe settings apply command'
+    Assert-True ([System.IO.File]::ReadAllText($syntheticEnv) -eq $envText) 'Apply rewrote .env'
+    $script:composeCalls = @()
+    $script:composeConfigExit = 1
+    $invalidFailed = $false
+    try { Invoke-ComposeSettings $settingsScratch } catch { $invalidFailed = $true }
+    Assert-True $invalidFailed 'Invalid Compose config must fail'
+    Assert-True ($script:composeCalls.Count -eq 1) 'Invalid config restarted container'
+    $script:composeConfigExit = 0
+    $script:composeUpExit = 1
+    $startFailed = $false
+    try { Invoke-ComposeSettings $settingsScratch } catch { $startFailed = $true }
+    Assert-True $startFailed 'Failed restart reported success'
+    Assert-True ((Get-Location).Path -eq $originalLocation) 'Apply did not restore working directory'
+} finally {
+    Remove-Item Function:docker -ErrorAction SilentlyContinue
+    Remove-Item -LiteralPath $settingsScratch -Recurse -Force -ErrorAction SilentlyContinue
+}
+Write-Host 'OK: bomb timer explicit EN/FR consent, rerun preservation, no-build settings apply and error paths.'

@@ -31,6 +31,26 @@ Pour revenir à une écoute locale uniquement :
 powershell -NoProfile -ExecutionPolicy Bypass -File .\installer\install.ps1 -LocalOnly
 ```
 
+## Chronomètre et modification du .env sans reconstruire l’image
+
+À la première installation, une question EN/FR propose d’activer le chronomètre estimatif de la bombe. Entrée ou Non le laisse désactivé ; le mode non interactif ne l’active pas. Une réinstallation conserve le choix existant.
+
+Pour changer ce réglage ensuite :
+
+1. Modifier uniquement `BOMB_TIMER_ENABLED=true` (activer) ou `BOMB_TIMER_ENABLED=false` (désactiver) dans le `.env` du dossier installé.
+2. Démarrer Docker Desktop, puis double-cliquer sur **`APPLIQUER_REGLAGES_WINDOWS.cmd`** dans ce même dossier.
+3. Attendre la confirmation, puis recharger le dashboard.
+
+Équivalent dans un terminal ouvert dans le dossier du projet :
+
+```powershell
+docker compose up -d --no-build --pull never --force-recreate --wait --wait-timeout 120 cs2-companion-studio
+```
+
+L’image existante est réutilisée, sans compilation ni téléchargement. Le conteneur est recréé pour relire le `.env` : courte interruption des connexions et remise à zéro de l’état de partie en mémoire. Les profils persistants de `data/` et le `.env` sont conservés. Modifier le fichier seul ou lancer `docker compose restart` ne recharge pas les variables du conteneur. Il faut une première installation ayant déjà construit l’image ; une mise à jour du code applicatif peut toujours nécessiter une reconstruction.
+
+Cette commande applique aussi les autres variables du `.env`, avec leurs conséquences : changer le PIN impose une reconnexion ; changer le token GSI ou le port nécessite d’aligner le fichier GSI de CS2 et de redémarrer CS2 (relancer l’installateur pour le régénérer). Préférer les options guidées `-Lan` / `-LocalOnly` pour le réseau et respecter les précautions LAN ci-dessus. Ne jamais partager le `.env`.
+
 ## Mise à jour depuis une installation existante
 
 1. Sauvegarder le fichier **`.env`** et tout le dossier **`data/`** (profils partagés).

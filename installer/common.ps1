@@ -271,3 +271,28 @@ function Invoke-SetupElevated([string] $InstallerPath, [string] $PathHint, [stri
     return $proc.ExitCode
 }
 
+
+# Ask only for a new installation; reruns preserve the existing private setting.
+function Select-BombTimerSetting([string] $EnvText, [bool] $CreatedEnv, [bool] $NonInteractive) {
+    if (-not $CreatedEnv -or $NonInteractive) { return $EnvText }
+    Write-Host (T 'bomb_warning') -ForegroundColor Yellow
+    if (Confirm-Action (T 'enable_bomb_timer') $false) {
+        return Set-EnvSetting $EnvText 'BOMB_TIMER_ENABLED' 'true'
+    }
+    return Set-EnvSetting $EnvText 'BOMB_TIMER_ENABLED' 'false'
+}
+
+function Invoke-ComposeSettings([string] $ProjectRoot = $script:StudioRoot) {
+    if (-not (Test-Path -LiteralPath (Join-Path $ProjectRoot '.env') -PathType Leaf)) {
+        throw (T 'settings_missing_env')
+    }
+    Push-Location $ProjectRoot
+    try {
+        $composePath = Join-Path $ProjectRoot 'compose.yaml'
+        & docker compose -f $composePath config --quiet
+        if ($LASTEXITCODE -ne 0) { throw (T 'settings_invalid') }
+        # Recreate the container to reload env_file; never rebuild or pull an image.
+        & docker compose -f $composePath up -d --no-build --pull never --force-recreate --wait --wait-timeout 120 cs2-companion-studio
+        if ($LASTEXITCODE -ne 0) { throw (T 'settings_failed') }
+    } finally { Pop-Location }
+}

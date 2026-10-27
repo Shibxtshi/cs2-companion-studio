@@ -27,7 +27,7 @@
 
 1. Download the source ZIP **from a trusted release/source**, unpack it into an ordinary folder (not directly from within the ZIP).
 2. Start Docker Desktop.
-3. Double-click **`INSTALLER_WINDOWS.cmd`**. Choose English or French, confirm the detected CS2 directory, and follow the prompts.
+3. Double-click **`INSTALLER_WINDOWS.cmd`**. Choose English or French, confirm the detected CS2 directory, choose whether to enable the estimated bomb countdown (No by default), and follow the prompts.
 4. The installer creates a **unique private PIN and GSI token**, writes the game GSI configuration (with backup when replacing an existing one), and starts Docker.
 5. Restart CS2 if a GSI config was newly installed; start a training match. Open **`http://localhost:8080`** and enter your PIN.
 6. To use your phone, opt into trusted-LAN mode during setup. Connect the phone to the same private Wi-Fi and open `http://YOUR-PC-LAN-IP:8080`.
@@ -44,6 +44,18 @@ docker compose up -d --build
 ```
 
 **Do not commit** the generated `.env`, PIN, GSI `.cfg`, personal `data/`, or local `logs/`. The public repo contains only `.env.example` and GSI config examples. When updating, keep both **`.env` and `data/`**; profiles live on the server, not in the browser.
+
+### Change settings without rebuilding the image
+
+To enable the optional countdown after installation, set `BOMB_TIMER_ENABLED=true` in your local `.env` (use `false` to disable it). Double-click **`APPLIQUER_REGLAGES_WINDOWS.cmd`**, or run from the project folder:
+
+```powershell
+docker compose up -d --no-build --pull never --force-recreate --wait --wait-timeout 120 cs2-companion-studio
+```
+
+This reloads the environment by recreating the container using its existing image. A brief interruption resets live match state; saved profiles in `data/` and credentials in `.env` are preserved. Reload the dashboard afterwards. Editing `.env` alone or running `docker compose restart` does not reload container environment variables. The image must already have been built by the initial installation.
+
+The installer asks about the timer only for a new installation. Enter/No and noninteractive installation keep it disabled; rerunning the installer preserves the existing choice. For changes to the PIN, GSI token, port or networking, follow the [Windows guide](docs/guides/windows-installation.md).
 
 ## Networking and safety
 
