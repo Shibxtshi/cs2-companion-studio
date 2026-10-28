@@ -1,6 +1,8 @@
 ﻿# Parse-only regression test. Compatible with Windows PowerShell 5.1 and PowerShell 7.
 $ErrorActionPreference = 'Stop'
-$files = Get-ChildItem -LiteralPath $PSScriptRoot -Filter '*.ps1' -File
+$projectRoot = Split-Path (Split-Path $PSScriptRoot -Parent) -Parent
+$files = @(Get-ChildItem -LiteralPath (Join-Path $projectRoot 'installer') -Filter '*.ps1' -File)
+$files += @(Get-ChildItem -LiteralPath $PSScriptRoot -Filter '*.ps1' -File)
 $errorsFound = $false
 foreach ($file in $files) {
     $tokens = $null
@@ -15,4 +17,4 @@ foreach ($file in $files) {
     }
 }
 if ($errorsFound) { exit 1 }
-Write-Host 'All installer scripts passed the PowerShell syntax check.' -ForegroundColor Green
+Write-Host 'All installer and Windows test scripts passed the PowerShell syntax check.' -ForegroundColor Green

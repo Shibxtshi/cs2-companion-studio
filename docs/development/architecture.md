@@ -14,8 +14,8 @@ static/
   index.html               Dashboard document
   css/                     Styles
   js/                      UI, translations, catalog and profile controller
-installer/                 Windows installation, status and uninstall scripts
-scripts/                   Development, configuration and recovery commands
+installer/                 Operational Windows scripts and their shared helpers
+scripts/                   Maintenance, configuration, recovery and quality commands
 tests/
   unit/                    Focused persistence and delivery tests
   integration/             HTTP, WebSocket and security boundaries
@@ -23,11 +23,16 @@ tests/
   browser/                 Real three-browser desktop/mobile journeys
   js/                      DOM-independent JavaScript behavior tests
   standalone/              Backend suites requiring isolated Python processes
-  legacy_browser/          Historical offline Chromium checks
+  docker/                  Disposable container integration runners
+  windows/                 PowerShell parsing and synthetic helper tests
+  browser/legacy/          Consolidated historical offline Chromium check
 docs/                      Guides, development, security, releases and history
-cs2_cfg/                   Safe GSI configuration example
+examples/gsi/              Distributable GSI example (no real credentials)
+cs2_cfg/                   Generated private GSI config; ignored, created on demand
 data/ and logs/            Private writable runtime state; never public assets
 ```
+
+The root intentionally retains the README, changelog, license/community policies, Docker/Compose configuration, dependency/configuration files and three Windows launchers. GitHub discovers the policy files here, and users can start installation/settings/uninstallation without browsing the implementation.
 
 ## Ownership and dependencies
 
@@ -39,7 +44,7 @@ The browser loads translations, the widget catalog, profile synchronization, rec
 
 ## Stable operational paths
 
-Keep the root Windows launchers, Compose/Docker entry points and documented scripts at their current locations. Project-root resolution is independent of the backend package directory: static/, data/, logs/ and environment-variable overrides retain their meanings. Packaging copies the backend package and web assets, plus the explicit offline recovery command.
+Keep the root Windows launchers and Compose/Docker entry points at their current locations. Operational Python commands live in scripts/; platform-specific test runners live in tests/docker/ and tests/windows/. Installer implementation lives in installer/; its index is [Windows operations](../../installer/README.md). Project-root resolution is independent of the backend package directory: static/, data/, logs/ and environment-variable overrides retain their meanings. Packaging copies the backend package and web assets, plus the explicit offline recovery command.
 
 Do not put private runtime files under static/. Do not move data/, logs/ or .env during a source-only refactor. Preserve authentication, localhost defaults, version identifiers and the default-disabled bomb timer.
 

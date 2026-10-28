@@ -1,7 +1,8 @@
 ﻿# Safe to run on Windows CI: does not require Docker, Steam, or CS2.
 $ErrorActionPreference = 'Stop'
-. (Join-Path $PSScriptRoot 'common.ps1')
-. (Join-Path $PSScriptRoot 'i18n.ps1')
+$installerRoot = Join-Path (Split-Path (Split-Path $PSScriptRoot -Parent) -Parent) 'installer'
+. (Join-Path $installerRoot 'common.ps1')
+. (Join-Path $installerRoot 'i18n.ps1')
 function Assert-True([bool] $Condition, [string] $Message) {
     if (-not $Condition) { throw $Message }
 }

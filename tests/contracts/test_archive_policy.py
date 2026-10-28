@@ -32,7 +32,7 @@ def test_private_variants_are_rejected(name):
         policy.check_zip(archive_with(name))
 
 
-@pytest.mark.parametrize('name',['release/.env.example','release/cs2_cfg/gamestate_integration_companion.cfg.example','release/README.md'])
+@pytest.mark.parametrize('name',['release/.env.example','release/examples/gsi/gamestate_integration_companion.cfg.example','release/README.md'])
 def test_examples_and_source_are_allowed(name):
     assert policy.check_zip(archive_with(name))
 

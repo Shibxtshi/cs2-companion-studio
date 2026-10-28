@@ -1,6 +1,6 @@
 # Code quality conventions
 
-These conventions guide incremental refactors; existing public interfaces remain compatible until a tested migration is complete.
+These conventions guide scoped changes. Update callers, tests and documentation together when an interface changes; backward compatibility is not required for the current undeployed project.
 
 ## Naming
 
@@ -22,7 +22,7 @@ These conventions guide incremental refactors; existing public interfaces remain
 - Avoid timers or DOM refreshes without work to perform; preserve timer accuracy and the default-disabled setting.
 - Update all launchers, callers, tests and documentation when an interface changes. The software is not deployed: do not retain aliases or add migrations solely for backward compatibility.
 - Place historical development documentation in `docs/history/`; use the current guide, development, security and release sections indexed by `docs/README.md`.
-- Keep pytest tests in `tests/unit/`, `tests/integration/` and `tests/contracts/`; browser journeys in `tests/browser/`; JavaScript tests in `tests/js/`; isolated CLI regressions in `tests/standalone/`; historical checks in `tests/legacy_browser/`. See `tests/README.md` for the different invocation methods.
+- Keep pytest tests in `tests/unit/`, `tests/integration/` and `tests/contracts/`; browser journeys in `tests/browser/`; JavaScript tests in `tests/js/`; isolated CLI regressions in `tests/standalone/`; historical browser checks in `tests/browser/legacy/`, disposable Docker runners in `tests/docker/`, and PowerShell verification in `tests/windows/`. See `tests/README.md` for the different invocation methods.
 - Keep widget template definitions in `static/js/widgets.js` and ensure it loads before `static/js/studio.js`.
 
 ## Quality gates

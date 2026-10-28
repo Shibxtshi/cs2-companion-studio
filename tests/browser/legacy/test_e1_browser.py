@@ -2,7 +2,7 @@
 from pathlib import Path
 from playwright.sync_api import sync_playwright
 import re
-R=Path(__file__).resolve().parents[2]
+R=Path(__file__).resolve().parents[3]
 html=re.sub(r'<script defer[^>]*></script>', '', (R/'static/index.html').read_text())
 html=re.sub(r'<link rel="stylesheet"[^>]*>', '', html)
 

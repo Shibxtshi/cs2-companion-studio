@@ -68,7 +68,7 @@
 
 - Correction d'un blocage de l'installateur lors du chargement des textes français.
 - Menu EN/FR et confirmations Y/N ou O/N conservés.
-- Vérification de syntaxe PowerShell disponible dans `installer/check_syntax.ps1`.
+- Vérification de syntaxe PowerShell disponible dans `tests/windows/check_syntax.ps1`.
 - Aucun changement du dashboard, du fichier GSI ni des identifiants.
 
 

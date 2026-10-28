@@ -99,4 +99,4 @@ Credits: independent maintainer and community contributors (once any exist); **O
 
 ## Project layout
 
-The backend lives in `companion/`, web assets in `static/css/` and `static/js/`, and automated checks in `tests/`. The server entry point is `companion.server:app`; Docker/Compose and Windows launchers start it. Start with the [documentation index](docs/README.md) or the [architecture guide](docs/development/architecture.md) to find the relevant component.
+The backend lives in `companion/`, web assets in `static/css/` and `static/js/`, and automated checks in `tests/` (including Docker and Windows verification). Operational Windows scripts are indexed in [installer/](installer/README.md), maintenance commands in [scripts/](scripts/README.md), and safe configuration examples in [examples/](examples/README.md). The server entry point is `companion.server:app`; Docker/Compose and Windows launchers start it. Start with the [documentation index](docs/README.md) or the [architecture guide](docs/development/architecture.md) to find the relevant component.

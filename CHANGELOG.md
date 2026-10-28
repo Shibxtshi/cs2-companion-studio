@@ -4,6 +4,8 @@
 
 ## Unreleased
 
+- Group Docker and Windows verification under tests/, consolidate historical browser checks, and separate distributable GSI examples from generated private configuration. Update CI and navigation to the new locations.
+
 - Fresh Windows installs ask whether to enable the estimated bomb countdown (disabled by default); reruns preserve existing settings.
 - Apply local .env changes with APPLIQUER_REGLAGES_WINDOWS.cmd, recreating the container with its existing image and preserving saved profiles.
 
