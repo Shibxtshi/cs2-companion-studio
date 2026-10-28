@@ -104,6 +104,13 @@ def run(browserName, output):
                         expectedLabel = 'Thème d’aperçu' if locale == 'FR' else 'Theme preview'
                         expect(page.locator('label[for="theme-preview"]')).to_have_text(expectedLabel)
                         expect(page.locator('#theme-preview')).to_have_attribute('aria-label', expectedLabel)
+                        if width <= 390:
+                            assert page.locator('#locale-select').evaluate("""node => {
+                                const context = document.createElement('canvas').getContext('2d');
+                                const style = getComputedStyle(node);
+                                context.font = style.fontWeight + ' ' + style.fontSize + ' ' + style.fontFamily;
+                                return context.measureText(node.selectedOptions[0].text).width + 40 <= node.clientWidth;
+                            }""")
                         if output and width in (1280, 390):
                             page.locator('#main-content').screenshot(path=str(output / f'{theme}-{width}-{locale}.png'))
                     results.append({'theme': theme, 'width': width, 'contrast': ratios})

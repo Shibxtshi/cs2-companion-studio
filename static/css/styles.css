@@ -869,10 +869,6 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .language-label {
     display:none
   }
-.language-select {
-    min-width:111px;
-    max-width:128px
-  }
 }
 
 /* Existing editor, grid snapping, presets and card styles. */
@@ -1367,10 +1363,6 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .session-banner #diagnostics-toggle {
     width:100%
   }
-.language-select {
-    min-width:105px;
-    max-width:114px
-  }
 .badge {
     padding:7px 9px
   }
@@ -1468,6 +1460,10 @@ button:disabled {
   }
   .brand-name {
     font-size:32px;
+  }
+  .language-select {
+    min-width:160px;
+    max-width:180px;
   }
   .theme-preview .select {
     font-size:16px;
