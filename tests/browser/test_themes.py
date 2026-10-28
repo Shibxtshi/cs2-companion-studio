@@ -101,8 +101,9 @@ def run(browserName, output):
                     assert dimensions['scroll'] <= dimensions['width'], (width, theme, dimensions)
                     for locale in ('FR', 'EN'):
                         page.locator('#locale-select').select_option(locale)
-                        expect(page.locator('label[for="theme-preview"]')).to_have_text(
-                            'Thème d’aperçu' if locale == 'FR' else 'Theme preview')
+                        expectedLabel = 'Thème d’aperçu' if locale == 'FR' else 'Theme preview'
+                        expect(page.locator('label[for="theme-preview"]')).to_have_text(expectedLabel)
+                        expect(page.locator('#theme-preview')).to_have_attribute('aria-label', expectedLabel)
                         if output and width in (1280, 390):
                             page.locator('#main-content').screenshot(path=str(output / f'{theme}-{width}-{locale}.png'))
                     results.append({'theme': theme, 'width': width, 'contrast': ratios})
