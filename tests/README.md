@@ -22,6 +22,8 @@ python scripts/run_checks.py
 node tests/js/test_profile_sync.js
 node tests/js/test_reconnect.js
 node tests/js/test_i18n.js
+node tests/js/test_display_format.js
+node tests/js/test_dashboard_client.js
 ```
 
 Ordinary pytest checks can also run with `python -m pytest -q`. Standalone and historical suites are excluded from pytest collection. Run a single backend suite with `python -m tests.standalone.test_security`; never collect these as ordinary pytest modules because they configure process-wide credentials and game state.
@@ -62,3 +64,16 @@ All automated checks use synthetic data. They do not certify real CS2/UAC/LAN in
 Edge cases include repeated health failures, authentication concurrency, malformed/Unicode inputs, JSON complexity, private archive variants and untranslated personal labels. Windows helper tests also inject a failed atomic write without touching Steam/CS2.
 
 Publication-preparation regressions cover binary WebSocket frames before/after authentication and deeply nested/non-finite profile storage. Linux CI also builds a ZIP from tracked source with git archive and checks its paths; this is not a full-history secret scan or a published release artifact.
+
+## Widget characterization and local comparison evidence
+
+```bash
+python tests/browser/test_widget_characterization.py --browser chromium
+python tests/browser/test_widget_characterization.py --browser chromium --output ../comparison-evidence --benchmark --repeats 9
+```
+
+The default path checks the frozen synthetic fixtures in tests/browser/fixtures/ without changing them. CI runs it in Chromium, Firefox and WebKit after the real HTTP/WebSocket journey. --record is a deliberate baseline-authoring operation; do not regenerate expected data from a failing refactor.
+
+--output optionally saves desktop/mobile EN/FR screenshots of the synthetic dashboard, plus a performance JSON when --benchmark is requested. It never captures the login PIN or reads personal runtime files. Date and timer anchors are frozen for characterization; benchmark pages use real clocks.
+
+Benchmarks use fresh contexts, a fixed 1280x900 viewport and the same fixtures. Metrics include navigation DCL, initial dashboard opening, 29/60-widget rebuilds, entry into the existing editor, and 29-widget refresh. UI click metrics force layout; initial/transport updates also include Playwright round-trip overhead. Raw samples accompany median/min/max. Run baseline and candidate sequentially on the same machine, repeat, and report noise rather than inventing a pass threshold. No benchmark timing is a CI performance gate.

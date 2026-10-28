@@ -1,10 +1,12 @@
 (()=>{'use strict';
-const tr=text=>window.CS2I18N?.translate(text)||text,$=id=>document.getElementById(id), isNum=x=>typeof x==='number'&&Number.isFinite(x),v=(x,none='—')=>x===null||x===undefined||x===''?none:String(x),cash=x=>isNum(x)?x.toLocaleString(window.CS2I18N?.locale()==='FR'?'fr-FR':'en-US')+' $':'—',fmt=x=>isNum(x)?x.toLocaleString(window.CS2I18N?.locale()==='FR'?'fr-FR':'en-US'):'—',pct=x=>isNum(x)?Math.max(0,Math.min(100,x))+'%':'0%',weaponName=x=>v(x).replace(/^weapon_/,'').replaceAll('_',' ').toUpperCase(),capitalize=s=>v(s).replace(/^./,x=>x.toUpperCase());
+const tr=text=>window.CS2I18N?.translate(text)||text,$=id=>document.getElementById(id);
+const {isNum}=window.CS2DisplayFormat;
+const widgetRenderer=window.CS2WidgetRenderer({board:$('board'),format:window.CS2DisplayFormat});
 const W=window.CS2WidgetCatalog;
 if(!W)throw new Error('Widget catalog must load before studio.js');
 const VERSION='1.0.0', COLOR='#f3ac52', DEFAULT_IDS=['score','weapon','economy','stats','bomb'];
 let profilesReady=false;
-let ws=null,modeDemo=false,last=null,anchor=null,pin='',currentView='default',editing=false,search='',category='all',openedSettings=new Set(),catalogOpen=false,profiles=[],activeProfile='',seq=1,notifyTimeout=null,dragId=null,pointerDrag=null;
+let modeDemo=false,last=null,anchor=null,pin='',currentView='default',editing=false,search='',category='all',openedSettings=new Set(),catalogOpen=false,profiles=[],activeProfile='',seq=1,notifyTimeout=null,dragId=null,pointerDrag=null;
 const WIDTHS=[3,4,6,8,12], STYLES=['solid','glass','outline'];
 const TEMPLATES={
  competitive:{name:'Compétitif compact',widgets:[['score',12],['weapon',4],['economy',8],['stats',12],['bomb',12]]},
@@ -34,8 +36,8 @@ function showSaveState(code){
 const profileSync=window.CS2ProfileSync({
  getDocument:()=>({profiles,activeProfile}),
  applyDocument:message=>{profiles=structuredClone(message.profiles||[]);activeProfile=message.activeProfile||profiles[0]?.id||'';profilesReady=true;renderBoard();},
- canSave:()=>profilesReady&&!modeDemo&&ws?.readyState===WebSocket.OPEN,
- send:command=>ws.send(JSON.stringify(command)),
+ canSave:()=>profilesReady&&!modeDemo&&dashboardClient.isOpen,
+ send:command=>dashboardClient.send(command),
  onStatus:showSaveState
 });
 const profile=()=>profiles.find(p=>p.id===activeProfile)||profiles[0]||newProfile('Demo');
@@ -55,9 +57,7 @@ function updateChrome(){const custom=currentView==='custom'&&!modeDemo&&profiles
 function currentWidgets(){return currentView==='default'||modeDemo||!profilesReady?DEFAULT_IDS.map((k,i)=>({id:'default'+i,kind:k,span:W[k].size,title:'',color:''})):profile().widgets;}
 function makeBtn(label,tip,action){const b=document.createElement('button');b.type='button';b.textContent=label;b.title=tip;b.setAttribute('aria-label',tip);b.addEventListener('click',action);return b;}
 function renderBoard(){updateChrome();const board=$('board');board.replaceChildren();const widgets=currentWidgets();board.classList.toggle('editing',currentView==='custom'&&editing);board.dataset.view=currentView;board.dataset.density=currentView==='custom'?(profile()?.density||'normal'):'normal';$('empty-board').classList.toggle('hidden',widgets.length>0);
- for(const w of widgets){const d=W[w.kind];if(!d)continue;const article=document.createElement('article');article.className='widget w-'+w.kind;article.dataset.id=w.id;article.dataset.kind=w.kind;article.style.setProperty('--span',w.span);if(w.color)article.style.setProperty('--widget-accent',w.color);if(w.background)article.style.setProperty('--widget-bg',w.background);article.style.setProperty('--widget-opacity',(w.opacity??100)+'%');article.dataset.style=w.style||'solid';
- const top=document.createElement('div');top.className='widget-top';const title=document.createElement('div');title.className='widget-heading';title.textContent=w.title||d.title;if(w.title)title.setAttribute('translate','no');const icon=document.createElement('span');icon.className='widget-icon';icon.textContent=d.icon;top.append(title,icon);article.append(top);
- const body=document.createElement('div');body.className='widget-body';body.innerHTML=d.html;article.append(body);
+ for(const w of widgets){const d=W[w.kind];if(!d)continue;const article=widgetRenderer.createCard(w,d);
  if(currentView==='custom'&&editing){const settings=document.createElement('div');settings.className='widget-settings';const controls=document.createElement('div');controls.className='edit-controls';
  controls.append(makeBtn('⠿','Glisser pour déplacer',()=>{}),makeBtn('↑','Monter le widget',()=>shift(w.id,-1)),makeBtn('↓','Descendre le widget',()=>shift(w.id,1)),makeBtn('⚙','Options du widget',()=>{openedSettings.has(w.id)?openedSettings.delete(w.id):openedSettings.add(w.id);renderBoard();}),makeBtn('×','Supprimer le widget',()=>removeWidget(w.id)));
  controls.firstElementChild.classList.add('move');controls.lastElementChild.classList.add('remove');const details=document.createElement('div');details.className='details'+(openedSettings.has(w.id)?' open':'');
@@ -97,84 +97,29 @@ function attachTouchHandles(){document.querySelectorAll('.widget .move').forEach
 function renderCatalog(){const parent=$('catalog-items');parent.replaceChildren();let group='';for(const [kind,d] of Object.entries(W)){if(category!=='all'&&category!==d.cat)continue;const terms=[kind,d.title,d.cat,tr(d.title),tr(d.cat)].join(' ').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase();if(search&&!terms.includes(search.normalize('NFD').replace(/[\u0300-\u036f]/g,'')))continue;if(group!==d.cat){group=d.cat;const h=document.createElement('div');h.className='cat-divider';h.textContent=tr(group);parent.append(h);}
  const b=document.createElement('button');b.className='catalog-item';b.dataset.kind=kind;b.type='button';const icon=document.createElement('div');icon.className='catalog-icon';icon.textContent=d.icon;const txt=document.createElement('div');const strong=document.createElement('strong');strong.textContent=d.title;const sm=document.createElement('small');sm.textContent=d.cat;txt.append(strong,sm);b.append(icon,txt);b.addEventListener('click',()=>{if(profile().widgets.length>=60){toast('Maximum 60 widgets par profil.');return;}profile().widgets.push(newWidget(kind));save();renderBoard();toast(d.title+' ajouté');});parent.append(b);
  }if(!parent.children.length){const x=document.createElement('div');x.textContent='Aucun widget trouvé';parent.append(x);}}
-function fieldData(s){const p=s.player||{},econ=s.economy||{},b=s.bomb_timer||{},map=v(s.map).replace(/^de_/,'').toUpperCase();return{
- map,round:`Round ${v(s.round)} · ${v(s.round_phase,s.map_phase||'—')}`,round_number:isNum(s.round)?String(s.round):'—',ct:v(s.ct),t:v(s.t),map_mode:v(s.map_mode),map_phase:capitalize(s.map_phase),round_phase:capitalize(s.round_phase),round_winner:s.round_winner?'Gagnant : '+v(s.round_winner):'',
- weapon:weaponName(p.weapon),ammo_clip:v(p.ammo_clip),ammo_reserve:'/ '+v(p.ammo_reserve),money:cash(p.money),nextmoney:cash(econ.on_loss),lossbonus:isNum(econ.loss_bonus)?'Bonus de défaite +'+cash(econ.loss_bonus):'Bonus indisponible',econ_note:econ.source==='gsi'?'Bonus fourni par GSI · hors exceptions':econ.source==='history'?'Estimation à partir des manches · règles standard':'Historique insuffisant · bonus inconnu',
- kills:v(p.kills),assists:v(p.assists),deaths:v(p.deaths),kd:isNum(p.kills)&&isNum(p.deaths)?(p.kills/Math.max(1,p.deaths)).toFixed(2):'—',mvps:v(p.mvps),personal_score:v(p.score),round_kills:v(p.round_kills),round_hs:v(p.round_killhs),round_damage:v(p.round_totaldmg),
- health:v(p.health),armor:v(p.armor),equip_value:cash(p.equip_value),helmet:p.helmet===null||p.helmet===undefined?'Casque —':p.helmet?'✓ Casque':'Sans casque',kit:p.defusekit===null||p.defusekit===undefined?'Kit —':p.defusekit?'✓ Kit':'Sans kit',armor_line:'Armure : '+v(p.armor),flash:v(p.flashed),smoke:v(p.smoked),fire:v(p.burning),name:v(p.name,'Joueur'),team:v(p.team,'Équipe —'),activity:capitalize(p.activity),
- bomb_state:({planted:'Plantée',defused:'Désamorcée',exploded:'Explosée',dropped:'Au sol',planting:'Pose en cours'})[s.bomb_state]||v(s.bomb_state,'En attente'),
- connection:s.online?'Données en direct':s.gsi_connected?'GSI actif · match en attente':'Hors ligne',lastpacket:s.age_seconds!==null&&s.age_seconds!==undefined?'Dernier paquet : '+s.age_seconds+' s':'En attente de données',provider:v(s.provider?.version)
- };}
-function addItem(parent,label,active=false){const el=document.createElement('div');el.className='item'+(active?' active':'');el.textContent=label;parent.append(el);}
-function updateValues(){if(!last)return;const f=fieldData(last),p=last.player||{};for(const card of $('board').children){const kind=card.dataset.kind;card.querySelectorAll('[data-v]').forEach(node=>node.textContent=f[node.dataset.v]??'—');card.querySelectorAll('[data-p]').forEach(node=>{let amount=0;if(node.dataset.p==='ammo'&&isNum(p.ammo_max)&&p.ammo_max>0&&isNum(p.ammo_clip))amount=p.ammo_clip/p.ammo_max*100;if(node.dataset.p==='health')amount=p.health;if(node.dataset.p==='armor')amount=p.armor;node.style.width=pct(amount);});
- const list=card.querySelector('[data-list]');if(list){list.replaceChildren();if(list.dataset.list==='weapons'||list.dataset.list==='grenades'){
-  const items=(p.weapons||[]).filter(w=>list.dataset.list==='weapons'||w.type==='Grenade'||/grenade|flashbang|molotov|incgrenade|decoy|smokegrenade/.test(w.name));if(!items.length)addItem(list,'Aucune donnée');else for(const w of items){const ammo=isNum(w.ammo_clip)&&w.type!=='Grenade'?' · '+w.ammo_clip:'';addItem(list,weaponName(w.name)+ammo,w.state==='active');}
- }else if(list.dataset.list==='wins'){const items=last.recent_wins||[];if(!items.length)addItem(list,'Historique indisponible');for(const w of items)addItem(list,`#${w.round} · ${w.winner}`);
- }else if(list.dataset.list==='events'){const items=last.events||[];if(!items.length)addItem(list,'Aucun événement enregistré');for(const evt of items.slice(0,8)){const item=document.createElement('div');item.className='item';const txt=document.createElement('span');txt.textContent=evt.message;const when=document.createElement('span');when.className='tiny';when.textContent=isNum(evt.at)?new Date(evt.at*1000).toLocaleTimeString(window.CS2I18N?.locale()==='FR'?'fr-FR':'en-US',{hour:'2-digit',minute:'2-digit',second:'2-digit'}):'';item.append(txt,when);list.append(item);}}
- }
- if(kind==='bomb'){const demoCtl=card.querySelector('[data-demo-controls]');if(demoCtl)demoCtl.classList.toggle('hidden',!modeDemo);} }
- paintBomb();}
-function paintBomb(){if(!last)return;let left=null,kind='',message='En attente',timer=last.bomb_timer||{};if(timer.status==='active'&&anchor){left=Math.max(0,anchor.left-(performance.now()-anchor.at)/1000);if(left>10){kind='yellow';message='Désamorçage possible sans kit';}else if(left>5){kind='orange';message='Kit nécessaire pour commencer';}else{kind='red';message='Trop tard pour commencer';}if(left===0)message='Explosion estimée';}
- else if(timer.status==='expired'){left=0;kind='red';message='Explosion estimée';}else if(timer.status==='disabled'){message='Minuteur désactivé';}else if(timer.status==='stale')message='Données interrompues';else if(timer.status==='unknown_start')message='Heure de pose inconnue';else if(last.bomb_state==='defused')message='Bombe désamorcée';else if(last.bomb_state==='exploded')message='Bombe explosée';else message='En attente d’une pose';
- for(const card of document.querySelectorAll('.widget.w-bomb')){const clock=card.querySelector('[data-bomb-clock]'),bar=card.querySelector('[data-bomb-fill]'),msg=card.querySelector('[data-bomb-msg]');if(!clock||!bar||!msg)continue;clock.textContent=left===null?'--.- s':left.toFixed(1)+' s';clock.className='bomb-clock '+kind;bar.style.width=left===null?'0%':pct(100*left/(timer.duration||40));bar.className='bomb-fill '+kind;msg.textContent=message;}}
+function updateValues(){widgetRenderer.updateValues(last,{modeDemo,anchor});}
+function paintBomb(){widgetRenderer.paintBomb(last,anchor);}
 function renderData(s){last=s;anchor=s.bomb_timer?.status==='active'&&isNum(s.bomb_timer.remaining)?{at:performance.now(),left:s.bomb_timer.remaining}:null;$('login').classList.add('hidden');$('view').classList.remove('hidden');setOnline(s);updateValues();}
-const reconnect=window.CS2Reconnect({connect:connectSocket});
-function login(){
- modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerror').textContent='';$('pin').setAttribute('aria-invalid','false');
- if(pin.length<6){$('loginerror').textContent='Code PIN trop court.';$('pin').setAttribute('aria-invalid','true');return;}
- reconnect.stop();if(ws){ws.onclose=null;ws.close();ws=null;}
- reconnect.start();
-}
-async function connectSocket(isCurrent){
- if(!isCurrent())return;
- setStatus('Connexion…','','connecting');
- try{const res=await fetch('/health',{cache:'no-store',signal:AbortSignal.timeout(5000)});if(!res.ok)throw Error('HTTP '+res.status);const health=await res.json();if(!isCurrent())return;if(health.version!==VERSION){$('loginerror').textContent='Redémarre Docker avec la version 1.0.0.';setStatus('Mise à jour requise','bad','error');throw Error('version');}}
- catch(err){if(!isCurrent())return;if(err.message!=='version'){$('loginerror').textContent='Serveur indisponible : '+err.message;setStatus('Hors ligne','bad','error');}throw err;}
- if(!isCurrent())return;
- const url=(location.protocol==='https:'?'wss:':'ws:')+'//'+location.host+'/ws',socket=new WebSocket(url);ws=socket;let authorized=false,failed=false;
- socket.onopen=()=>{if(isCurrent()&&ws===socket)socket.send(JSON.stringify({type:'auth',pin}));};
- socket.onmessage=e=>{
-  if(modeDemo||ws!==socket||!isCurrent())return;
-  let msg;
-  try{msg=JSON.parse(e.data);}catch{return;}
-  if(msg.type==='auth_error'){
-   failed=true;reconnect.stop();
-   $('loginerror').textContent=msg.message||'Code incorrect.';
-   $('pin').setAttribute('aria-invalid','true');
-   setStatus('PIN incorrect','bad','error');
-   return;
+const dashboardClient=window.CS2DashboardClient({
+ version:VERSION,
+ getPin:()=>pin,
+ isDemo:()=>modeDemo,
+ onConnecting:()=>setStatus('Connexion…','','connecting'),
+ onHealthError:(error,versionMismatch)=>{
+  if(versionMismatch){
+   $('loginerror').textContent='Redémarre Docker avec la version 1.0.0.';
+   setStatus('Mise à jour requise','bad','error');
+  }else{
+   $('loginerror').textContent='Serveur indisponible : '+error.message;
+   setStatus('Hors ligne','bad','error');
   }
-  if(msg.type==='auth_ok'){
-   authorized=true;reconnect.connected();
-   profileSync.authenticate(msg.session||'');
-   profilesReady=true;
-   $('pin').value='';
-   $('download-support').classList.remove('hidden');
-   setStatus('Connecté','ok');
-   document.dispatchEvent(new Event('cs2:authenticated'));
-   return;
-  }
-  if(msg.type==='profiles_state'&&authorized){profileSync.receive(msg);return;}
-  if(msg.type==='profiles_error'&&authorized){profileSync.failed(msg.code);return;}
-  if(msg.type==='diagnostics_data'&&authorized){
-   const blob=new Blob([JSON.stringify(msg.report,null,2)],{type:'application/json'});
-   const downloadUrl=URL.createObjectURL(blob);
-   const anchor=document.createElement('a');
-   anchor.href=downloadUrl;
-   anchor.download='CS2_Companion_support.json';
-   anchor.click();
-   setTimeout(()=>URL.revokeObjectURL(downloadUrl),1000);
-   return;
-  }
-  if(msg.type==='state'&&authorized)renderData(msg);
- };
- socket.onerror=()=>{
-  if(ws!==socket||!isCurrent())return;
+ },
+ onMessage:handleServerMessage,
+ onNetworkError:({failed})=>{
   if(!failed)setStatus('Erreur réseau','bad','error');
   document.dispatchEvent(new Event('cs2:network-error'));
- };
- socket.onclose=()=>{
-  if(modeDemo||ws!==socket)return;
+ },
+ onClose:({authorized,failed})=>{
   profileSync.disconnected();
   if(!authorized){
    if(!failed)$('loginerror').textContent='Impossible de se connecter au WebSocket.';
@@ -192,10 +137,49 @@ async function connectSocket(isCurrent){
    paintBomb();
   }
   reconnect.failed();
- };
+ }
+});
+const reconnect=window.CS2Reconnect({connect:isCurrent=>dashboardClient.connect(isCurrent)});
+function login(){
+ modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerror').textContent='';$('pin').setAttribute('aria-invalid','false');
+ if(pin.length<6){$('loginerror').textContent='Code PIN trop court.';$('pin').setAttribute('aria-invalid','true');return;}
+ reconnect.stop();dashboardClient.close();
+ reconnect.start();
+}
+function handleServerMessage(message){
+ if(message.type==='auth_error'){
+  reconnect.stop();
+  $('loginerror').textContent=message.message||'Code incorrect.';
+  $('pin').setAttribute('aria-invalid','true');
+  setStatus('PIN incorrect','bad','error');
+  return;
+ }
+ if(message.type==='auth_ok'){
+  reconnect.connected();
+  profileSync.authenticate(message.session||'');
+  profilesReady=true;
+  $('pin').value='';
+  $('download-support').classList.remove('hidden');
+  setStatus('Connecté','ok');
+  document.dispatchEvent(new Event('cs2:authenticated'));
+  return;
+ }
+ if(message.type==='profiles_state'){profileSync.receive(message);return;}
+ if(message.type==='profiles_error'){profileSync.failed(message.code);return;}
+ if(message.type==='diagnostics_data'){
+  const blob=new Blob([JSON.stringify(message.report,null,2)],{type:'application/json'});
+  const downloadUrl=URL.createObjectURL(blob);
+  const downloadLink=document.createElement('a');
+  downloadLink.href=downloadUrl;
+  downloadLink.download='CS2_Companion_support.json';
+  downloadLink.click();
+  setTimeout(()=>URL.revokeObjectURL(downloadUrl),1000);
+  return;
+ }
+ if(message.type==='state')renderData(message);
 }
 const SAMPLE={type:'state',online:true,gsi_connected:true,age_seconds:0,map:'de_mirage',map_mode:'competitive',map_phase:'live',round:14,round_phase:'live',ct:8,t:5,round_winner:'',recent_wins:[{round:10,winner:'ct_win'},{round:11,winner:'t_win'},{round:12,winner:'ct_win'}],bomb_state:'',bomb_timer:{enabled:false,status:'disabled',duration:40},economy:{on_loss:5600,loss_bonus:2400,loss_streak_known:true,source:'gsi'},events:[{message:'Élimination · 18 au total',at:Date.now()/1000,category:'kill'},{message:'Nouvelle manche · MIRAGE',at:Date.now()/1000-35,category:'round'}],provider:{version:'CS2'},player:{name:'Player',team:'CT',activity:'playing',money:3200,health:87,armor:94,helmet:true,defusekit:true,equip_value:4300,flashed:0,smoked:0,burning:0,weapon:'weapon_ak47',ammo_clip:21,ammo_max:30,ammo_reserve:90,kills:18,assists:4,deaths:11,mvps:3,score:42,round_kills:2,round_killhs:1,round_totaldmg:167,weapons:[{name:'weapon_ak47',type:'Rifle',state:'active',ammo_clip:21},{name:'weapon_usp_silencer',type:'Pistol',state:'holstered',ammo_clip:12},{name:'weapon_smokegrenade',type:'Grenade',state:'holstered'},{name:'weapon_flashbang',type:'Grenade',state:'holstered'}]}};
-function demo(){if(!allowDiscardPending())return;reconnect.stop();clearPrivateProfiles();pin='';$('pin').value='';$('download-support').classList.add('hidden');modeDemo=true;if(ws){ws.onclose=null;ws.close();ws=null;}renderData(structuredClone(SAMPLE));}function demoBomb(n){if(!modeDemo)return;const s=structuredClone(SAMPLE);s.bomb_state=n==='stop'?'defused':'planted';s.bomb_timer=n==='stop'?{enabled:true,status:'idle',duration:40}:{enabled:true,status:'active',remaining:n,duration:40};renderData(s);}
+function demo(){if(!allowDiscardPending())return;reconnect.stop();clearPrivateProfiles();pin='';$('pin').value='';$('download-support').classList.add('hidden');modeDemo=true;dashboardClient.close();renderData(structuredClone(SAMPLE));}function demoBomb(n){if(!modeDemo)return;const s=structuredClone(SAMPLE);s.bomb_state=n==='stop'?'defused':'planted';s.bomb_timer=n==='stop'?{enabled:true,status:'idle',duration:40}:{enabled:true,status:'active',remaining:n,duration:40};renderData(s);}
 function initialize(){updateProfiles();renderBoard();renderCatalog();}
 $('tab-default').addEventListener('click',()=>{currentView='default';editing=false;catalogOpen=false;renderBoard();});$('tab-custom').addEventListener('click',()=>{if(modeDemo||!profilesReady)return;currentView='custom';renderBoard();});
 $('edit').addEventListener('click',()=>{editing=!editing;if(!editing)catalogOpen=false;renderBoard();});$('add').addEventListener('click',()=>{catalogOpen=!catalogOpen;updateChrome();if(catalogOpen)$('search-widgets').focus();});$('close-catalog').addEventListener('click',()=>{catalogOpen=false;updateChrome();});$('search-widgets').addEventListener('input',e=>{search=e.target.value.toLowerCase();renderCatalog();});$('catalog-category').addEventListener('change',e=>{category=e.target.value;renderCatalog();});
@@ -208,10 +192,10 @@ $('delete-profile').addEventListener('click',()=>{if(profiles.length<=1)return;i
 $('reset').addEventListener('click',()=>{if(!confirm(tr('Remettre ce profil à sa disposition initiale ?')))return;profile().widgets=seedWidgets();profile().accent=COLOR;profile().density='normal';openedSettings.clear();save();renderBoard();});
 $('export').addEventListener('click',()=>{const data={format:'cs2-companion-layout',version:2,profile:{name:profile().name,accent:profile().accent,density:profile().density,widgets:profile().widgets.map(({kind,span,title,color,background,opacity,style})=>({kind,span,title,color,background,opacity,style}))}};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='CS2_Companion_'+profile().name.replace(/[^a-z0-9_-]+/gi,'_')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),500);toast('Profil exporté');});
 $('import').addEventListener('click',()=>$('import-file').click());$('import-file').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;if(file.size>150000){toast('Fichier trop volumineux.');return;}try{const data=JSON.parse(await file.text());if(data.format!=='cs2-companion-layout'||data.version!==2||!data.profile||!Array.isArray(data.profile.widgets))throw Error('Format inconnu');if(profiles.length>=12)throw Error('Maximum 12 profils');const items=data.profile.widgets.slice(0,60).map(sanitizeWidget).filter(Boolean);const p={id:freshProfileId(),name:String(data.profile.name||'Import').slice(0,32),accent:safeColor(data.profile.accent)||COLOR,density:safeDensity(data.profile.density),widgets:items};profiles.push(p);activeProfile=p.id;editing=true;save();renderBoard();toast('Profil importé · '+items.length+' widgets');}catch(err){toast('Import impossible : '+err.message);}});
-$('download-support').addEventListener('click',()=>{if(!modeDemo&&profilesReady&&ws?.readyState===WebSocket.OPEN)ws.send(JSON.stringify({type:'diagnostics_request'}));});
+$('download-support').addEventListener('click',()=>{if(!modeDemo&&profilesReady&&dashboardClient.isOpen)dashboardClient.send({type:'diagnostics_request'});});
 $('connect').addEventListener('click',login);$('pin').addEventListener('keydown',e=>{if(e.key==='Enter')login();});$('demo').addEventListener('click',demo);$('demoagain').addEventListener('click',demo);
 $('board').addEventListener('click',e=>{const b=e.target.closest('[data-demo]');if(b&&modeDemo){const n=b.dataset.demo;demoBomb(n==='stop'?'stop':Number(n));}});
-$('logout').addEventListener('click',()=>{if(!allowDiscardPending())return;reconnect.stop();clearPrivateProfiles();pin='';$('pin').value='';$('download-support').classList.add('hidden');document.dispatchEvent(new Event('cs2:logout'));modeDemo=false;if(ws){ws.onclose=null;ws.close();ws=null;}last=null;anchor=null;$('view').classList.add('hidden');$('login').classList.remove('hidden');setStatus('Non connecté');});
+$('logout').addEventListener('click',()=>{if(!allowDiscardPending())return;reconnect.stop();clearPrivateProfiles();pin='';$('pin').value='';$('download-support').classList.add('hidden');document.dispatchEvent(new Event('cs2:logout'));modeDemo=false;dashboardClient.close();last=null;anchor=null;$('view').classList.add('hidden');$('login').classList.remove('hidden');setStatus('Non connecté');});
 $('locale-select').addEventListener('change',()=>setTimeout(()=>{renderCatalog();showSaveState(profileSync.status);},0));
 // Repaint the countdown only while it is running and the tab is visible.
 setInterval(()=>{

@@ -65,3 +65,7 @@ python -m uvicorn companion.server:app --env-file .env --host 127.0.0.1 --port 8
 ```
 
 Profile files use the same depth/finite-number checks as network JSON and are read with a byte cap before parsing. Unsupported binary WebSocket frames close with code 1003. CI actions are pinned to reviewed commit SHAs; refresh them deliberately and rerun the complete matrix. Docker availability failures do not trigger UAC; elevation remains limited to the existing explicit GSI-folder permission workflow.
+
+## Frontend module boundaries
+
+P1 separates display projections, widget DOM rendering and HTTP/WebSocket transport from studio.js. Profile/editor state, current autosave and retry policy retain their existing owners. Read [frontend responsibilities and approved future boundaries](frontend-modules.md) before extending them.
