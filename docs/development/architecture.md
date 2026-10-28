@@ -69,3 +69,5 @@ Profile files use the same depth/finite-number checks as network JSON and are re
 ## Frontend module boundaries
 
 P1 separates display projections, widget DOM rendering and HTTP/WebSocket transport from studio.js. Profile/editor state, current autosave and retry policy retain their existing owners. Read [frontend responsibilities and approved future boundaries](frontend-modules.md) before extending them.
+
+The approved identity, token ownership and temporary theme preview are documented in [design-system.md](design-system.md).

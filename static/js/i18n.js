@@ -5,6 +5,9 @@
 const STORAGE='cs2-companion-language';
 const translations={
  EN:{
+ "Ouvre « Mon dashboard », puis « Personnaliser » pour ajouter, déplacer et redimensionner tes widgets. Les profils sont sauvegardés dans cette instance Docker et partagés entre les appareils connectés. Tu peux aussi exporter un JSON.":"Open “My dashboard”, then “Customize”, to add, move and resize widgets. Profiles are saved on this Docker instance and shared across authenticated devices. You can also export JSON.",
+ 'Thème d’aperçu':'Theme preview',
+ 'Non enregistré · cet onglet':'Not saved · this tab',
  'Renommer':'Rename',
  'Nouveau nom du dashboard :':'New dashboard name:',
  'Dashboard renommé':'Dashboard renamed',

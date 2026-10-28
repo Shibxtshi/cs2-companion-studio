@@ -100,3 +100,7 @@ Credits: independent maintainer and community contributors (once any exist); **O
 ## Project layout
 
 The backend lives in `companion/`, web assets in `static/css/` and `static/js/`, and automated checks in `tests/` (including Docker and Windows verification). Operational Windows scripts are indexed in [installer/](installer/README.md), maintenance commands in [scripts/](scripts/README.md), and safe configuration examples in [examples/](examples/README.md). The server entry point is `companion.server:app`; Docker/Compose and Windows launchers start it. Start with the [documentation index](docs/README.md) or the [architecture guide](docs/development/architecture.md) to find the relevant component.
+
+## Identity and theme preview
+
+CCS uses the Repère identity and local Inter / Barlow Condensed fonts. Tactical Blue is the default; the header offers Competitive Red, Performance Green and Creator Purple previews. The choice is not saved, affects only this tab and resets on reload. Existing profile/widget color choices remain intact; theme persistence will be connected to a later profile contract. See [design foundations](docs/development/design-system.md) and [font licenses/provenance](static/fonts/README.md).

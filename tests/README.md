@@ -77,3 +77,7 @@ The default path checks the frozen synthetic fixtures in tests/browser/fixtures/
 --output optionally saves desktop/mobile EN/FR screenshots of the synthetic dashboard, plus a performance JSON when --benchmark is requested. It never captures the login PIN or reads personal runtime files. Date and timer anchors are frozen for characterization; benchmark pages use real clocks.
 
 Benchmarks use fresh contexts, a fixed 1280x900 viewport and the same fixtures. Metrics include navigation DCL, initial dashboard opening, 29/60-widget rebuilds, entry into the existing editor, and 29-widget refresh. UI click metrics force layout; initial/transport updates also include Playwright round-trip overhead. Raw samples accompany median/min/max. Run baseline and candidate sequentially on the same machine, repeat, and report noise rather than inventing a pass threshold. No benchmark timing is a CI performance gate.
+
+## Design-system checks
+
+Run node tests/js/test_theme_preview.js and python tests/browser/test_themes.py --browser chromium. CI also runs the theme journey in Firefox and WebKit. Optional --output ../theme-evidence saves synthetic desktop/mobile screenshots and contrast samples. It covers four palettes, all 29 widget outputs, EN/FR, keyboard focus, four viewport widths, local fonts and profile/storage isolation. It does not certify arbitrary user-chosen widget colors or browser-owned native dialogs.

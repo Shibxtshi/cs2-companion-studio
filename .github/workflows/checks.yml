@@ -53,6 +53,8 @@ jobs:
           node tests/js/test_i18n.js
           node tests/js/test_display_format.js
           node tests/js/test_dashboard_client.js
+          node tests/js/test_theme_preview.js
+          node --check static/js/theme-preview.js
           node --check static/js/display-format.js
           node --check static/js/widget-renderer.js
           node --check static/js/dashboard-client.js
@@ -104,6 +106,11 @@ jobs:
         env:
           HOME: /root
         run: python tests/browser/test_widget_characterization.py --browser ${{ matrix.browser }}
+
+      - name: Verify all themes, local fonts and profile isolation
+        env:
+          HOME: /root
+        run: python tests/browser/test_themes.py --browser ${{ matrix.browser }}
 
   dependency-audit:
     name: Vulnerability report / SBOM

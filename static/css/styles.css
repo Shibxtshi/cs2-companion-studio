@@ -1,27 +1,12 @@
-:root {
-  color-scheme:dark;
-  --bg:#0a0f18;
-  --card:#141c29;
-  --card2:#1a2534;
-  --line:#2c394b;
-  --text:#eef2f9;
-  --muted:#96a4b6;
-  --accent:#f3ac52;
-  --good:#6ce2b7;
-  --red:#fa7380;
-  --blue:#76bbfd;
-  --yellow:#f5d75e;
-  --orange:#f6a044
-}
-
 * {
   box-sizing:border-box
 }
 
 body {
   margin:0;
-  background:radial-gradient(ellipse at 70% -20%,#223546 0%,transparent 55%),var(--bg);
-  font:15px/1.45 Inter,system-ui,-apple-system,"Segoe UI",sans-serif;
+  background:var(--bg);
+  font:14px/1.45 var(--font-ui);
+  font-optical-sizing:none;
   color:var(--text);
   min-height:100vh
 }
@@ -35,12 +20,12 @@ button {
 }
 
 button:disabled {
-  opacity:.4;
+  opacity:.65;
   cursor:not-allowed
 }
 
 button:focus-visible,input:focus-visible,select:focus-visible {
-  outline:2px solid var(--accent);
+  outline:2px solid var(--ccs-focus);
   outline-offset:2px
 }
 
@@ -51,7 +36,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .app {
   max-width:1350px;
   margin:auto;
-  padding:26px 24px 80px
+  padding:26px var(--space-6) 80px
 }
 
 .topbar {
@@ -65,30 +50,21 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .brand {
   display:flex;
   align-items:center;
-  gap:12px
+  gap:var(--space-3)
 }
 
 .brandmark {
-  display:grid;
-  place-items:center;
-  width:43px;
-  height:43px;
-  border:1px solid #695033;
-  border-radius:13px;
-  background:#33291b;
-  color:var(--accent);
-  font-size:24px;
-  font-weight:900
+  width:40px;
+  height:40px;
+  flex:none;
+  background:var(--ccs-accent);
+  mask:url('../branding/repere.svg') center/contain no-repeat;
+  -webkit-mask:url('../branding/repere.svg') center/contain no-repeat;
 }
 
 .brand-name {
-  font-size:21px;
-  font-weight:850;
-  letter-spacing:-.9px
-}
-
-.brand-name span {
-  color:var(--accent)
+  font:700 34px/1 var(--font-brand);
+  letter-spacing:.03em;
 }
 
 .sub {
@@ -97,9 +73,9 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .badge {
-  padding:8px 12px;
-  border:1px solid #445367;
-  border-radius:99px;
+  padding:var(--space-2) var(--space-3);
+  border:1px solid var(--ccs-control-border);
+  border-radius:4px;
   color:var(--muted);
   font-size:12px;
   white-space:nowrap
@@ -107,12 +83,12 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .badge.ok {
   color:var(--good);
-  border-color:#2d6958
+  border-color:var(--success)
 }
 
 .badge.bad {
   color:var(--red);
-  border-color:#714854
+  border-color:var(--error)
 }
 
 .login {
@@ -121,12 +97,12 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   padding:28px;
   background:var(--card);
   border:1px solid var(--line);
-  border-radius:18px
+  border-radius:var(--radius-card)
 }
 
 .login h2 {
   font-size:23px;
-  margin:0 0 8px
+  margin:0 0 var(--space-2)
 }
 
 .login input {
@@ -137,7 +113,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .login-actions {
   display:flex;
   align-items:center;
-  gap:8px
+  gap:var(--space-2)
 }
 
 .error {
@@ -153,23 +129,25 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .btn {
-  border:1px solid #415069;
-  border-radius:10px;
-  background:#202d40;
+  border:1px solid var(--ccs-control-border);
+  border-radius:var(--radius-control);
+  background:var(--ccs-raised);
   color:var(--text);
-  padding:10px 14px;
+  padding:9px 14px;
   font-size:13px;
-  font-weight:650
+  font-weight:600;
+  min-height:40px;
+  transition:background-color var(--motion-fast),border-color var(--motion-fast);
 }
 
 .btn:hover {
-  filter:brightness(1.14)
+  background:var(--ccs-tint)
 }
 
 .btn.primary {
-  background:var(--accent);
-  color:#191a1e;
-  border-color:var(--accent)
+  background:var(--ccs-accent);
+  color:var(--ccs-on-accent);
+  border-color:var(--ccs-accent)
 }
 
 .btn.ghost {
@@ -182,17 +160,18 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .btn.danger {
-  border-color:#784451;
-  color:#ffb7bc
+  border-color:var(--error);
+  color:var(--error)
 }
 
 .input,.select {
   color:var(--text);
-  background:#0d1520;
-  border:1px solid #42516a;
-  border-radius:10px;
+  background:var(--ccs-input);
+  border:1px solid var(--ccs-control-border);
+  border-radius:var(--radius-control);
   padding:9px 11px;
-  min-width:0
+  min-width:0;
+  min-height:40px;
 }
 
 .select {
@@ -211,31 +190,32 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .tabs {
   display:flex;
   gap:5px;
-  background:#121a26;
+  background:var(--ccs-nav);
   border:1px solid var(--line);
   padding:5px;
-  border-radius:13px
+  border-radius:var(--radius-card)
 }
 
 .tab {
   padding:10px 17px;
-  border-radius:9px;
+  border-radius:var(--radius-card);
   background:transparent;
   border:0;
   color:var(--muted);
-  font-weight:700;
+  font-weight:600;
   font-size:13px
 }
 
 .tab.active {
-  background:#2d3b4f;
-  color:var(--text)
+  background:var(--ccs-tint);
+  color:var(--ccs-ink);
+  box-shadow:inset 0 -2px var(--ccs-accent);
 }
 
 .head-actions {
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:var(--space-2);
   flex-wrap:wrap
 }
 
@@ -250,8 +230,8 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .custom-tools {
   border:1px solid var(--line);
-  background:#111925;
-  border-radius:15px;
+  background:var(--ccs-nav);
+  border-radius:var(--radius-card);
   padding:13px 15px;
   margin-bottom:15px;
   display:flex;
@@ -278,10 +258,10 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .catalog {
-  border:1px solid #46566a;
-  background:#131d2a;
+  border:1px solid var(--ccs-control-border);
+  background:var(--ccs-surface);
   padding:19px;
-  border-radius:15px;
+  border-radius:var(--radius-card);
   margin-bottom:15px
 }
 
@@ -313,22 +293,22 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   text-align:left;
   align-items:center;
   gap:9px;
-  padding:12px;
+  padding:var(--space-3);
   border:1px solid var(--line);
-  border-radius:11px;
-  background:#1a2736;
+  border-radius:var(--radius-card);
+  background:var(--ccs-raised);
   color:var(--text)
 }
 
 .catalog-item:hover {
-  border-color:var(--accent)
+  border-color:var(--ccs-accent)
 }
 
 .catalog-icon {
   display:grid;
   place-items:center;
-  background:#2a3545;
-  border-radius:9px;
+  background:var(--ccs-nav);
+  border-radius:var(--radius-card);
   min-width:35px;
   height:35px;
   font-size:18px
@@ -344,11 +324,11 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .cat-divider {
   grid-column:1/-1;
   margin:10px 0 0;
-  font-weight:750;
-  font-size:11px;
+  font-weight:700;
+  font-size:12px;
   letter-spacing:1px;
   text-transform:uppercase;
-  color:var(--accent)
+  color:var(--ccs-accent)
 }
 
 .board {
@@ -362,15 +342,15 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   position:relative;
   min-width:0;
   grid-column:span var(--span,6);
-  background:linear-gradient(145deg,#182333,#121a26);
+  background:var(--card);
   border:1px solid var(--line);
-  border-radius:17px;
+  border-radius:var(--radius-card);
   padding:19px 20px;
   min-height:146px;
   overflow:hidden;
   display:flex;
   flex-direction:column;
-  transition:border-color .12s
+  transition:border-color var(--motion-fast)
 }
 
 .widget::before {
@@ -386,8 +366,8 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .widget.drag-over {
-  border-color:var(--accent);
-  outline:2px dashed var(--accent);
+  border-color:var(--ccs-accent);
+  outline:2px dashed var(--ccs-accent);
   outline-offset:-5px
 }
 
@@ -426,11 +406,11 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .widget-heading {
-  font-size:11px;
+  font-size:12px;
   letter-spacing:1.35px;
   text-transform:uppercase;
-  color:#a3b0c0;
-  font-weight:800;
+  color:var(--ccs-muted);
+  font-weight:700;
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap
@@ -450,12 +430,12 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   display:none;
   border-top:1px solid var(--line);
   margin-top:14px;
-  padding-top:12px
+  padding-top:var(--space-3)
 }
 
 .board.editing .widget {
   border-style:dashed;
-  border-color:#546277
+  border-color:var(--ccs-control-border)
 }
 
 .board.editing .widget-settings {
@@ -470,16 +450,16 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .edit-controls button {
-  border:1px solid #40516a;
+  border:1px solid var(--ccs-control-border);
   color:var(--text);
   border-radius:7px;
-  background:#243347;
-  padding:5px 8px;
+  background:var(--ccs-raised);
+  padding:5px var(--space-2);
   font-size:12px
 }
 
 .edit-controls .remove {
-  color:#ffc1c5
+  color:var(--error)
 }
 
 .widget-settings .details {
@@ -495,7 +475,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .widget-settings .details label {
-  font-size:11px;
+  font-size:12px;
   color:var(--muted)
 }
 
@@ -512,9 +492,9 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   width:35px;
   height:33px;
   padding:3px;
-  border:1px solid #46566a;
+  border:1px solid var(--ccs-control-border);
   border-radius:8px;
-  background:#151c26
+  background:var(--ccs-input)
 }
 
 .move {
@@ -527,7 +507,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .big {
-  font-weight:800;
+  font-weight:700;
   font-size:clamp(32px,3.5vw,49px);
   line-height:1.1;
   letter-spacing:-1px;
@@ -536,14 +516,14 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .medium {
   font-size:clamp(22px,2.4vw,31px);
-  font-weight:780;
+  font-weight:700;
   letter-spacing:-.5px;
   font-variant-numeric:tabular-nums
 }
 
 .smallish {
   font-size:17px;
-  font-weight:730
+  font-weight:700
 }
 
 .muted {
@@ -570,7 +550,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:12px
+  gap:var(--space-3)
 }
 
 .flex-wrap {
@@ -579,28 +559,28 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .rowgap {
   display:flex;
-  gap:12px;
+  gap:var(--space-3);
   align-items:center;
   flex-wrap:wrap
 }
 
 .pill {
   display:inline-block;
-  border:1px solid #40516a;
-  padding:4px 9px;
+  border:1px solid var(--ccs-control-border);
+  padding:var(--space-1) 9px;
   border-radius:99px;
-  font-size:11px;
+  font-size:12px;
   color:var(--muted)
 }
 
 .pill.good {
   color:var(--good);
-  border-color:#2e6553
+  border-color:var(--success)
 }
 
 .pill.bad {
   color:var(--red);
-  border-color:#6e4152
+  border-color:var(--error)
 }
 
 .space {
@@ -614,7 +594,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .tiny {
-  font-size:11px;
+  font-size:12px;
   color:var(--muted)
 }
 
@@ -626,8 +606,8 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   width:100%;
   height:8px;
   overflow:hidden;
-  border-radius:100px;
-  background:#303b4b;
+  border-radius:3px;
+  background:var(--ccs-raised);
   margin-top:9px
 }
 
@@ -635,15 +615,15 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   height:100%;
   background:var(--widget-accent,var(--accent));
   border-radius:100px;
-  transition:width .16s
+  transition:width var(--motion-normal)
 }
 
 .widget .score-side {
   display:flex;
-  gap:12px;
+  gap:var(--space-3);
   align-items:baseline;
   font-size:clamp(28px,3.8vw,46px);
-  font-weight:840
+  font-weight:700
 }
 
 .team-ct {
@@ -651,12 +631,12 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .team-t {
-  color:#f6d084
+  color:var(--team-t)
 }
 
 .widget .weapon-text {
   font-size:22px;
-  font-weight:850;
+  font-weight:700;
   overflow:hidden;
   text-overflow:ellipsis;
   white-space:nowrap
@@ -665,7 +645,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .stat-tiles {
   display:flex;
   justify-content:space-between;
-  gap:12px;
+  gap:var(--space-3);
   flex-wrap:wrap
 }
 
@@ -684,10 +664,10 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .tag {
   display:inline-block;
   font-size:12px;
-  padding:4px 9px;
+  padding:var(--space-1) 9px;
   border-radius:8px;
-  background:#253348;
-  color:#c4d2e2
+  background:var(--ccs-raised);
+  color:var(--ccs-text)
 }
 
 .inventory-list,.history-list,.event-list {
@@ -700,15 +680,15 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .item {
   font-size:12px;
   line-height:1.25;
-  background:#202e40;
-  border:1px solid #354458;
-  border-radius:9px;
-  padding:8px 10px
+  background:var(--ccs-raised);
+  border:1px solid var(--ccs-border);
+  border-radius:var(--radius-card);
+  padding:var(--space-2) 10px
 }
 
 .item.active {
-  border-color:var(--accent);
-  color:#ffe2bb
+  border-color:var(--ccs-accent);
+  color:var(--ccs-ink)
 }
 
 .event-list {
@@ -723,12 +703,12 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .bomb-clock {
   font-size:clamp(44px,6vw,76px);
-  font-weight:850;
+  font-weight:700;
   letter-spacing:-2px;
   line-height:1.1;
   font-variant-numeric:tabular-nums;
   color:var(--muted);
-  margin:12px 0
+  margin:var(--space-3) 0
 }
 
 .bomb-clock.yellow {
@@ -745,7 +725,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .bomb-track {
   height:10px;
-  background:#303b4b;
+  background:var(--ccs-raised);
   border-radius:100px;
   overflow:hidden
 }
@@ -782,9 +762,9 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .empty-board {
-  background:#131d2b;
-  border:1px dashed #495a72;
-  border-radius:16px;
+  background:var(--ccs-surface);
+  border:1px dashed var(--ccs-control-border);
+  border-radius:var(--radius-card);
   padding:40px;
   text-align:center;
   color:var(--muted)
@@ -798,7 +778,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .foot-actions {
   display:flex;
-  gap:8px;
+  gap:var(--space-2);
   flex-wrap:wrap;
   margin-top:15px
 }
@@ -808,35 +788,35 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   bottom:20px;
   left:50%;
   transform:translateX(-50%);
-  background:#263449;
-  border:1px solid #4a5b71;
-  border-radius:12px;
-  padding:11px 16px;
+  background:var(--ccs-raised);
+  border:1px solid var(--ccs-control-border);
+  border-radius:var(--radius-card);
+  padding:11px var(--space-4);
   z-index:200;
-  box-shadow:0 8px 30px #0009;
-  color:#f3f6fd;
+  box-shadow:var(--shadow-menu);
+  color:var(--ccs-text);
   font-size:13px
 }
 
 .notice {
   font-size:12px;
-  color:#eecb95;
-  border:1px solid #674f34;
-  background:#221d19;
+  color:var(--warning);
+  border:1px solid var(--warning);
+  background:var(--warning-bg);
   padding:10px 13px;
-  border-radius:9px;
+  border-radius:var(--radius-card);
   margin-top:15px
 }
 
 @media(max-width:800px) {
   .app {
-    padding:16px 13px 60px
+    padding:var(--space-4) 13px 60px
   }
 .board {
     gap:11px
   }
 .widget {
-    padding:16px
+    padding:var(--space-4)
   }
 .board .widget {
     grid-column:span 12
@@ -845,13 +825,10 @@ button:focus-visible,input:focus-visible,select:focus-visible {
     margin-bottom:17px
   }
 .custom-tools {
-    padding:12px
+    padding:var(--space-3)
   }
 .tab {
-    padding:10px 12px
-  }
-.brand-name {
-    font-size:19px
+    padding:10px var(--space-3)
   }
 .stat-tiles b {
     font-size:25px
@@ -864,7 +841,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   }
 }
 
-/* V1P-C.2 language selector */
+/* Language selection. */
 .header-controls {
   display:flex;
   align-items:center;
@@ -875,13 +852,13 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .language-label {
   font-size:12px;
-  color:#a9b5c8
+  color:var(--ccs-muted)
 }
 
 .language-select {
   width:auto!important;
   min-width:135px;
-  padding:8px 9px;
+  padding:var(--space-2) 9px;
   font-size:12px
 }
 
@@ -892,19 +869,15 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .language-label {
     display:none
   }
-.language-select {
-    min-width:111px;
-    max-width:128px
-  }
 }
 
-/* V1P-D: Studio edit mode, grid snapping, presets and card themes. */
+/* Existing editor, grid snapping, presets and card styles. */
 .edit-hint {
   padding:10px 13px;
-  border:1px solid #4d594b;
-  background:#192323;
-  color:#c3d0cf;
-  border-radius:10px;
+  border:1px solid var(--ccs-border);
+  background:var(--ccs-surface);
+  color:var(--ccs-text);
+  border-radius:var(--radius-card);
   margin-bottom:13px;
   font-size:12px
 }
@@ -921,7 +894,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .board[data-density="compact"] .widget {
   padding:11px 13px;
   min-height:100px;
-  border-radius:11px
+  border-radius:var(--radius-card)
 }
 
 .board[data-density="compact"] .widget.w-bomb {
@@ -946,17 +919,17 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .board[data-view="custom"] .widget[data-style="solid"] {
-  background:color-mix(in srgb,var(--widget-bg,#182333) var(--widget-opacity,100%),transparent)
+  background:color-mix(in srgb,var(--widget-bg,var(--card)) var(--widget-opacity,100%),transparent)
 }
 
 .board[data-view="custom"] .widget[data-style="glass"] {
-  background:color-mix(in srgb,var(--widget-bg,#182333) calc(var(--widget-opacity,100%) * .67),transparent);
+  background:color-mix(in srgb,var(--widget-bg,var(--card)) calc(var(--widget-opacity,100%) * .67),transparent);
   backdrop-filter:blur(10px);
-  border-color:#586277
+  border-color:var(--ccs-control-border)
 }
 
 .board[data-view="custom"] .widget[data-style="outline"] {
-  background:color-mix(in srgb,var(--widget-bg,#182333) calc(var(--widget-opacity,100%) * .15),transparent);
+  background:color-mix(in srgb,var(--widget-bg,var(--card)) calc(var(--widget-opacity,100%) * .15),transparent);
   border:1px solid var(--widget-accent,var(--accent))
 }
 
@@ -986,7 +959,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   cursor:ew-resize;
   font-size:23px;
   font-weight:bold;
-  color:#0b131b;
+  color:var(--ccs-on-accent);
   background:var(--widget-accent,var(--accent));
   border:0;
   border-radius:11px 0 11px 0;
@@ -994,18 +967,18 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .resize-grip:focus-visible {
-  outline:3px solid #fff;
+  outline:3px solid var(--ccs-focus);
   outline-offset:1px
 }
 
 .widget-settings .details input[type=range] {
   width:105px;
-  accent-color:var(--accent)
+  accent-color:var(--ccs-accent)
 }
 
 .widget-settings .details {
   align-items:center;
-  row-gap:12px
+  row-gap:var(--space-3)
 }
 
 @media(max-width:800px) {
@@ -1013,7 +986,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
     display:none
   }
 .edit-hint {
-    font-size:11px
+    font-size:12px
   }
 .catalog-head {
     align-items:flex-start;
@@ -1024,17 +997,17 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   }
 }
 
-/* V1P-E · Guidance, diagnostics and accessibility */
+/* Guidance, diagnostics and accessibility. */
 .skip-link {
   position:absolute;
   left:14px;
   top:-120px;
   z-index:300;
-  border-radius:9px;
-  padding:12px 16px;
-  background:#f9d08a;
-  color:#10141e;
-  font-weight:800
+  border-radius:var(--radius-card);
+  padding:var(--space-3) var(--space-4);
+  background:var(--ccs-accent);
+  color:var(--ccs-on-accent);
+  font-weight:700
 }
 
 .skip-link:focus {
@@ -1056,39 +1029,39 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .login h1 {
   font-size:26px;
-  margin:0 0 8px;
+  margin:0 0 var(--space-2);
   letter-spacing:-.5px
 }
 
 .login .input {
-  margin:8px 0 10px
+  margin:var(--space-2) 0 10px
 }
 
 .login-eyebrow,.help-eyebrow {
-  font-size:11px;
-  color:var(--accent);
+  font-size:12px;
+  color:var(--ccs-accent);
   letter-spacing:1.1px;
   text-transform:uppercase;
-  font-weight:850;
+  font-weight:700;
   margin-bottom:9px
 }
 
 .welcome-steps {
-  background:#101925;
+  background:var(--ccs-nav);
   border:1px solid var(--line);
-  border-radius:12px;
-  padding:16px 17px;
+  border-radius:var(--radius-card);
+  padding:var(--space-4) 17px;
   margin-top:20px
 }
 
 .welcome-title {
-  font-weight:780;
+  font-weight:700;
   font-size:14px
 }
 
 .welcome-steps ol {
   font-size:13px;
-  color:#b7c6d6;
+  color:var(--ccs-muted);
   padding-left:22px;
   margin:10px 0
 }
@@ -1100,8 +1073,8 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .text-link {
   background:transparent;
   border:0;
-  padding:4px 0;
-  color:#ffd39a;
+  padding:var(--space-1) 0;
+  color:var(--ccs-ink);
   text-decoration:underline;
   text-underline-offset:3px;
   font-size:13px;
@@ -1114,38 +1087,38 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   align-items:center;
   gap:14px;
   padding:14px 17px;
-  border-radius:14px;
-  border:1px solid #49546a;
-  background:#162132
+  border-radius:var(--radius-card);
+  border:1px solid var(--ccs-border);
+  background:var(--ccs-surface)
 }
 
 .session-banner .session-marker {
   font-size:17px;
   line-height:1;
-  color:#f7c268
+  color:var(--warning)
 }
 
 .session-banner[data-state="live"] {
-  border-color:#397b68;
-  background:#122c2a
+  border-color:var(--success);
+  background:var(--success-bg)
 }
 
 .session-banner[data-state="live"] .session-marker {
-  color:#7ef6ca
+  color:var(--success)
 }
 
 .session-banner[data-state="demo"] {
-  border-color:#876c38;
-  background:#2c241c
+  border-color:var(--warning);
+  background:var(--warning-bg)
 }
 
 .session-banner[data-state="error"] {
-  border-color:#894554;
-  background:#321e28
+  border-color:var(--error);
+  background:var(--error-bg)
 }
 
 .session-banner[data-state="error"] .session-marker {
-  color:#ff8d9b
+  color:var(--error)
 }
 
 .session-copy {
@@ -1161,13 +1134,13 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .session-copy span {
   font-size:12px;
-  color:#bdcad9
+  color:var(--ccs-muted)
 }
 
 .diagnostics {
-  border:1px solid #40546c;
-  background:#101b29;
-  border-radius:15px;
+  border:1px solid var(--ccs-control-border);
+  background:var(--ccs-surface);
+  border-radius:var(--radius-card);
   padding:19px;
   margin:0 0 18px
 }
@@ -1176,7 +1149,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px
+  gap:var(--space-3)
 }
 
 .diagnostics h2 {
@@ -1187,22 +1160,22 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .diagnostics-grid {
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:12px;
+  gap:var(--space-3);
   margin-top:15px
 }
 
 .diagnostic-line {
   display:flex;
   gap:10px;
-  background:#1c2a3b;
-  border:1px solid #33485d;
-  border-radius:11px;
+  background:var(--ccs-raised);
+  border:1px solid var(--ccs-border);
+  border-radius:var(--radius-card);
   padding:13px;
   min-width:0
 }
 
 .diagnostic-line>span {
-  font-weight:900;
+  font-weight:700;
   font-size:20px;
   line-height:1.1
 }
@@ -1213,42 +1186,41 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .diagnostic-line p {
   font-size:12px;
-  color:#b4c6d9;
-  margin:4px 0 0
+  color:var(--ccs-muted);
+  margin:var(--space-1) 0 0
 }
 
 .diag-success {
-  color:#87f0cb
+  color:var(--success)
 }
 
 .diag-failure {
-  color:#ff9ba5
+  color:var(--error)
 }
 
 .diag-unknown {
-  color:#e0c07c
+  color:var(--warning)
 }
 
 .diag-help {
   font-size:12px;
-  color:#bac7d5;
+  color:var(--ccs-muted);
   margin:13px 0 0
 }
 
 .help-dialog {
   padding:0;
-  background:#111c2b;
+  background:var(--ccs-raised);
   color:var(--text);
-  border:1px solid #54627a;
-  border-radius:19px;
+  border:1px solid var(--ccs-control-border);
+  border-radius:var(--radius-dialog);
   width:min(620px,calc(100% - 28px));
   max-height:min(88vh,900px);
-  box-shadow:0 24px 90px #000b
+  box-shadow:var(--shadow-dialog)
 }
 
 .help-dialog::backdrop {
-  background:rgba(0,4,12,.78);
-  backdrop-filter:blur(3px)
+  background:var(--dialog-backdrop);
 }
 
 .help-shell {
@@ -1259,7 +1231,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px
+  gap:var(--space-3)
 }
 
 .help-heading h2 {
@@ -1268,32 +1240,32 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .help-heading .help-eyebrow {
-  margin:0 0 4px
+  margin:0 0 var(--space-1)
 }
 
 .help-body {
   max-height:60vh;
   overflow-y:auto;
   overscroll-behavior:contain;
-  margin:16px 0
+  margin:var(--space-4) 0
 }
 
 .help-body section {
-  background:#192639;
-  border:1px solid #2e425a;
+  background:var(--ccs-surface);
+  border:1px solid var(--ccs-border);
   padding:13px 17px;
-  border-radius:12px;
+  border-radius:var(--radius-card);
   margin-bottom:10px
 }
 
 .help-body h3 {
   font-size:15px;
-  margin:0 0 8px
+  margin:0 0 var(--space-2)
 }
 
 .help-body p,.help-body li {
   font-size:13px;
-  color:#c7d2df
+  color:var(--ccs-muted)
 }
 
 .help-body p {
@@ -1301,7 +1273,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .help-body ol,.help-body ul {
-  margin:5px 0 8px;
+  margin:5px 0 var(--space-2);
   padding-left:21px
 }
 
@@ -1310,13 +1282,13 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .help-body .help-caution {
-  border-color:#7a674a;
-  background:#2b251f
+  border-color:var(--warning);
+  background:var(--warning-bg)
 }
 
 [aria-invalid="true"] {
-  border-color:#fa7380!important;
-  outline-color:#fa7380!important
+  border-color:var(--error)!important;
+  outline-color:var(--error)!important
 }
 
 :where(.btn,.tab,.text-link,.catalog-item,.edit-controls button) {
@@ -1335,7 +1307,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   }
 
  .session-banner {
-    padding:12px;
+    padding:var(--space-3);
     flex-wrap:wrap;
     gap:10px
   }
@@ -1384,19 +1356,12 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 @media(max-width:390px) {
-  .brand-name {
-    font-size:17px
-  }
-.app {
+  .app {
     padding-left:10px;
     padding-right:10px
   }
 .session-banner #diagnostics-toggle {
     width:100%
-  }
-.language-select {
-    min-width:105px;
-    max-width:114px
   }
 .badge {
     padding:7px 9px
@@ -1412,7 +1377,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   }
 }
 
-/* V1P-E.1: diagnostics is a footer utility rather than a banner action. */
+/* Diagnostics remain a footer utility. */
 .diagnostics-footer {
   margin-top:23px;
   padding-top:15px;
@@ -1423,9 +1388,98 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   display:flex;
   gap:10px;
   flex-wrap:wrap;
-  margin-bottom:12px
+  margin-bottom:var(--space-3)
 }
 
 .diagnostics-footer .diagnostics {
-  margin:0 0 8px
+  margin:0 0 var(--space-2)
+}
+
+/* Shared controls use brand colors; profile colors are reserved for widgets. */
+.btn.primary:hover {
+  background:var(--ccs-hover);
+  border-color:var(--ccs-hover);
+}
+.btn.primary:active {
+  background:var(--ccs-pressed);
+  border-color:var(--ccs-pressed);
+}
+.btn:disabled:hover {
+  background:var(--ccs-raised);
+}
+.input::placeholder {
+  color:var(--muted);
+  opacity:1;
+}
+input[type=checkbox] {
+  accent-color:var(--ccs-accent);
+}
+.theme-preview {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:center;
+  gap:var(--space-2);
+}
+.theme-preview label {
+  font-size:12px;
+  color:var(--muted);
+}
+.theme-preview .select {
+  width:auto;
+  max-width:190px;
+  font-size:12px;
+}
+:where(.login,.custom-tools,.catalog,.diagnostics,.help-dialog) {
+  border-radius:var(--radius-card);
+}
+.help-dialog {
+  border-radius:var(--radius-dialog);
+}
+button:disabled {
+  color:var(--muted);
+}
+.session-banner[data-state=waiting] .session-marker {
+  display:inline-block;
+  width:14px;
+  height:14px;
+  border:2px solid var(--info);
+  border-right-color:transparent;
+  border-radius:50%;
+  font-size:0;
+  animation:connection-spin 1s linear infinite;
+}
+@keyframes connection-spin {
+  to { transform:rotate(360deg); }
+}
+@media(max-width:800px) {
+  .theme-preview {
+    flex-basis:100%;
+  }
+  .input,.select,.widget-settings .details input[type=text] {
+    font-size:16px;
+  }
+  .brand-name {
+    font-size:32px;
+  }
+  .language-select {
+    min-width:160px;
+    max-width:180px;
+  }
+  .theme-preview .select {
+    font-size:16px;
+    max-width:100%;
+  }
+}
+@media(pointer:coarse) {
+  :is(.btn,.tab,.text-link,.catalog-item,.edit-controls button,.input,.select,.resize-grip,input[type=color],input[type=range]) {
+    min-height:44px;
+  }
+  .edit-controls button,.resize-grip,input[type=color] {
+    min-width:44px;
+  }
+}
+@media(prefers-reduced-motion:reduce) {
+  .session-banner .session-marker {
+    animation:none;
+  }
 }
