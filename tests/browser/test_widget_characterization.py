@@ -139,6 +139,20 @@ def compact_cases(cases):
     return result
 
 
+def write_cases(target, cases):
+    """Keep one widget per JSON line so reviewed golden diffs remain readable."""
+    lines = ['{']
+    entries = list(cases.items())
+    for index, (name, cards) in enumerate(entries):
+        lines.append('  ' + json.dumps(name) + ': [')
+        for cardIndex, card in enumerate(cards):
+            lines.append('    ' + json.dumps(card, ensure_ascii=False)
+                         + (',' if cardIndex + 1 < len(cards) else ''))
+        lines.append('  ]' + (',' if index + 1 < len(entries) else ''))
+    lines.append('}')
+    target.write_text('\n'.join(lines) + '\n', encoding='utf-8')
+
+
 def characterize(browser, url, record, output):
     for locale in ('EN', 'FR'):
         context = browser.new_context(viewport={'width': 1280, 'height': 900},
@@ -209,7 +223,7 @@ def characterize(browser, url, record, output):
         target = FIXTURES / ('widgets-' + locale.lower() + '.json')
         if record:
             target.parent.mkdir(parents=True, exist_ok=True)
-            target.write_text(json.dumps(cases, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+            write_cases(target, cases)
         else:
             expected = json.loads(target.read_text(encoding='utf-8'))
             assert cases == expected, 'Widget characterization differs for ' + locale
@@ -290,6 +304,8 @@ def run():
     parser.add_argument('--benchmark', action='store_true')
     parser.add_argument('--repeats', type=int, default=9)
     args = parser.parse_args()
+    if args.repeats < 1:
+        parser.error('--repeats must be positive')
     if args.output:
         args.output.mkdir(parents=True, exist_ok=True)
     runtime, proc, url = start_server()

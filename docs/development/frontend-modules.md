@@ -37,3 +37,5 @@ See [the test guide](../../tests/README.md). The browser characterization record
 Optional screenshots and timing reports are local evidence, not distributed application assets. Compare the same browser, viewport, locale, timezone, fixtures and machine; timing runs should be sequential and repeated. Initial/update round-trip measurements include browser automation overhead and are not pure render timings.
 
 The existing authenticated-to-demo transition does not immediately rebuild the board. Its observed output is characterized, without treating it as a desired future behavior; changing it belongs to a separately approved functional fix.
+
+Measured P1 results and limitations: [validation record](p1-validation.md).
