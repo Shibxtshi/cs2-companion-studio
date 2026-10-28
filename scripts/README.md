@@ -8,7 +8,7 @@ Run these commands from the repository root.
 | `python scripts/recover_profiles.py --inspect` | Classify profile storage without revealing its content |
 | `python scripts/recover_profiles.py --prepare-reset --service-stopped` | Prepare a distinct verified private snapshot; no reset |
 | `python scripts/recover_profiles.py --restore` | Explicitly restore a validated private backup; stop the service first |
-| `python scripts/generate_profile_schema.py --check` | Verify the inactive browser schema generated from P3; omit --check to regenerate |
+| `python scripts/generate_profile_schema.py --check` | Verify the inactive browser schemas generated from P3 and the P5 wire model; omit --check to regenerate |
 | `python scripts/run_checks.py` | Run isolated backend suites, pytest and source-secret hygiene |
 | `python scripts/check_secrets.py` | Check exclusions and tracked/source files without reading personal secrets |
 | `python scripts/check_public_archive.py <archive.zip>` | Reject private runtime files in a distribution archive |

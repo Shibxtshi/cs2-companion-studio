@@ -43,6 +43,8 @@
     let inFlight = null;
     let closed = false;
     let leaving = false;
+    let publicationLocked = false;
+    let finalizing = false;
     let status = generation ? 'pending' : 'saved';
     let errorCode = null;
 
@@ -54,6 +56,7 @@
     }
     function editable() {
       if (closed || leaving) contract.fail('session_closed');
+      if (publicationLocked || finalizing) contract.fail('publication_locked');
     }
     function snapshot() {
       return contract.validateDraft({...base, ...history.value});
@@ -138,7 +141,7 @@
       get preview() { return history.value; },
       get draft() { return snapshot(); },
       get state() { return {status, error: errorCode, dirty: generation !== savedGeneration || history.activeGesture,
-        closed, gestureActive: history.activeGesture, canUndo: history.canUndo, canRedo: history.canRedo, history: history.stats}; },
+        closed, publicationLocked: publicationLocked || finalizing, gestureActive: history.activeGesture, canUndo: history.canUndo, canRedo: history.canRedo, history: history.stats}; },
       edit(next) { editable(); if (history.commit(next)) changed(); },
       undo() { editable(); if (history.undo()) changed(); },
       redo() { editable(); if (history.redo()) changed(); },
@@ -151,6 +154,53 @@
         editable();
         leaving = true;
         try { return await persisted(); } finally { leaving = false; }
+      },
+      holdPublication(value) {
+        editable();
+        const sent = contract.validateDraft(value);
+        if (history.activeGesture || generation !== savedGeneration
+            || contract.canonical(sent) !== contract.canonical(snapshot())) contract.fail('draft_changed');
+        const capturedGeneration = generation;
+        const capturedToken = token;
+        publicationLocked = true;
+        notify('publication_locked');
+        return Object.freeze({
+          capture: Object.freeze({draftId: sent.draftId, localRevision: sent.localRevision, baseRevision: sent.baseRevision, token: capturedToken}),
+          release() {
+            publicationLocked = false;
+            if (!closed) { notify(generation === savedGeneration ? 'saved' : 'pending'); schedule(); }
+          },
+          async abandon(journalToken) {
+            if (generation !== capturedGeneration || token !== capturedToken || finalizing) contract.fail('draft_changed');
+            finalizing = true;
+            try {
+              await store.abandonPublication(profile.id, journalToken, {draftId: sent.draftId,
+                localRevision: sent.localRevision, baseRevision: sent.baseRevision, token: capturedToken});
+              closed = true;
+              publicationLocked = false;
+              history.reset(CONTENT(sent));
+              notify('discarded');
+            } finally { finalizing = false; }
+          },
+          async finish(journalToken, receipt, {preserveDraft: forcePreserve = false} = {}) {
+            if (finalizing) contract.fail('publication_busy');
+            finalizing = true;
+            const preserveDraft = forcePreserve || generation !== capturedGeneration || token !== capturedToken;
+            let result;
+            try { result = await store.completePublication(profile.id, journalToken, receipt, {preserveDraft}); }
+            finally { finalizing = false; }
+            publicationLocked = false;
+            if (result.draftRemoved && !preserveDraft) {
+              closed = true;
+              history.reset(CONTENT(sent));
+              notify('published');
+            } else {
+              notify('published_draft_retained');
+              schedule();
+            }
+            return result;
+          },
+        });
       },
       inspectRemote: latest => inspect({store, profileId: profile.id, published: latest}),
       dispose() { clearTimeout(timer); timer = null; closed = true; },

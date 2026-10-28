@@ -90,3 +90,7 @@ These are maintainer requirements for later lots, not P3 features:
 - P6/P8 must obtain approval for collision/reflow rules before implementing them; P7 supplies actual widget variants. P2's temporary theme preview is unchanged in P3 and is not yet profile persistence.
 
 Before activating an incompatible format: stop the service and close old CCS tabs; warn the operator; prepare and verify a private snapshot; require explicit confirmation; install/validate the agreed new default; keep recovery bytes. P3's recovery reset intentionally installs only the current usable format. A future target-format reset must be a separate reviewed activation change, not a silent alteration to this command.
+
+## P5 implementation status
+
+P5 implements the previously required atomic commit/acknowledgement boundary, persistent client operation journal and authenticated target catalog as an inactive composition. The default server and legacy frontend remain unchanged. Read [explicit publication and transition gates](profile-publication.md) for operation receipts, conflicts, accessId policy, recovery generations and remaining P6/P8 activation requirements. The P3 storage/export/draft/operation versions and reducer are unchanged.

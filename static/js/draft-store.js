@@ -3,7 +3,7 @@
   'use strict';
   const contract = window.CCSDraftContract;
   const DB_NAME = 'ccs-local-drafts';
-  const DB_VERSION = 1;
+  const DB_VERSION = 2;
   const HEX_ID = /^[a-f0-9]{32}$/;
   const RECORD_KEYS = ['key', 'contextKey', 'writeId', 'createdAt', 'draft'];
 
@@ -46,8 +46,9 @@
       catch (error) { reject(storageError(error)); return; }
       request.onupgradeneeded = () => {
         const database = request.result;
-        database.createObjectStore('contexts', {keyPath: 'key'});
-        database.createObjectStore('drafts', {keyPath: 'key'});
+        for (const name of ['contexts', 'drafts', 'publications']) {
+          if (!database.objectStoreNames.contains(name)) database.createObjectStore(name, {keyPath: 'key'});
+        }
       };
       request.onerror = () => { settled = true; reject(storageError(request.error)); };
       request.onblocked = () => { settled = true; reject(new contract.DraftError('storage_blocked')); };
@@ -65,7 +66,7 @@
       let failure;
       let tx;
       try {
-        tx = database.transaction(['contexts', 'drafts'], mode);
+        tx = database.transaction(['contexts', 'drafts', 'publications'], mode);
         const abort = error => { failure = storageError(error); tx.abort(); };
         tx.oncomplete = () => resolve(result);
         tx.onabort = () => reject(failure || storageError(tx.error || {name: 'AbortError'}));
@@ -164,18 +165,23 @@
         if (epoch >= Number.MAX_SAFE_INTEGER) { abort(new contract.DraftError('revision_limit')); return; }
         const prefix = contextKey.slice(0, -1) + ',';
         const range = window.IDBKeyRange.bound(prefix, prefix + '\uffff');
-        const request = tx.objectStore('drafts').openCursor(range);
-        request.onsuccess = () => {
-          const cursor = request.result;
-          if (cursor) { cursor.delete(); cursor.continue(); }
-          else {
-            tx.objectStore('contexts').put({key: contextKey, epoch: epoch + 1});
-            done(true);
-          }
-        };
+        function erase(name, next) {
+          const request = tx.objectStore(name).openCursor(range);
+          request.onsuccess = () => {
+            try {
+              const cursor = request.result;
+              if (cursor) { cursor.delete(); cursor.continue(); } else next();
+            } catch (error) { abort(error); }
+          };
+        }
+        erase('drafts', () => erase('publications', () => {
+          tx.objectStore('contexts').put({key: contextKey, epoch: epoch + 1});
+          done(true);
+        }));
       });
     }
-    return Object.freeze({read, save, remove, clearContext, context: Object.freeze({...context}), close: () => database.close()});
+    return Object.freeze({read, save, remove, clearContext,
+      ...window.CCSDraftPublications({run, keyFor, contextKey, context, randomId}), context: Object.freeze({...context}), close: () => database.close()});
   }
   window.CCSDraftStore = Object.freeze({open});
 })();
