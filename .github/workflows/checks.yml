@@ -51,6 +51,11 @@ jobs:
           node tests/js/test_profile_sync.js
           node tests/js/test_reconnect.js
           node tests/js/test_i18n.js
+          node tests/js/test_display_format.js
+          node tests/js/test_dashboard_client.js
+          node --check static/js/display-format.js
+          node --check static/js/widget-renderer.js
+          node --check static/js/dashboard-client.js
           node --check static/js/reconnect.js
           node --check static/js/profile-sync.js
           node --check static/js/widgets.js
@@ -94,6 +99,11 @@ jobs:
         env:
           HOME: /root
         run: python tests/browser/test_live_browser.py --browser ${{ matrix.browser }}
+
+      - name: Characterize all widgets with frozen synthetic fixtures
+        env:
+          HOME: /root
+        run: python tests/browser/test_widget_characterization.py --browser ${{ matrix.browser }}
 
   dependency-audit:
     name: Vulnerability report / SBOM
