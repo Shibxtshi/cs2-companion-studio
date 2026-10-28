@@ -5,6 +5,8 @@ import re
 import tempfile
 from pathlib import Path
 
+from companion.security import decode_message
+
 PROFILE_KINDS = frozenset('score map round score_split match_phase round_history weapon ammo inventory grenades equip_value gear economy cash forecast stats kd mvp personal_score round_stats health armor effects player bomb bomb_state events connection provider'.split())
 # Keep this list in sync with static/js/widgets.js's widget catalog.
 COLORS = re.compile(r'^#[0-9a-fA-F]{6}$')
@@ -98,10 +100,12 @@ def atomic_write(path: Path, content: bytes):
 
 
 def read_document(path: Path):
-    raw = Path(path).read_bytes()
+    # Bound allocation before parsing a corrupt or unexpectedly large local file.
+    with Path(path).open('rb') as file:
+        raw = file.read(MAX_STORE_BYTES + 1)
     if len(raw) > MAX_STORE_BYTES:
         raise ValueError('Profile storage exceeds size limit')
-    loaded = json.loads(raw)
+    loaded = decode_message(raw)
     cleaned = validate_document(loaded)
     revision = loaded.get('revision', 0)
     if type(revision) is not int or revision < 0:

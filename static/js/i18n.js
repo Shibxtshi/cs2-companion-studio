@@ -139,6 +139,7 @@ const translations={
  "Modifications non enregistrées. Choisis une action.":"Unsaved changes. Choose an action.",
  "Modifications non enregistrées.":"Unsaved changes.",
  "Enregistrement…":"Saving…",
+ "Enregistrement impossible. Vérifie le stockage du serveur.":"Could not save. Check server storage.",
  "Modifications non enregistrées. Connexion interrompue.":"Unsaved changes. Connection interrupted.",
  "Modifications non enregistrées. Le serveur a une autre version.":"Unsaved changes. The server has another version.",
  "Enregistrer ma version":"Save my version",

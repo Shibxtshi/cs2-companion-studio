@@ -21,20 +21,8 @@ try {
     if ($Lan -and $LocalOnly) { throw 'Options -Lan et -LocalOnly incompatibles.' }
     $stage = 'Verification Docker Desktop'
     Write-Host (T 'stage1')
-    try { Test-DockerReady } catch {
-        $dockerError = $_.Exception.Message
-        if (-not $NonInteractive -and -not (Test-AdminSession)) {
-            Write-Host $dockerError -ForegroundColor Yellow
-            Write-Host (T 'elevation_reason') -ForegroundColor Yellow
-            if (Confirm-Action (T 'elevation_question') $false) {
-                Write-Host (T 'elevation_ok')
-                $rc = Invoke-SetupElevated $PSCommandPath $Cs2Path $script:InstallLanguage ([bool]$Lan) ([bool]$LocalOnly) ([bool]$NoStart) ([bool]$ForceGsiOverwrite)
-                if ($rc -ne 0) { throw (T 'elevation_failed') }
-                exit 0
-            }
-        }
-        throw $dockerError
-    }
+    # Docker availability does not justify elevating the entire installer.
+    Test-DockerReady
     $stage = 'Recherche de CS2'
     Write-Host (T 'stage2')
     $cfgFolder = Find-Cs2ConfigFolder $Cs2Path

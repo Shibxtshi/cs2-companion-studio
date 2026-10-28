@@ -102,6 +102,8 @@ def test_simultaneous_authentication_respects_capacity(runtime_server):
                     await gate.wait()
                     return json.dumps({'type':'auth','pin':'synthetic-pin'})
                 await asyncio.Event().wait()
+            async def receive(self):
+                return {'type': 'websocket.receive', 'text': await self.receive_text()}
             async def send_json(self,message):
                 if message.get('type')=='auth_ok':
                     await asyncio.sleep(0)
@@ -158,3 +160,22 @@ def test_boundary_inputs_return_controlled_errors(runtime_server):
             assert ws.receive_json()=={'type':'profiles_error','code':'invalid'}
             ws.send_json({'type':'diagnostics_request'})
             assert ws.receive_json()['type']=='diagnostics_data'
+
+@pytest.mark.parametrize('authenticated', [False, True])
+def test_binary_websocket_frames_close_cleanly(runtime_server, authenticated):
+    from fastapi.testclient import TestClient
+    from starlette.websockets import WebSocketDisconnect
+    server = runtime_server
+    with TestClient(server.app) as client:
+        with client.websocket_connect('/ws', headers={'origin': 'http://testserver'}) as socket:
+            if authenticated:
+                socket.send_json({'type': 'auth', 'pin': server.DASHBOARD_PIN})
+                assert socket.receive_json()['type'] == 'auth_ok'
+                socket.receive_json()
+                socket.receive_json()
+            socket.send_bytes(b'synthetic binary frame')
+            with pytest.raises(WebSocketDisconnect) as closed:
+                socket.receive_text()
+            assert closed.value.code == 1003
+    assert server.pending_logins == server.reserved_logins == 0
+    assert not server.connected

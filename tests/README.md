@@ -21,6 +21,7 @@ python -m pip install -r requirements-dev.txt pytest
 python scripts/run_checks.py
 node tests/js/test_profile_sync.js
 node tests/js/test_reconnect.js
+node tests/js/test_i18n.js
 ```
 
 Ordinary pytest checks can also run with `python -m pytest -q`. Standalone and historical suites are excluded from pytest collection. Run a single backend suite with `python -m tests.standalone.test_security`; never collect these as ordinary pytest modules because they configure process-wide credentials and game state.
@@ -59,3 +60,5 @@ The consolidated historical runner is `python -m tests.browser.legacy.test_e1_br
 All automated checks use synthetic data. They do not certify real CS2/UAC/LAN installation, anti-cheat approval or release readiness. See [architecture](../docs/development/architecture.md) and [release gates](../docs/releases/checklist.md).
 
 Edge cases include repeated health failures, authentication concurrency, malformed/Unicode inputs, JSON complexity, private archive variants and untranslated personal labels. Windows helper tests also inject a failed atomic write without touching Steam/CS2.
+
+Publication-preparation regressions cover binary WebSocket frames before/after authentication and deeply nested/non-finite profile storage. Linux CI also builds a ZIP from tracked source with git archive and checks its paths; this is not a full-history secret scan or a published release artifact.

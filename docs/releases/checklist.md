@@ -11,8 +11,8 @@ The step-9 archive is a **publication candidate**, not a published or security-c
 
 ## Security and privacy — BLOCKING
 
-- [ ] Enable GitHub **Private Vulnerability Reporting** or publish a tested private security-contact mechanism; update [SECURITY.md](../../SECURITY.md).
-- [ ] Configure a usable private conduct-reporting contact; update [CODE_OF_CONDUCT.md](../../CODE_OF_CONDUCT.md).
+- [ ] Follow the selected GitHub **Private Vulnerability Reporting** plan in [SECURITY.md](../../SECURITY.md). The feature is documented for public repositories: at the separately authorized visibility transition, enable it, verify the form and notifications, then announce availability. Do not make the repository public merely to tick this box during preparation.
+- [ ] Verify the chosen GitHub **Report abuse** route for sensitive conduct reports; [CODE_OF_CONDUCT.md](../../CODE_OF_CONDUCT.md) states that GitHub Support receives these reports. A direct confidential maintainer contact remains unconfigured.
 - [ ] Verify that `.env`, PIN, generated `.cfg`, `data/profiles.json`, `logs/` and `.installer-state/` are **not tracked** in Git or included in the public archive.
 - [ ] If a secret has ever been posted in public source or a release, **rotate it**; deleting the file from the tip is not enough to remove it from Git history.
 - [ ] Review the repository history and scan release artifacts for personal data and secrets.
@@ -22,7 +22,7 @@ The step-9 archive is a **publication candidate**, not a published or security-c
 
 ## Quality and release process — BLOCKING
 
-- [ ] Push first to a **private GitHub repository** (not public yet); run every CI job and fix failures. Workflow existence is not proof of successful execution.
+- [ ] Keep the repository **private during preparation**; check every required CI job on the exact candidate revision and fix failures. Workflow existence or results from an older commit are not proof for that candidate.
 - [ ] Confirm Windows and Linux Python suites, PowerShell 5.1 parsing/helpers, Chromium/Firefox/WebKit browser tests, Docker smoke tests, and dependency audit/SBOM all pass.
 - [ ] Run `python scripts/run_checks.py` locally.
 - [ ] Rebuild the Docker image using the pinned runtime dependencies; check startup and authenticated access.
@@ -46,3 +46,7 @@ Uncompleted items are **release blockers**, not warnings to silently ignore.
 ## Evidence recorded on 2026-10-27
 
 All eight CI jobs passed for main 3db5d855605e7285a534db16bfdcd57c7e737b6c (PR #7). The maintainer reports the existing application works on their local PC. This records evidence, not completion of the fresh-install/UAC, upgrade, LAN, licensing/contact or final-artifact gates above. Recheck CI on the exact final release revision.
+
+## Preparation audit — 2026-10-28
+
+Main 44a1f395 (including merged #15) passed all eight CI jobs. This is evidence for that revision only. The next audit patch adds controlled binary WebSocket rejection, bounded/strict profile-file decoding, a missing EN save-error translation, removal of Docker-failure UAC escalation, immutable CI action revisions and an automatic tracked-source ZIP privacy check. Its own CI must pass before integration. These changes do not tick manual installation, licensing, screenshots, full-history secret review or final-artifact gates. No tag, release or visibility change is authorized.
