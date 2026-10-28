@@ -1,0 +1,67 @@
+/* Local licensed typefaces; no network font service is used at runtime. */
+@font-face {
+  font-family:Inter;
+  font-style:normal;
+  font-weight:400 700;
+  font-display:swap;
+  src:url('../fonts/inter-400-700-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family:'Barlow Condensed';
+  font-style:normal;
+  font-weight:600;
+  font-display:swap;
+  src:url('../fonts/barlow-condensed-600-latin.woff2') format('woff2');
+}
+@font-face {
+  font-family:'Barlow Condensed';
+  font-style:normal;
+  font-weight:700;
+  font-display:swap;
+  src:url('../fonts/barlow-condensed-700-latin.woff2') format('woff2');
+}
+:root {
+  color-scheme:dark;
+  --font-ui:Inter,system-ui,-apple-system,'Segoe UI',sans-serif;
+  --font-brand:'Barlow Condensed','Arial Narrow',sans-serif;
+  --space-1:4px;
+  --space-2:8px;
+  --space-3:12px;
+  --space-4:16px;
+  --space-6:24px;
+  --space-8:32px;
+  --radius-control:6px;
+  --radius-card:8px;
+  --radius-dialog:10px;
+  --motion-fast:120ms;
+  --motion-normal:160ms;
+  --shadow-menu:0 8px 24px #0006;
+  --shadow-dialog:0 20px 64px #0009;
+  --dialog-backdrop:#000b;
+  --success:#77DDAA;
+  --success-bg:#153126;
+  --error:#FF8E98;
+  --error-bg:#361B24;
+  --warning:#F2CA76;
+  --warning-bg:#332A18;
+  --info:#9AC8FF;
+  --info-bg:#172B43;
+  --team-ct:#8FC7FF;
+  --team-t:#F1C66E;
+  --timer-warning:#F2CA76;
+  --timer-urgent:#FFAE66;
+  --timer-danger:#FF8E98;
+  /* Existing widget styling hooks remain distinct from the brand palette. */
+  --bg:var(--ccs-bg);
+  --card:var(--ccs-surface);
+  --card2:var(--ccs-raised);
+  --line:var(--ccs-border);
+  --text:var(--ccs-text);
+  --muted:var(--ccs-muted);
+  --accent:var(--profile-accent,var(--ccs-accent));
+  --good:var(--success);
+  --red:var(--error);
+  --blue:var(--team-ct);
+  --yellow:var(--timer-warning);
+  --orange:var(--timer-urgent);
+}

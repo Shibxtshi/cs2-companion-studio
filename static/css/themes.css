@@ -1,0 +1,78 @@
+/* Approved complete palettes. Tactical Blue is the non-persistent default. */
+:root,
+:root[data-theme="tactical-blue"] {
+  --ccs-bg:#090E14;
+  --ccs-nav:#0D151F;
+  --ccs-surface:#121C28;
+  --ccs-raised:#1A2939;
+  --ccs-input:#0B141F;
+  --ccs-border:#2C4158;
+  --ccs-control-border:#6D87A4;
+  --ccs-text:#EDF4FC;
+  --ccs-muted:#A4B7CD;
+  --ccs-accent:#4E9FFF;
+  --ccs-hover:#77B6FF;
+  --ccs-pressed:#2C84E8;
+  --ccs-on-accent:#08111E;
+  --ccs-tint:#172F4D;
+  --ccs-ink:#96C7FF;
+  --ccs-focus:#B3D7FF;
+}
+
+:root[data-theme="competitive-red"] {
+  --ccs-bg:#0B0D11;
+  --ccs-nav:#101319;
+  --ccs-surface:#141820;
+  --ccs-raised:#1B202A;
+  --ccs-input:#0E1218;
+  --ccs-border:#2C3442;
+  --ccs-control-border:#657387;
+  --ccs-text:#F1F3F6;
+  --ccs-muted:#A3ADBD;
+  --ccs-accent:#EF4540;
+  --ccs-hover:#FA5D58;
+  --ccs-pressed:#E33D38;
+  --ccs-on-accent:#0B0D11;
+  --ccs-tint:#321B22;
+  --ccs-ink:#FF8D88;
+  --ccs-focus:#FFADA8;
+}
+
+:root[data-theme="performance-green"] {
+  --ccs-bg:#0A100E;
+  --ccs-nav:#0E1814;
+  --ccs-surface:#14221C;
+  --ccs-raised:#1D3027;
+  --ccs-input:#0B1711;
+  --ccs-border:#304C3E;
+  --ccs-control-border:#739584;
+  --ccs-text:#EEF6F0;
+  --ccs-muted:#A7BEB0;
+  --ccs-accent:#49D294;
+  --ccs-hover:#74E3AE;
+  --ccs-pressed:#29B87C;
+  --ccs-on-accent:#07150F;
+  --ccs-tint:#183B2C;
+  --ccs-ink:#8AE4B8;
+  --ccs-focus:#A8F0CD;
+}
+
+:root[data-theme="creator-purple"] {
+  --ccs-bg:#100C16;
+  --ccs-nav:#171220;
+  --ccs-surface:#20192C;
+  --ccs-raised:#2C223B;
+  --ccs-input:#140F1D;
+  --ccs-border:#473651;
+  --ccs-control-border:#9785AB;
+  --ccs-text:#F5F0FC;
+  --ccs-muted:#BDB0D0;
+  --ccs-accent:#B38AFB;
+  --ccs-hover:#C8A8FF;
+  --ccs-pressed:#9B70E5;
+  --ccs-on-accent:#140C21;
+  --ccs-tint:#39264F;
+  --ccs-ink:#D6BFFF;
+  --ccs-focus:#E2D0FF;
+}
+

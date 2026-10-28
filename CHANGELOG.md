@@ -4,6 +4,9 @@
 
 ## Unreleased
 
+- Adopt the Repère identity and locally served Inter / Barlow Condensed fonts.
+- Add complete Tactical Blue (default), Competitive Red, Performance Green and Creator Purple theme previews for the current interface. The preview affects only this tab, resets on reload and does not change shared profiles or autosave.
+
 - Reject unsupported binary WebSocket frames cleanly and handle corrupt/deep profile files with controlled recovery errors.
 - Translate save failures in English, avoid UAC prompts for Docker availability failures, and verify tracked-source archive privacy in CI.
 - Pin CI actions to verified commit revisions and document GitHub reporting choices without publishing the project.

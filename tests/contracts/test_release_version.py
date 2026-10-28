@@ -9,7 +9,7 @@ def text(path):
 def test_version_identifiers_are_consistent():
     assert "VERSION = '1.0.0'" in text("companion/server.py")
     assert "const VERSION='1.0.0'" in text("static/js/studio.js")
-    assert "Dashboard Studio · v1.0.0" in text("static/index.html")
+    assert "Match Center · Player Edition · v1.0.0" in text("static/index.html")
     assert "styles.css?v=1.0.0" in text("static/index.html")
     assert "version='1.0.0'" in text("installer/install.ps1")
     assert "json.loads(data).get('version') == '1.0.0'" in text("tests/docker/smoke.py")
