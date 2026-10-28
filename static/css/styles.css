@@ -36,7 +36,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .app {
   max-width:1350px;
   margin:auto;
-  padding:26px 24px 80px
+  padding:26px var(--space-6) 80px
 }
 
 .topbar {
@@ -50,7 +50,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .brand {
   display:flex;
   align-items:center;
-  gap:12px
+  gap:var(--space-3)
 }
 
 .brandmark {
@@ -67,17 +67,13 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   letter-spacing:.03em;
 }
 
-.brand-name span {
-  color:var(--ccs-accent)
-}
-
 .sub {
   color:var(--muted);
   font-size:12px
 }
 
 .badge {
-  padding:8px 12px;
+  padding:var(--space-2) var(--space-3);
   border:1px solid var(--ccs-control-border);
   border-radius:4px;
   color:var(--muted);
@@ -106,7 +102,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .login h2 {
   font-size:23px;
-  margin:0 0 8px
+  margin:0 0 var(--space-2)
 }
 
 .login input {
@@ -117,7 +113,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .login-actions {
   display:flex;
   align-items:center;
-  gap:8px
+  gap:var(--space-2)
 }
 
 .error {
@@ -219,7 +215,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .head-actions {
   display:flex;
   align-items:center;
-  gap:8px;
+  gap:var(--space-2);
   flex-wrap:wrap
 }
 
@@ -297,7 +293,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   text-align:left;
   align-items:center;
   gap:9px;
-  padding:12px;
+  padding:var(--space-3);
   border:1px solid var(--line);
   border-radius:var(--radius-card);
   background:var(--ccs-raised);
@@ -434,7 +430,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   display:none;
   border-top:1px solid var(--line);
   margin-top:14px;
-  padding-top:12px
+  padding-top:var(--space-3)
 }
 
 .board.editing .widget {
@@ -458,7 +454,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   color:var(--text);
   border-radius:7px;
   background:var(--ccs-raised);
-  padding:5px 8px;
+  padding:5px var(--space-2);
   font-size:12px
 }
 
@@ -554,7 +550,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   display:flex;
   justify-content:space-between;
   align-items:center;
-  gap:12px
+  gap:var(--space-3)
 }
 
 .flex-wrap {
@@ -563,7 +559,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .rowgap {
   display:flex;
-  gap:12px;
+  gap:var(--space-3);
   align-items:center;
   flex-wrap:wrap
 }
@@ -571,7 +567,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .pill {
   display:inline-block;
   border:1px solid var(--ccs-control-border);
-  padding:4px 9px;
+  padding:var(--space-1) 9px;
   border-radius:99px;
   font-size:12px;
   color:var(--muted)
@@ -624,7 +620,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .widget .score-side {
   display:flex;
-  gap:12px;
+  gap:var(--space-3);
   align-items:baseline;
   font-size:clamp(28px,3.8vw,46px);
   font-weight:700
@@ -649,7 +645,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .stat-tiles {
   display:flex;
   justify-content:space-between;
-  gap:12px;
+  gap:var(--space-3);
   flex-wrap:wrap
 }
 
@@ -668,7 +664,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .tag {
   display:inline-block;
   font-size:12px;
-  padding:4px 9px;
+  padding:var(--space-1) 9px;
   border-radius:8px;
   background:var(--ccs-raised);
   color:var(--ccs-text)
@@ -687,7 +683,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   background:var(--ccs-raised);
   border:1px solid var(--ccs-border);
   border-radius:var(--radius-card);
-  padding:8px 10px
+  padding:var(--space-2) 10px
 }
 
 .item.active {
@@ -712,7 +708,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   line-height:1.1;
   font-variant-numeric:tabular-nums;
   color:var(--muted);
-  margin:12px 0
+  margin:var(--space-3) 0
 }
 
 .bomb-clock.yellow {
@@ -782,7 +778,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .foot-actions {
   display:flex;
-  gap:8px;
+  gap:var(--space-2);
   flex-wrap:wrap;
   margin-top:15px
 }
@@ -795,7 +791,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   background:var(--ccs-raised);
   border:1px solid var(--ccs-control-border);
   border-radius:var(--radius-card);
-  padding:11px 16px;
+  padding:11px var(--space-4);
   z-index:200;
   box-shadow:var(--shadow-menu);
   color:var(--ccs-text);
@@ -814,13 +810,13 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 @media(max-width:800px) {
   .app {
-    padding:16px 13px 60px
+    padding:var(--space-4) 13px 60px
   }
 .board {
     gap:11px
   }
 .widget {
-    padding:16px
+    padding:var(--space-4)
   }
 .board .widget {
     grid-column:span 12
@@ -829,13 +825,10 @@ button:focus-visible,input:focus-visible,select:focus-visible {
     margin-bottom:17px
   }
 .custom-tools {
-    padding:12px
+    padding:var(--space-3)
   }
 .tab {
-    padding:10px 12px
-  }
-.brand-name {
-    font-size:19px
+    padding:10px var(--space-3)
   }
 .stat-tiles b {
     font-size:25px
@@ -848,7 +841,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   }
 }
 
-/* V1P-C.2 language selector */
+/* Language selection. */
 .header-controls {
   display:flex;
   align-items:center;
@@ -865,7 +858,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .language-select {
   width:auto!important;
   min-width:135px;
-  padding:8px 9px;
+  padding:var(--space-2) 9px;
   font-size:12px
 }
 
@@ -882,7 +875,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   }
 }
 
-/* V1P-D: Studio edit mode, grid snapping, presets and card themes. */
+/* Existing editor, grid snapping, presets and card styles. */
 .edit-hint {
   padding:10px 13px;
   border:1px solid var(--ccs-border);
@@ -989,7 +982,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .widget-settings .details {
   align-items:center;
-  row-gap:12px
+  row-gap:var(--space-3)
 }
 
 @media(max-width:800px) {
@@ -1008,14 +1001,14 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   }
 }
 
-/* V1P-E · Guidance, diagnostics and accessibility */
+/* Guidance, diagnostics and accessibility. */
 .skip-link {
   position:absolute;
   left:14px;
   top:-120px;
   z-index:300;
   border-radius:var(--radius-card);
-  padding:12px 16px;
+  padding:var(--space-3) var(--space-4);
   background:var(--ccs-accent);
   color:var(--ccs-on-accent);
   font-weight:700
@@ -1040,12 +1033,12 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .login h1 {
   font-size:26px;
-  margin:0 0 8px;
+  margin:0 0 var(--space-2);
   letter-spacing:-.5px
 }
 
 .login .input {
-  margin:8px 0 10px
+  margin:var(--space-2) 0 10px
 }
 
 .login-eyebrow,.help-eyebrow {
@@ -1061,7 +1054,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   background:var(--ccs-nav);
   border:1px solid var(--line);
   border-radius:var(--radius-card);
-  padding:16px 17px;
+  padding:var(--space-4) 17px;
   margin-top:20px
 }
 
@@ -1084,7 +1077,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .text-link {
   background:transparent;
   border:0;
-  padding:4px 0;
+  padding:var(--space-1) 0;
   color:var(--ccs-ink);
   text-decoration:underline;
   text-underline-offset:3px;
@@ -1160,7 +1153,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px
+  gap:var(--space-3)
 }
 
 .diagnostics h2 {
@@ -1171,7 +1164,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .diagnostics-grid {
   display:grid;
   grid-template-columns:repeat(3,minmax(0,1fr));
-  gap:12px;
+  gap:var(--space-3);
   margin-top:15px
 }
 
@@ -1198,7 +1191,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .diagnostic-line p {
   font-size:12px;
   color:var(--ccs-muted);
-  margin:4px 0 0
+  margin:var(--space-1) 0 0
 }
 
 .diag-success {
@@ -1242,7 +1235,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   display:flex;
   align-items:center;
   justify-content:space-between;
-  gap:12px
+  gap:var(--space-3)
 }
 
 .help-heading h2 {
@@ -1251,14 +1244,14 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .help-heading .help-eyebrow {
-  margin:0 0 4px
+  margin:0 0 var(--space-1)
 }
 
 .help-body {
   max-height:60vh;
   overflow-y:auto;
   overscroll-behavior:contain;
-  margin:16px 0
+  margin:var(--space-4) 0
 }
 
 .help-body section {
@@ -1271,7 +1264,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 
 .help-body h3 {
   font-size:15px;
-  margin:0 0 8px
+  margin:0 0 var(--space-2)
 }
 
 .help-body p,.help-body li {
@@ -1284,7 +1277,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 .help-body ol,.help-body ul {
-  margin:5px 0 8px;
+  margin:5px 0 var(--space-2);
   padding-left:21px
 }
 
@@ -1318,7 +1311,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   }
 
  .session-banner {
-    padding:12px;
+    padding:var(--space-3);
     flex-wrap:wrap;
     gap:10px
   }
@@ -1367,10 +1360,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 }
 
 @media(max-width:390px) {
-  .brand-name {
-    font-size:17px
-  }
-.app {
+  .app {
     padding-left:10px;
     padding-right:10px
   }
@@ -1395,7 +1385,7 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   }
 }
 
-/* V1P-E.1: diagnostics is a footer utility rather than a banner action. */
+/* Diagnostics remain a footer utility. */
 .diagnostics-footer {
   margin-top:23px;
   padding-top:15px;
@@ -1406,11 +1396,11 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   display:flex;
   gap:10px;
   flex-wrap:wrap;
-  margin-bottom:12px
+  margin-bottom:var(--space-3)
 }
 
 .diagnostics-footer .diagnostics {
-  margin:0 0 8px
+  margin:0 0 var(--space-2)
 }
 
 /* Shared controls use brand colors; profile colors are reserved for widgets. */
@@ -1479,12 +1469,16 @@ button:disabled {
   .brand-name {
     font-size:32px;
   }
+  .theme-preview .select {
+    font-size:16px;
+    max-width:100%;
+  }
 }
 @media(pointer:coarse) {
-  :where(.btn,.tab,.text-link,.catalog-item,.edit-controls button,.input,.select,.resize-grip) {
+  :is(.btn,.tab,.text-link,.catalog-item,.edit-controls button,.input,.select,.resize-grip,input[type=color],input[type=range]) {
     min-height:44px;
   }
-  .edit-controls button,.resize-grip {
+  .edit-controls button,.resize-grip,input[type=color] {
     min-width:44px;
   }
 }

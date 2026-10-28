@@ -26,7 +26,7 @@ Brand colors and profile colors are separate: controls and branding follow the p
 
 ## Typography and assets
 
-Inter serves UI text and tabular numeric values (400–700). Barlow Condensed is reserved for branding (700), with 600 available for display headings. The shipped Latin subsets cover EN/FR; other characters fall back to system fonts. Fonts use font-display:swap and load from this server, never a third-party font service. Original OFL notices stay alongside the font files. See [font provenance](../../static/fonts/README.md).
+Inter serves UI text and tabular numeric values (400–700), with a fixed optical-size setting for consistent dashboard typography. Barlow Condensed is reserved for branding (700), with 600 available for display headings. The shipped Latin subsets cover EN/FR; other characters fall back to system fonts. Fonts use font-display:swap and load from this server, never a third-party font service. Original OFL notices stay alongside the font files. See [font provenance](../../static/fonts/README.md).
 
 The header is a responsive lockup: a compact Repère mask, live Barlow lettering and the product descriptor. The standalone SVG contains paths rather than external fonts or images. Its default dark-background colors use Tactical Blue. The compact mark also supports monochrome use through a CSS alpha mask. No third-party brand or game artwork is included.
 
@@ -45,3 +45,5 @@ The existing help dialog is themed. Browser-owned select popups, prompt/confirm 
 Keep P1 golden fixtures unchanged. Run the existing live journey, widget characterization and tests/browser/test_themes.py in all three CI browsers. The theme journey checks 29-widget output parity, four viewport widths, EN/FR, keyboard focus, contrast, same-origin resources and absence of profile/storage writes. It can save synthetic screenshots with --output; never capture a personal PIN or profile.
 
 See [tests/README.md](../../tests/README.md) for commands. Local timing/screenshot evidence is kept outside the repository and reported in the PR. Use the unchanged P1 baseline and the same characterization benchmark for comparisons; do not present automation round trips as pure rendering or infer real CS2/LAN certification.
+
+The dated local results, timing ranges and limitations are recorded in [p2-validation.md](p2-validation.md).

@@ -64,7 +64,9 @@ def run(browserName, output):
             browser = getattr(playwright, browserName).launch(**options)
             for width, height in ((1280, 900), (1024, 768), (390, 844), (320, 740)):
                 context = browser.new_context(viewport={'width': width, 'height': height},
-                                              locale='en-US', timezone_id='UTC', reduced_motion='reduce')
+                                              locale='en-US', timezone_id='UTC', reduced_motion='reduce',
+                                              has_touch=(width <= 390),
+                                              is_mobile=(width <= 390 and browserName != 'firefox'))
                 requests = []
                 context.on('request', lambda request: requests.append(request.url))
                 page, fixture, faults = open_fixture(context, url)
@@ -81,6 +83,11 @@ def run(browserName, output):
                     page.keyboard.press('Tab')
                     page.keyboard.press('Shift+Tab')
                     expect(page.locator('#theme-preview')).to_be_focused()
+                    if page.evaluate("matchMedia('(pointer:coarse)').matches"):
+                        targets = page.locator('.btn,.tab,.edit-controls button,#theme-preview')
+                        for target in targets.all():
+                            if target.is_visible():
+                                assert target.bounding_box()['height'] >= 44
                     ratios = check_palette(page)
                     assert page.evaluate(SNAPSHOT) == initial, (width, theme)
                     assert fixture.document == document
