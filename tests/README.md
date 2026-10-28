@@ -44,6 +44,7 @@ Docker CI creates disposable credentials and volumes, builds the image, then run
 ```bash
 python tests/docker/smoke.py
 python tests/docker/settings.py
+python tests/docker/profile_contracts.py
 ```
 
 Run these only against the disposable synthetic instance from the CI workflow. They modify game state and settings. The settings runner toggles the timer and checks authenticated WebSocket state, unchanged image IDs and profile content. They are excluded from ordinary pytest collection.
@@ -81,3 +82,9 @@ Benchmarks use fresh contexts, a fixed 1280x900 viewport and the same fixtures. 
 ## Design-system checks
 
 Run node tests/js/test_theme_preview.js and python tests/browser/test_themes.py --browser chromium. CI also runs the theme journey in Firefox and WebKit. Optional --output ../theme-evidence saves synthetic desktop/mobile screenshots and contrast samples. It covers four palettes, all 29 widget outputs, EN/FR, keyboard focus, four viewport widths, local fonts and profile/storage isolation. It does not certify arbitrary user-chosen widget colors or browser-owned native dialogs.
+
+## Target profile contracts and offline recovery (P3)
+
+Unit suites test strict server/export/draft/operation documents, all 29 kinds, geometry bounds, per-profile compare-and-swap and bounded retry receipts. Recovery tests use temporary synthetic files and inject backup/write/validation failures, interruption before/after replacement, rollback failure, process death and concurrent recovery tools. They never reset personal profiles. Windows may skip the symlink test when symlink creation is unavailable; Linux CI runs that path.
+
+Integration tests ensure current WebSocket saves reject target version markers without changing the active revision/file. Existing autosave, import/export, authentication, GSI, reconnect and theme/browser tests continue to run. The Docker profile_contracts runner checks the packaged inactive modules and recovery entirely under container /tmp; it never resets the live mounted profile store. See [contract boundaries](../docs/development/profile-contracts.md) and [operator procedure](../docs/guides/profile-recovery.md).

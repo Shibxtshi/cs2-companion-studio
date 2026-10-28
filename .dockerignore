@@ -28,3 +28,7 @@ logs/
 
 # Exclude interrupted atomic credential writes at any depth.
 **/.companion-write-*.tmp
+
+# Private offline profile recovery snapshots, including custom data directories.
+**/profile-reset-backups/
+**/.profiles-recovery.lock

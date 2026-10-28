@@ -170,6 +170,8 @@ jobs:
           test -s data/profiles.json
       - name: Verify settings reload without rebuilding the image
         run: python tests/docker/settings.py
+      - name: Verify packaged profile contracts and isolated recovery
+        run: python tests/docker/profile_contracts.py
       - name: Verify unprivileged container
         run: test "$(docker compose exec -T cs2-companion-studio id -u)" = '10001'
       - name: Cleanup

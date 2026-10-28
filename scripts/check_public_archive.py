@@ -9,7 +9,7 @@ PRIVATE_CONTEXT_FILES = {
     'AGENTS.md', 'PROJECT_CONTEXT.md', 'DECISIONS.md',
     'LOCAL_WORK_PLAN.md', 'LOCAL_AUDIT_FIX_GUIDE.md',
 }
-PRIVATE_DIRS = {'.git', '.venv', '.installer-state', '__pycache__', '.pytest_cache'}
+PRIVATE_DIRS = {'.git', '.venv', '.installer-state', '__pycache__', '.pytest_cache', 'profile-reset-backups'}
 RUNTIME_DIRS = {'data', 'logs'}
 PRIVATE_FILES = {'pin.txt', 'profiles.json', 'support-summary.json'}
 
@@ -38,7 +38,7 @@ def check_zip(file):
                 raise ValueError('Private runtime file: ' + info.filename)
             name = path.name.lower()
             if (name in {value.lower() for value in PRIVATE_CONTEXT_FILES} or name in PRIVATE_FILES
-                    or name.startswith('.companion-write-')
+                    or name.startswith(('.companion-write-', '.profiles-'))
                     or name.endswith(('.bak', '.log', '.jsonl')) or '.corrupt-' in name
                     or (name.startswith('gamestate_integration_') and name.endswith('.cfg'))):
                 raise ValueError('Private/generated file: ' + info.filename)

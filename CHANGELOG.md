@@ -4,6 +4,9 @@
 
 ## Unreleased
 
+- Prepare inactive, versioned dashboard profile/export/draft contracts and per-profile revision validation for the upcoming editor; current profiles and autosave remain active.
+- Add explicit offline profile inspection, verified private reset snapshots and confirmed current-format recovery, including interrupted-operation status. No automatic profile reset or target-format activation.
+
 - Adopt the Repère identity and locally served Inter / Barlow Condensed fonts.
 - Add complete Tactical Blue (default), Competitive Red, Performance Green and Creator Purple theme previews for the current interface. The preview affects only this tab, resets on reload and does not change shared profiles or autosave.
 

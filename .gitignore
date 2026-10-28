@@ -31,3 +31,7 @@ logs/*
 
 # Atomic installer writes may contain credentials until committed.
 .companion-write-*.tmp
+
+# Private offline profile recovery snapshots, including custom data directories.
+**/profile-reset-backups/
+**/.profiles-recovery.lock

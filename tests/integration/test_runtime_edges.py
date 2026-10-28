@@ -179,3 +179,25 @@ def test_binary_websocket_frames_close_cleanly(runtime_server, authenticated):
             assert closed.value.code == 1003
     assert server.pending_logins == server.reserved_logins == 0
     assert not server.connected
+
+
+@pytest.mark.parametrize('marker', ['format', 'version', 'schemaVersion'])
+def test_target_markers_cannot_be_silently_saved_by_current_websocket(runtime_server, marker):
+    from fastapi.testclient import TestClient
+    server = runtime_server
+    original = server.profile_store.path.read_bytes()
+    revision = server.profile_store.revision
+    with TestClient(server.app) as client:
+        with client.websocket_connect('/ws', headers={'origin': 'http://testserver'}) as socket:
+            socket.send_json({'type': 'auth', 'pin': server.DASHBOARD_PIN})
+            assert socket.receive_json()['type'] == 'auth_ok'
+            snapshot = socket.receive_json()
+            socket.receive_json()
+            document = {key: copy.deepcopy(snapshot[key]) for key in ('profiles', 'activeProfile')}
+            document[marker] = 'ccs-dashboard-store' if marker == 'format' else 1
+            socket.send_json({'type': 'profiles_save', 'revision': revision, 'document': document})
+            assert socket.receive_json() == {'type': 'profiles_error', 'code': 'invalid'}
+            socket.send_json({'type': 'diagnostics_request'})
+            assert socket.receive_json()['type'] == 'diagnostics_data'
+    assert server.profile_store.path.read_bytes() == original
+    assert server.profile_store.revision == revision

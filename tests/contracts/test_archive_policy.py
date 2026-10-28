@@ -46,3 +46,11 @@ def test_empty_runtime_scaffolding_is_allowed():
 def test_ambiguous_paths_are_rejected(name):
     with pytest.raises(ValueError,match='Unsafe'):
         policy.check_zip(archive_with(name))
+
+
+@pytest.mark.parametrize('name', ['release/custom/profile-reset-backups/id/manifest.json',
+    'release/PROFILE-RESET-BACKUPS/id/renamed.bin', 'release/.profiles-recovery.lock',
+    'release/.profiles-synthetic.tmp'])
+def test_offline_reset_material_is_private_even_outside_data(name):
+    with pytest.raises(ValueError, match='Private'):
+        policy.check_zip(archive_with(name))
