@@ -32,6 +32,8 @@ def _id(val):
 
 
 def validate_document(obj):
+    if isinstance(obj, dict) and any(key in obj for key in ('format', 'version', 'schemaVersion')):
+        raise ValueError('unsupported_format')
     if not isinstance(obj, dict) or not isinstance(obj.get('profiles'), list):
         raise ValueError('format')
     source = obj['profiles']
@@ -99,10 +101,18 @@ def atomic_write(path: Path, content: bytes):
             os.unlink(filename)
 
 
-def read_document(path: Path):
-    # Bound allocation before parsing a corrupt or unexpectedly large local file.
-    with Path(path).open('rb') as file:
-        raw = file.read(MAX_STORE_BYTES + 1)
+def default_document():
+    """Return fresh current-format defaults without touching disk."""
+    return {'activeProfile': 'p-default', 'profiles': [{'id': 'p-default',
+        'name': 'My dashboard', 'accent': DEFAULT_COLOR, 'density': 'normal',
+        'widgets': [{'id': 'w-default-' + str(index), 'kind': kind, 'span': span,
+                     'title': '', 'color': '', 'background': '', 'opacity': 100, 'style': 'solid'}
+                    for index, (kind, span) in enumerate([
+                        ('score', 12), ('weapon', 4), ('economy', 8), ('stats', 12), ('bomb', 12)])]}]}
+
+
+def decode_stored_document(raw):
+    """Validate bounded current-format bytes, retaining no untrusted fields."""
     if len(raw) > MAX_STORE_BYTES:
         raise ValueError('Profile storage exceeds size limit')
     loaded = decode_message(raw)
@@ -113,6 +123,13 @@ def read_document(path: Path):
     return cleaned, revision
 
 
+def read_document(path: Path):
+    # Bound allocation before parsing a corrupt or unexpectedly large local file.
+    with Path(path).open('rb') as file:
+        raw = file.read(MAX_STORE_BYTES + 1)
+    return decode_stored_document(raw)
+
+
 class ProfileStore:
     def __init__(self, path: Path):
         self.path = Path(path)
@@ -121,14 +138,10 @@ class ProfileStore:
         if self.path.exists():
             try:
                 self.data, self.revision = read_document(self.path)
-            except (ValueError, UnicodeError) as exc:
-                raise RuntimeError('Invalid profile storage. Preserve the file and use scripts/recover_profiles.py --restore with a validated backup.') from exc
+            except (ValueError, UnicodeError):
+                raise RuntimeError('Invalid or incompatible profile storage. Preserve the file; stop the service and use scripts/recover_profiles.py --inspect or --restore with a validated backup.') from None
         else:
-            self.put({'activeProfile': 'p-default', 'profiles': [{'id': 'p-default',
-                'name': 'My dashboard', 'accent': DEFAULT_COLOR, 'density': 'normal',
-                'widgets': [{'id': 'w-default-'+str(i), 'kind': kind, 'span': span, 'title': '', 'color': '',
-                             'background': '', 'opacity': 100, 'style': 'solid'}
-                            for i,(kind,span) in enumerate([('score',12),('weapon',4),('economy',8),('stats',12),('bomb',12)])]}]}, 0)
+            self.put(default_document(), 0)
 
     def snapshot(self, source=None):
         # Deep copy to avoid shared mutable reference leaks.

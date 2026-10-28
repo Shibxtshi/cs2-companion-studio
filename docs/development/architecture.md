@@ -6,7 +6,10 @@ CS2 Companion Studio is a single-process FastAPI service with a browser dashboar
 companion/                 Backend implementation
   server.py                Routes, authentication, GSI state and orchestration
   gsi_lifecycle.py          Pure GSI observations and economy projections
-  profile_store.py         Validated profiles, revisions, atomic persistence
+  profile_store.py         Current active profiles, revisions, atomic persistence
+  profile_contracts.py     Inactive target data models and strict validation
+  profile_operations.py    Pure target transitions; no active publication path
+  profile_recovery.py      Explicit offline snapshots, reset and recovery
   security.py              Origin checks and login throttling
   support_diagnostics.py   Privacy-conscious event counters and summaries
   dashboard_delivery.py    Bounded, ordered dashboard fan-out
@@ -71,3 +74,7 @@ Profile files use the same depth/finite-number checks as network JSON and are re
 P1 separates display projections, widget DOM rendering and HTTP/WebSocket transport from studio.js. Profile/editor state, current autosave and retry policy retain their existing owners. Read [frontend responsibilities and approved future boundaries](frontend-modules.md) before extending them.
 
 The approved identity, token ownership and temporary theme preview are documented in [design-system.md](design-system.md).
+
+## Profile transition
+
+P3 prepares strict target contracts and pure per-profile revision transitions without activating them. The current store, autosave and WebSocket messages remain active. Read [profile contracts and staged transition](profile-contracts.md) before P4/P5 work. The stable offline command and private snapshot procedure are documented in [profile recovery](../guides/profile-recovery.md); they can operate when invalid storage blocks server startup.
