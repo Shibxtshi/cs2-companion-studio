@@ -54,6 +54,12 @@ jobs:
           node tests/js/test_display_format.js
           node tests/js/test_dashboard_client.js
           node tests/js/test_theme_preview.js
+          node tests/js/test_drafts.js
+          node --check static/js/draft-schema.js
+          node --check static/js/draft-contract.js
+          node --check static/js/edit-history.js
+          node --check static/js/draft-store.js
+          node --check static/js/draft-session.js
           node --check static/js/theme-preview.js
           node --check static/js/display-format.js
           node --check static/js/widget-renderer.js
@@ -111,6 +117,11 @@ jobs:
         env:
           HOME: /root
         run: python tests/browser/test_themes.py --browser ${{ matrix.browser }}
+
+      - name: Verify persistent IndexedDB drafts, history and tab conflicts
+        env:
+          HOME: /root
+        run: python tests/browser/test_drafts.py --browser ${{ matrix.browser }}
 
   dependency-audit:
     name: Vulnerability report / SBOM

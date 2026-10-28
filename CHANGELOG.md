@@ -4,6 +4,8 @@
 
 ## Unreleased
 
+- Prepare inactive browser-only IndexedDB drafts, bounded undo/redo and coherent gesture history for the future Studio. Current editor/autosave remain unchanged; no draft publication is activated.
+
 - Prepare inactive, versioned dashboard profile/export/draft contracts and per-profile revision validation for the upcoming editor; current profiles and autosave remain active.
 - Add explicit offline profile inspection, verified private reset snapshots and confirmed current-format recovery, including interrupted-operation status. No automatic profile reset or target-format activation.
 

@@ -1,0 +1,1194 @@
+{
+  "profile": {
+    "id": "p-competitive",
+    "name": "Competitive",
+    "revision": 7,
+    "configuration": {
+      "theme": "tactical-blue",
+      "appearance": {
+        "accent": "",
+        "background": "",
+        "density": "normal"
+      },
+      "navigation": {
+        "mode": "compact",
+        "floatingButton": true
+      },
+      "fullscreen": {
+        "showConnectionStatus": true
+      },
+      "layout": {
+        "columns": 24,
+        "widgets": [
+          {
+            "id": "w-0",
+            "kind": "score",
+            "x": 0,
+            "y": 0,
+            "width": 6,
+            "height": 2,
+            "variant": "standard",
+            "style": "solid",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-1",
+            "kind": "map",
+            "x": 0,
+            "y": 2,
+            "width": 6,
+            "height": 2,
+            "variant": "compact",
+            "style": "glass",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-2",
+            "kind": "round",
+            "x": 0,
+            "y": 4,
+            "width": 6,
+            "height": 2,
+            "variant": "minimal",
+            "style": "outline",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-3",
+            "kind": "score_split",
+            "x": 0,
+            "y": 6,
+            "width": 6,
+            "height": 2,
+            "variant": "standard",
+            "style": "solid",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-4",
+            "kind": "match_phase",
+            "x": 0,
+            "y": 8,
+            "width": 6,
+            "height": 2,
+            "variant": "compact",
+            "style": "glass",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-5",
+            "kind": "round_history",
+            "x": 0,
+            "y": 10,
+            "width": 6,
+            "height": 2,
+            "variant": "minimal",
+            "style": "outline",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-6",
+            "kind": "weapon",
+            "x": 0,
+            "y": 12,
+            "width": 6,
+            "height": 2,
+            "variant": "standard",
+            "style": "solid",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-7",
+            "kind": "ammo",
+            "x": 0,
+            "y": 14,
+            "width": 6,
+            "height": 2,
+            "variant": "compact",
+            "style": "glass",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-8",
+            "kind": "inventory",
+            "x": 0,
+            "y": 16,
+            "width": 6,
+            "height": 2,
+            "variant": "minimal",
+            "style": "outline",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-9",
+            "kind": "grenades",
+            "x": 0,
+            "y": 18,
+            "width": 6,
+            "height": 2,
+            "variant": "standard",
+            "style": "solid",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-10",
+            "kind": "equip_value",
+            "x": 0,
+            "y": 20,
+            "width": 6,
+            "height": 2,
+            "variant": "compact",
+            "style": "glass",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-11",
+            "kind": "gear",
+            "x": 0,
+            "y": 22,
+            "width": 6,
+            "height": 2,
+            "variant": "minimal",
+            "style": "outline",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-12",
+            "kind": "economy",
+            "x": 0,
+            "y": 24,
+            "width": 6,
+            "height": 2,
+            "variant": "standard",
+            "style": "solid",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-13",
+            "kind": "cash",
+            "x": 0,
+            "y": 26,
+            "width": 6,
+            "height": 2,
+            "variant": "compact",
+            "style": "glass",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-14",
+            "kind": "forecast",
+            "x": 0,
+            "y": 28,
+            "width": 6,
+            "height": 2,
+            "variant": "minimal",
+            "style": "outline",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-15",
+            "kind": "stats",
+            "x": 0,
+            "y": 30,
+            "width": 6,
+            "height": 2,
+            "variant": "standard",
+            "style": "solid",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-16",
+            "kind": "kd",
+            "x": 0,
+            "y": 32,
+            "width": 6,
+            "height": 2,
+            "variant": "compact",
+            "style": "glass",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-17",
+            "kind": "mvp",
+            "x": 0,
+            "y": 34,
+            "width": 6,
+            "height": 2,
+            "variant": "minimal",
+            "style": "outline",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-18",
+            "kind": "personal_score",
+            "x": 0,
+            "y": 36,
+            "width": 6,
+            "height": 2,
+            "variant": "standard",
+            "style": "solid",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-19",
+            "kind": "round_stats",
+            "x": 0,
+            "y": 38,
+            "width": 6,
+            "height": 2,
+            "variant": "compact",
+            "style": "glass",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-20",
+            "kind": "health",
+            "x": 0,
+            "y": 40,
+            "width": 6,
+            "height": 2,
+            "variant": "minimal",
+            "style": "outline",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-21",
+            "kind": "armor",
+            "x": 0,
+            "y": 42,
+            "width": 6,
+            "height": 2,
+            "variant": "standard",
+            "style": "solid",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-22",
+            "kind": "effects",
+            "x": 0,
+            "y": 44,
+            "width": 6,
+            "height": 2,
+            "variant": "compact",
+            "style": "glass",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-23",
+            "kind": "player",
+            "x": 0,
+            "y": 46,
+            "width": 6,
+            "height": 2,
+            "variant": "minimal",
+            "style": "outline",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-24",
+            "kind": "bomb",
+            "x": 0,
+            "y": 48,
+            "width": 6,
+            "height": 2,
+            "variant": "standard",
+            "style": "solid",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-25",
+            "kind": "bomb_state",
+            "x": 0,
+            "y": 50,
+            "width": 6,
+            "height": 2,
+            "variant": "compact",
+            "style": "glass",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-26",
+            "kind": "events",
+            "x": 0,
+            "y": 52,
+            "width": 6,
+            "height": 2,
+            "variant": "minimal",
+            "style": "outline",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-27",
+            "kind": "connection",
+            "x": 0,
+            "y": 54,
+            "width": 6,
+            "height": 2,
+            "variant": "standard",
+            "style": "solid",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          },
+          {
+            "id": "w-28",
+            "kind": "provider",
+            "x": 0,
+            "y": 56,
+            "width": 6,
+            "height": 2,
+            "variant": "compact",
+            "style": "glass",
+            "title": "",
+            "color": "",
+            "background": "",
+            "opacity": 100
+          }
+        ]
+      }
+    }
+  },
+  "cases": [
+    {
+      "name": "complete draft with all 29 kinds",
+      "kind": "draft",
+      "changes": [],
+      "valid": true
+    },
+    {
+      "name": "complete published profile",
+      "kind": "profile",
+      "changes": [],
+      "valid": true
+    },
+    {
+      "name": "missing format",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "format"
+          ],
+          "remove": true
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing version",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "version"
+          ],
+          "remove": true
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing storeId",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "storeId"
+          ],
+          "remove": true
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing profileId",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "profileId"
+          ],
+          "remove": true
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing draftId",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "draftId"
+          ],
+          "remove": true
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing baseRevision",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "baseRevision"
+          ],
+          "remove": true
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing localRevision",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "localRevision"
+          ],
+          "remove": true
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing updatedAt",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "updatedAt"
+          ],
+          "remove": true
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing name",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "name"
+          ],
+          "remove": true
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "missing configuration",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration"
+          ],
+          "remove": true
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "forbidden secret at ",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "pin"
+          ],
+          "value": "synthetic-forbidden-secret"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "forbidden secret at configuration",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "pin"
+          ],
+          "value": "synthetic-forbidden-secret"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "forbidden secret at configuration.appearance",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "appearance",
+            "pin"
+          ],
+          "value": "synthetic-forbidden-secret"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "forbidden secret at configuration.navigation",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "navigation",
+            "pin"
+          ],
+          "value": "synthetic-forbidden-secret"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "forbidden secret at configuration.fullscreen",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "fullscreen",
+            "pin"
+          ],
+          "value": "synthetic-forbidden-secret"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "forbidden secret at configuration.layout",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "layout",
+            "pin"
+          ],
+          "value": "synthetic-forbidden-secret"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "forbidden secret at configuration.layout.widgets.0",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "layout",
+            "widgets",
+            0,
+            "pin"
+          ],
+          "value": "synthetic-forbidden-secret"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "future version",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "version"
+          ],
+          "value": 2
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "boolean version",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "version"
+          ],
+          "value": true
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "wrong format",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "format"
+          ],
+          "value": "other"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "safe revision",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "baseRevision"
+          ],
+          "value": 9007199254740991
+        }
+      ],
+      "valid": true
+    },
+    {
+      "name": "unsafe revision",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "baseRevision"
+          ],
+          "value": 9007199254740992
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "negative revision",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "localRevision"
+          ],
+          "value": -1
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "boolean revision",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "localRevision"
+          ],
+          "value": false
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "fractional revision",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "baseRevision"
+          ],
+          "value": 1.2
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "empty name",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "name"
+          ],
+          "value": ""
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "leading name space",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "name"
+          ],
+          "value": " bad"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "emoji name",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "name"
+          ],
+          "value": "🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮"
+        }
+      ],
+      "valid": true
+    },
+    {
+      "name": "long emoji name",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "name"
+          ],
+          "value": "🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮🎮"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "control name",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "name"
+          ],
+          "value": "bad\nname"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "NBSP name",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "name"
+          ],
+          "value": "bad name"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "zero width title",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "layout",
+            "widgets",
+            0,
+            "title"
+          ],
+          "value": "bad​title"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "unknown theme",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "theme"
+          ],
+          "value": "unknown"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "wrong bool",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "navigation",
+            "floatingButton"
+          ],
+          "value": 1
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "negative x",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "layout",
+            "widgets",
+            0,
+            "x"
+          ],
+          "value": -1
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "fractional y",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "layout",
+            "widgets",
+            0,
+            "y"
+          ],
+          "value": 1.5
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "zero width",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "layout",
+            "widgets",
+            0,
+            "width"
+          ],
+          "value": 0
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "column overflow",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "layout",
+            "widgets",
+            0,
+            "width"
+          ],
+          "value": 25
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "row overflow",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "layout",
+            "widgets",
+            0,
+            "height"
+          ],
+          "value": 4097
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "unknown variant",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "layout",
+            "widgets",
+            0,
+            "variant"
+          ],
+          "value": "glass"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "unknown style",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "layout",
+            "widgets",
+            0,
+            "style"
+          ],
+          "value": "minimal"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "wrong kind",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "layout",
+            "widgets",
+            0,
+            "kind"
+          ],
+          "value": "not-a-kind"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "opacity step",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "layout",
+            "widgets",
+            0,
+            "opacity"
+          ],
+          "value": 61
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "color suffix newline",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "layout",
+            "widgets",
+            0,
+            "color"
+          ],
+          "value": "#123456\n"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "profile ID newline",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "profileId"
+          ],
+          "value": "valid\n"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "unknown navigation",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "navigation",
+            "mode"
+          ],
+          "value": "other"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "null configuration",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration"
+          ],
+          "value": null
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "duplicate widget ID",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "layout",
+            "widgets",
+            1,
+            "id"
+          ],
+          "value": "w-0"
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "empty layout",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "layout",
+            "widgets"
+          ],
+          "value": []
+        }
+      ],
+      "valid": true
+    },
+    {
+      "name": "too many widgets",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "layout",
+            "widgets"
+          ],
+          "repeatWidget": 61
+        }
+      ],
+      "valid": false
+    },
+    {
+      "name": "overlap accepted",
+      "kind": "draft",
+      "changes": [
+        {
+          "path": [
+            "configuration",
+            "layout",
+            "widgets",
+            1,
+            "y"
+          ],
+          "value": 0
+        }
+      ],
+      "valid": true
+    }
+  ],
+  "draftMetadata": {
+    "format": "ccs-dashboard-draft",
+    "version": 1,
+    "storeId": "11111111111111111111111111111111",
+    "profileId": "p-competitive",
+    "draftId": "22222222222222222222222222222222",
+    "baseRevision": 7,
+    "localRevision": 0,
+    "updatedAt": 1000
+  }
+}

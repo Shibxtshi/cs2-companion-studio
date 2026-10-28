@@ -78,3 +78,7 @@ The approved identity, token ownership and temporary theme preview are documente
 ## Profile transition
 
 P3 prepares strict target contracts and pure per-profile revision transitions without activating them. The current store, autosave and WebSocket messages remain active. Read [profile contracts and staged transition](profile-contracts.md) before P4/P5 work. The stable offline command and private snapshot procedure are documented in [profile recovery](../guides/profile-recovery.md); they can operate when invalid storage blocks server startup.
+
+## Local drafts
+
+P4 supplies inactive, configuration-only IndexedDB persistence and bounded session history. The current editor/autosave are not connected to it. See [local draft boundaries, lifecycle and integration requirements](local-drafts.md) before P5/P8.

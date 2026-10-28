@@ -6,6 +6,7 @@ Start with the [project README](../README.md) for installation and features, or 
 | --- | --- |
 | Install, update or recover a Windows instance | [Windows guide](guides/windows-installation.md) |
 | Recover incompatible/corrupt profile storage offline | [Profile recovery](guides/profile-recovery.md) |
+| Understand local drafts and session history | [Local draft foundations](development/local-drafts.md) |
 | Understand current and target profile formats | [Profile contracts and transition](development/profile-contracts.md) |
 | Understand usage limits and affiliation | [Usage and affiliation](guides/usage-and-affiliation.md) |
 | Find the code and understand its boundaries | [Architecture and repository map](development/architecture.md) |
