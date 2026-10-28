@@ -15,6 +15,7 @@ from urllib.request import urlopen
 
 from playwright.sync_api import sync_playwright
 from test_live_browser import ROOT
+sys.path.insert(0, str(ROOT))
 from companion.profile_contracts import encode_document, validate_contract
 from companion.profile_publication import access_id, renewed_generation
 
