@@ -9,6 +9,7 @@ Start with the [project README](../README.md) for installation and features, or 
 | Find the code and understand its boundaries | [Architecture and repository map](development/architecture.md) |
 | Follow naming and compatibility conventions | [Code style](development/code-style.md) |
 | Run automated checks | [Test guide](../tests/README.md) |
+| Find Windows operational scripts | [Installer index](../installer/README.md) |
 | Find maintenance commands | [Script guide](../scripts/README.md) |
 | Understand protections and limitations | [Technical security notes](security/technical-notes.md) |
 | Report a vulnerability | [Security policy](../SECURITY.md) |

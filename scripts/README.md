@@ -1,18 +1,15 @@
 # Maintenance commands
 
-Run commands from the repository root. These entry points stay stable across the source reorganization.
+Run these commands from the repository root.
 
 | Command | Purpose |
 | --- | --- |
 | `python scripts/generate_config.py` | Generate private local credentials and a GSI config |
-| `python scripts/run_checks.py` | Run isolated backend suites, pytest checks and source-secret hygiene |
+| `python scripts/recover_profiles.py --restore` | Explicitly restore a validated private backup; stop the service first |
+| `python scripts/run_checks.py` | Run isolated backend suites, pytest and source-secret hygiene |
 | `python scripts/check_secrets.py` | Check exclusions and tracked/source files without reading personal secrets |
 | `python scripts/check_public_archive.py <archive.zip>` | Reject private runtime files in a distribution archive |
-| `python scripts/recover_profiles.py --restore` | Explicitly restore a validated private backup; stop the service first |
-| `python scripts/docker_smoke.py` | CI integration check against an already running synthetic Docker instance |
 
-Generation and recovery can change private local files; consult the [Windows guide](../docs/guides/windows-installation.md). Never run Docker smoke checks against a personal instance: they create synthetic profiles/state. See [tests](../tests/README.md), [architecture](../docs/development/architecture.md) and [release gates](../docs/releases/checklist.md).
+Generation and recovery change private local files; consult the [Windows guide](../docs/guides/windows-installation.md). Docker and Windows test runners belong in [tests/](../tests/README.md), while operational PowerShell commands belong in [installer/](../installer/README.md).
 
-The archive checker rejects data/log contents, credential variants, backups, symlinks/unsafe paths and private assistant guides. Only empty runtime .gitkeep scaffolding and explicit example configurations are distributable.
-
-- `test_docker_settings.py`: CI-only disposable Docker integration test for .env reload, timer opt-in/out and image/profile preservation. Never run against a personal instance.
+The archive checker rejects data/log contents, credential variants, backups, symlinks/unsafe paths and private assistant guides. Only empty runtime .gitkeep scaffolding and explicit example configurations are distributable. See [architecture](../docs/development/architecture.md) and [release gates](../docs/releases/checklist.md).

@@ -3,7 +3,7 @@
 from pathlib import Path
 import subprocess
 
-from docker_smoke import wait_for_health
+from smoke import wait_for_health
 
 COMPOSE = ['docker', 'compose']
 SERVICE = 'cs2-companion-studio'

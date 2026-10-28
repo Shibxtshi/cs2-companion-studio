@@ -32,7 +32,7 @@ def test_refactored_python_locals_use_camel_case():
         "companion/gsi_lifecycle.py": {"half_start", "half_end", "team_data"},
         "companion/profile_store.py": {"widgets_raw", "next_rev"},
         "scripts/check_secrets.py": {"repo_root"},
-        "scripts/docker_smoke.py": {"last_error"},
+        "tests/docker/smoke.py": {"last_error"},
     }
     for path, retired_names in previous_locals.items():
         parsed = ast.parse(read(path), filename=path)
@@ -111,8 +111,8 @@ def test_standalone_suites_are_isolated_and_grouped():
         assert module in runner
         assert suite in workflow
     assert "python -m" in workflow
-    assert "tests/standalone tests/legacy_browser" in config
-    assert (ROOT / "tests" / "legacy_browser" / "test_e1_browser.py").exists()
+    assert "tests/standalone tests/browser tests/docker tests/windows" in config
+    assert (ROOT / "tests" / "browser" / "legacy" / "test_e1_browser.py").exists()
 
 
 def test_connection_states_do_not_depend_on_localized_messages():
