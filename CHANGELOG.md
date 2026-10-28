@@ -4,6 +4,10 @@
 
 ## Unreleased
 
+- Reject unsupported binary WebSocket frames cleanly and handle corrupt/deep profile files with controlled recovery errors.
+- Translate save failures in English, avoid UAC prompts for Docker availability failures, and verify tracked-source archive privacy in CI.
+- Pin CI actions to verified commit revisions and document GitHub reporting choices without publishing the project.
+
 - Group Docker and Windows verification under tests/, consolidate historical browser checks, and separate distributable GSI examples from generated private configuration. Update CI and navigation to the new locations.
 
 - Fresh Windows installs ask whether to enable the estimated bomb countdown (disabled by default); reruns preserve existing settings.

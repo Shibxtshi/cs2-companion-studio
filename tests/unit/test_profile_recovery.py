@@ -62,3 +62,28 @@ def test_failed_replace_keeps_current_revision_and_file(tmp_path):
     assert store.revision == revision
     assert store.data['profiles'][0]['name'] == 'My dashboard'
     assert not list(tmp_path.glob('.profiles-*.tmp'))
+
+@pytest.mark.parametrize('raw', [
+    '[' * 10000 + '0' + ']' * 10000,
+    '{"profiles":[],"extra":NaN}',
+    '{"profiles":[],"extra":1e400}',
+], ids=['deep', 'nan', 'overflow'])
+def test_corrupt_storage_has_controlled_recovery_error(tmp_path, raw):
+    path = tmp_path / 'profiles.json'
+    import json
+    store = ProfileStore(path)
+    raw = json.dumps(store.snapshot())[:-1] + ', "extra":' + raw + '}'
+    path.write_text(raw, encoding='utf-8')
+    with pytest.raises(RuntimeError, match='recover_profiles'):
+        ProfileStore(path)
+    assert path.read_text(encoding='utf-8') == raw
+
+
+def test_deep_backup_is_rejected_without_touching_current(tmp_path):
+    store = ProfileStore(tmp_path / 'profiles.json')
+    before = store.path.read_bytes()
+    (tmp_path / 'profiles.json.bak').write_text('[' * 10000 + '0' + ']' * 10000)
+    with pytest.raises(ValueError):
+        recovery.restore(tmp_path)
+    assert store.path.read_bytes() == before
+    assert not list(tmp_path.glob('profiles.json.corrupt-*'))

@@ -6,4 +6,6 @@ We do not welcome harassment, personal attacks, discriminatory slurs, doxxing, t
 
 A maintainer may edit, close or remove inappropriate posts or contributions at their discretion. Repeated violations may result in restrictions in project spaces.
 
-For urgent privacy or security matters, use the private channel described in [SECURITY.md](SECURITY.md). **Before making the repository public, the maintainer must configure a private contact route** for conduct reports that contain sensitive details as well. Do not publish such details in a public issue.
+For security vulnerabilities, use the separate private security-reporting route described in [SECURITY.md](SECURITY.md).
+
+For conduct violations on GitHub that contain sensitive details, use [GitHub's Report abuse workflow](https://docs.github.com/en/communities/maintaining-your-safety-on-github/reporting-abuse-or-spam). These reports go to **GitHub Support**, not directly to this project's maintainer, and are handled under GitHub's policies. Do not publish sensitive details in an issue or misuse vulnerability reports for unrelated conduct complaints. Verify this route during publication preparation; no private maintainer email has been configured.

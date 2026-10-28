@@ -431,6 +431,18 @@ async def gsi(request: Request):
     return JSONResponse({'ok': True})
 
 
+async def receive_text_frame(websocket: WebSocket) -> str:
+    """Close unsupported binary frames without an unhandled ASGI exception."""
+    message = await websocket.receive()
+    if message['type'] == 'websocket.disconnect':
+        raise WebSocketDisconnect(code=message.get('code', 1000))
+    text = message.get('text')
+    if not isinstance(text, str):
+        await websocket.close(code=1003)
+        raise WebSocketDisconnect(code=1003)
+    return text
+
+
 @app.websocket('/ws')
 async def ws(websocket: WebSocket):
     """Authenticate each same-origin WebSocket, including LAN phone browsers."""
@@ -453,7 +465,7 @@ async def ws(websocket: WebSocket):
     capacityReserved = False
     try:
         await websocket.accept()
-        raw = await asyncio.wait_for(websocket.receive_text(), timeout=8.0)
+        raw = await asyncio.wait_for(receive_text_frame(websocket), timeout=8.0)
         if len(raw) > 512:
             limiter.fail(ip, time.monotonic())
             diagnostics.record('login_failed')
@@ -489,7 +501,7 @@ async def ws(websocket: WebSocket):
         await websocket.send_json(profile_store.snapshot())
         await websocket.send_text(json.dumps(summary(), ensure_ascii=False))
         while True:
-            rawMsg = await websocket.receive_text()
+            rawMsg = await receive_text_frame(websocket)
             if len(rawMsg) > 225_000:
                 await websocket.close(code=1009)
                 break

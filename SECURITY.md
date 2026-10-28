@@ -10,9 +10,11 @@ Security fixes are currently planned only for the **most recent development/rele
 
 **Do not post exploitable vulnerabilities, PINs, tokens or private diagnostic data in public issues.**
 
-Before opening the public repository, the maintainer must enable **GitHub private vulnerability reporting** (Repository → Settings → Code security and analysis / Private vulnerability reporting, if available). Once enabled, use the repository's private "Report a vulnerability" option.
+The maintainer has selected **GitHub Private Vulnerability Reporting** as the security-reporting channel. Once the public repository has this feature enabled, use **Security → Advisories → Report a vulnerability**. A SECURITY.md file alone does not enable the form. See [GitHub's reporting guide](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/report-privately).
 
-**Release blocker:** if private vulnerability reporting is unavailable, the maintainer must publish a suitable private security contact method **before** releasing this repository. No private contact address has been configured in this draft, so avoid public disclosure of exploit details.
+**Preparation status:** the repository is still private. GitHub documents this feature for public repositories; activation and a working reporting form have not been verified. At an explicitly authorized publication, the maintainer must enable it under **Settings → Advanced Security → Private vulnerability reporting**, verify the reporting entry point and notification settings, then announce availability. Do not change visibility merely to complete this preparation. See [GitHub's configuration guide](https://docs.github.com/en/code-security/how-tos/report-and-fix-vulnerabilities/configure-vulnerability-reporting/configure-for-a-repository).
+
+Until a private reporting route is verified, do not put vulnerability details in public issues. This preparation does not authorize publication or establish a confidential email contact.
 
 When reporting privately, include affected version, reproduction steps with synthetic data, potential impact, and suggested mitigation. Never send working PINs, tokens or player data.
 
