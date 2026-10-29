@@ -108,3 +108,7 @@ CCS uses the Repère identity and local Inter / Barlow Condensed fonts. Tactical
 ### Dashboard navigation
 
 Use Dashboard for viewing, Customization Studio for the current automatically saved editor, and Settings for display previews, help and diagnostics. Full, compact and hidden navigation plus native/fallback fullscreen are available. Navigation previews are not saved in legacy profiles. The X/Y target renderer and per-tab profile selection remain isolated test foundations until the coordinated storage transition; see [P6 boundaries](docs/development/dashboard.md). Streamer Studio is explicitly marked coming soon.
+
+### Widget presentations
+
+The main dashboard uses the modern Standard presentation for all 29 widgets. Compact and Minimal are supported by the existing target profile contract and isolated renderer tests; their final Studio selection/persistence awaits the coordinated transition. Surface styles remain independent, and estimates/source warnings stay visible. See [widget presentation boundaries](docs/development/widget-presentations.md).

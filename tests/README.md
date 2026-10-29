@@ -106,3 +106,9 @@ Optional backend measurements: python tests/benchmarks/profile_publication.py --
 ## P6 dashboard checks
 
 Run node tests/js/test_dashboard_layout.js, python tests/browser/test_dashboard_navigation.py --browser chromium and python tests/browser/test_dashboard_target.py --browser chromium (also firefox/webkit in CI). The target test uses disposable P5 storage, real authenticated transport and synthetic GSI; it never accesses personal profiles. Add --output PATH to the target test for local screenshots and reflow timings. Keep those artifacts outside the source tree.
+
+## P7 widget variants
+
+Run node tests/js/test_widget_presentation.js and python tests/browser/test_widget_preview.py --browser chromium (also firefox/webkit). The synthetic review server is not packaged into Docker or started by production. --output PATH optionally writes the standalone gallery and screenshots outside the source tree. P1 JSON fixture bytes stay unchanged; reviewed display-only normalizations are explicit in the characterization comparator. P6 target tests additionally cover all 87 combinations and intrinsic-height clipping at seven resolutions.
+
+Optional matched-board timings: python tests/browser/benchmark_widget_updates.py --browser chromium --repeats 5 --output PATH. Run baseline/candidate sequentially with matching browser/viewport/fixtures. It reports DOM counts and card/list identity as well as 29/60-widget render/update samples; no latency threshold is enforced.

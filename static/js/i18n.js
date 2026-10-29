@@ -5,6 +5,17 @@
 const STORAGE='cs2-companion-language';
 const translations={
  EN:{
+ 'grenades reçues':'grenades received',
+ 'Données périmées · hors ligne':'Stale data · offline',
+ 'Arme active':'Active weapon',
+ 'Scénarios de démo':'Demo scenarios',
+ 'Plus de détails':'More details',
+ 'objets reçus':'items received',
+ 'Dernière manche reçue':'Last received round',
+ 'Données simulées':'Simulated data',
+ 'Hors ligne — données indisponibles':'Offline — data unavailable',
+ 'Valeur indisponible':'Value unavailable',
+ 'Munitions':'Ammunition',
  "Ouvre Customization Studio pour ajouter, déplacer et redimensionner tes widgets avec l’éditeur actuel. La sauvegarde automatique et le partage des profils entre appareils restent actifs. Tu peux aussi exporter un JSON.":"Open Customization Studio to add, move and resize widgets with the current editor. Automatic saving and profile sharing across devices remain active. You can also export JSON.",
  'Thème d’aperçu':'Theme preview',
  'Non enregistré · cet onglet':'Not saved · this tab',
@@ -210,6 +221,7 @@ function enqueue(n){pending.add(n);if(!scheduled){scheduled=true;queueMicrotask(
 function setLocale(next){if(!Object.prototype.hasOwnProperty.call(translations,next))return;code=next;document.documentElement.lang=code.toLowerCase();try{localStorage.setItem(STORAGE,code);}catch{}
  const select=document.getElementById('locale-select');if(select)select.value=code;const label=document.querySelector('.language-label');if(label)label.textContent=code==='FR'?'Langue':'Language';
  enqueue(document.body);
+ if(typeof CustomEvent==='function')document.dispatchEvent(new CustomEvent('cs2:locale-changed',{detail:{locale:code}}));
 }
 const messages={
  'profile.pending':'Modifications non enregistrées.',

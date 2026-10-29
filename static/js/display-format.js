@@ -11,10 +11,17 @@
   const weaponName = value => valueText(value).replace(/^weapon_/, '').replaceAll('_', ' ').toUpperCase();
   const capitalize = value => valueText(value).replace(/^./, character => character.toUpperCase());
 
-  function fields(state) {
+  function inventory(player, type = 'weapons') {
+    return (player.weapons || []).filter(weapon => type === 'weapons' || weapon.type === 'Grenade'
+      || /grenade|flashbang|molotov|incgrenade|decoy|smokegrenade/.test(weapon.name));
+  }
+
+  function fields(state, {modeDemo = false} = {}) {
     const player = state.player || {};
     const economy = state.economy || {};
     const map = valueText(state.map).replace(/^de_/, '').toUpperCase();
+    const activities = {playing: locale() === 'fr-FR' ? 'En jeu' : 'Playing',
+      menu:'Menu',textinput:locale() === 'fr-FR' ? 'Saisie de texte' : 'Text input'};
     return {
       map,
       round: 'Round ' + valueText(state.round) + ' · ' + valueText(state.round_phase, state.map_phase || '—'),
@@ -57,12 +64,12 @@
       fire: valueText(player.burning),
       name: valueText(player.name, 'Joueur'),
       team: valueText(player.team, 'Équipe —'),
-      activity: capitalize(player.activity),
+      activity: Object.hasOwn(activities,player.activity) ? activities[player.activity] : capitalize(player.activity),
       bomb_state: ({
         planted: 'Plantée', defused: 'Désamorcée', exploded: 'Explosée',
         dropped: 'Au sol', planting: 'Pose en cours'
       })[state.bomb_state] || valueText(state.bomb_state, 'En attente'),
-      connection: state.online ? 'Données en direct'
+      connection: modeDemo ? 'Données simulées' : state.online ? 'Données en direct'
         : state.gsi_connected ? 'GSI actif · match en attente' : 'Hors ligne',
       lastpacket: state.age_seconds !== null && state.age_seconds !== undefined
         ? 'Dernier paquet : ' + state.age_seconds + ' s' : 'En attente de données',
@@ -70,5 +77,5 @@
     };
   }
 
-  window.CS2DisplayFormat = Object.freeze({isNum, percent, weaponName, fields});
+  window.CS2DisplayFormat = Object.freeze({isNum, percent, weaponName, fields, inventory});
 })();

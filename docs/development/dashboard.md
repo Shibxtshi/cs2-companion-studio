@@ -50,3 +50,7 @@ P6 does not activate target storage. A future coordinated change still needs tar
 ## Verification
 
 See tests/README.md. Pure Node tests cover stable ordering, collision freedom, 60 widgets, bounds, responsive restoration and fallback. Browser tests cover real historical HTTP/GSI/WS/auth/autosave/import/export, golden widget values, theme isolation, keyboard/touch recovery, fullscreen fallback, and the isolated target with two tabs plus another device and remote P5 publication/deletion. Screenshots and raw timing evidence remain private local artifacts outside the source tree. No real personal profile is used by the tests.
+
+## P7 widget presentations
+
+See [widget-presentations.md](widget-presentations.md) for the 29-kind, three-variant renderer, shared data nodes, measured minima, preserved legacy Standard path and inactive target persistence.

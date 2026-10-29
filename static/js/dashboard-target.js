@@ -2,7 +2,7 @@
 (() => {
   'use strict';
   const byId = id => document.getElementById(id);
-  const renderer = CS2WidgetRenderer({board: byId('board'), format: CS2DisplayFormat});
+  const renderer = CS2WidgetRenderer({board: byId('board'), format: CS2DisplayFormat, presentation: CCSWidgetPresentation, onGeometryChange: () => grid.requestRefresh()});
   const grid = CCSDashboardGrid({board: byId('board'), onStatus: code => {
     byId('notice').textContent = code === 'layout_overflow'
       ? (CS2I18N.locale() === 'FR' ? 'Disposition trop grande : widgets restants affichés à la suite.' : 'Layout too large: remaining widgets follow below.') : '';
@@ -94,6 +94,7 @@
     },
   });
   const reconnect = CS2Reconnect({connect: isCurrent => client.connect(isCurrent)});
+  document.addEventListener('cs2:locale-changed', () => { updateValues(); grid.requestRefresh(); });
   selection.addEventListener('change', () => profiles.select(selection.value));
   function login() {
     pin = byId('pin').value.trim();
@@ -114,6 +115,6 @@
   byId('profile-save-panel')?.remove();
   byId('empty-board').textContent = CS2I18N.locale() === 'FR' ? 'Ce profil ne contient aucun widget.' : 'This profile has no widgets.';
   const timer = setInterval(() => { if (!document.hidden && last?.bomb_timer?.status === 'active') renderer.paintBomb(last, anchor); }, 100);
-  function dispose() { disposed = true; clearInterval(timer); reconnect.stop(); client.close(); grid.dispose(); }
+  function dispose() { disposed = true; clearInterval(timer); reconnect.stop(); client.close(); grid.dispose(); renderer.dispose(); }
   window.addEventListener('pagehide', event => { if (!event.persisted) dispose(); });
 })();

@@ -25,7 +25,7 @@ def run(browserName, output):
     base = first['configuration']['layout']['widgets'][0]
     first['configuration']['layout'] = {'columns':24, 'widgets': [
         {**base, 'id':'target-' + str(i), 'kind':KINDS[i % 29],
-         'x':i % 4 * 6, 'y':i // 4 * 6, 'width':6, 'height':4} for i in range(60)]}
+         'x':i % 4 * 6, 'y':i // 4 * 6, 'width':6, 'height':4,'variant':['standard','compact','minimal'][i%3]} for i in range(60)]}
     first['configuration']['layout']['widgets'][1].update(x=0,y=0)
     second = copy.deepcopy(first)
     second.update(id='p-second',name='Second Screen',revision=1)
@@ -123,7 +123,14 @@ def run(browserName, output):
                     for i,box in enumerate(boxes):
                         for other in boxes[i+1:]:
                             assert box['right']<=other['x']+.5 or other['right']<=box['x']+.5 or box['bottom']<=other['y']+.5 or other['bottom']<=box['y']+.5
-                assert target.read_bytes()==raw,'Responsive must not write storage'
+                inventory=a.locator('.w-inventory[data-variant="minimal"]').first
+                beforeHeight=inventory.bounding_box()['height']
+                inventory.locator('summary').click()
+                settle(a)
+                assert inventory.bounding_box()['height']>=beforeHeight
+                inventory.locator('summary').click()
+                settle(a)
+                assert target.read_bytes()==raw,'Responsive/details must not write storage'
                 assert json.loads(target.read_bytes())['profiles'][0]['configuration']['layout']==saved_geometry
                 b.evaluate('window.originalCard=document.querySelector("#board").firstElementChild')
                 publisher=prepare(context,url)
@@ -176,6 +183,22 @@ def run(browserName, output):
                 boxes=a.locator('#board>.widget').evaluate_all('(cards)=>cards.map(card=>{const r=card.getBoundingClientRect();return {y:r.y,bottom:r.bottom};})')
                 assert boxes[1]['y']>=boxes[0]['bottom'] and boxes[2]['y']>=boxes[1]['bottom']
                 expect(a.locator('#notice')).to_contain_text('remaining widgets')
+                a.select_option('#dashboard-profile-menu','p-first')
+                for variant in ['standard','compact','minimal']:
+                    content={'name':variant,'configuration':copy.deepcopy(first['configuration'])}
+                    content['configuration']['layout']['widgets']=copy.deepcopy(first['configuration']['layout']['widgets'][:29])
+                    for widget in content['configuration']['layout']['widgets']:
+                        widget['variant']=variant
+                    publisher.evaluate("([id,content])=>publicationHarness.create(id,content)",['p-'+variant,content])
+                    wait_state(publisher,'published')
+                    a.select_option('#dashboard-profile-menu','p-'+variant)
+                    a.bring_to_front()
+                    for width,height in [(1920,1080),(1366,768),(1280,900),(1024,768),(768,1024),(390,844),(320,740)]:
+                        a.set_viewport_size({'width':width,'height':height})
+                        settle(a)
+                        assert a.evaluate('document.documentElement.scrollWidth <= innerWidth'),(variant,width)
+                        clipped=a.locator('#board>.widget').evaluate_all('(cards)=>cards.filter(card=>card.scrollHeight>card.clientHeight+2).map(card=>({kind:card.dataset.kind,height:card.clientHeight,scroll:card.scrollHeight}))')
+                        assert not clipped,(variant,width,clipped)
                 a.select_option('#dashboard-profile-menu','p-first')
                 assert not faults,faults
                 if output:
