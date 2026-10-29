@@ -2,8 +2,14 @@
 (() => {
   'use strict';
 
-  window.CS2WidgetRenderer = ({board, format}) => {
+  window.CS2WidgetRenderer = ({board, format, presentation = null, onGeometryChange = () => {}}) => {
     const {isNum, percent, weaponName, fields} = format;
+    const WRAPPING_FIELDS = new Set(['name','weapon','map','map_mode','provider','activity','round',
+      'round_phase','round_winner','map_phase','bomb_state','connection','econ_note']);
+    const bindings = new WeakMap();
+    const listCache = new WeakMap();
+    const bombLayoutKeys = new WeakMap();
+    let accessibilityFrame = null;
 
     function createCard(widget, definition) {
       const article = document.createElement('article');
@@ -33,6 +39,7 @@
       // HTML comes only from the shipped catalog, never from profiles or GSI.
       body.innerHTML = definition.html;
       article.append(body);
+      presentation?.decorate(article, widget);
       return article;
     }
 
@@ -44,9 +51,7 @@
     }
 
     function renderInventory(list, player) {
-      const items = (player.weapons || []).filter(weapon =>
-        list.dataset.list === 'weapons' || weapon.type === 'Grenade'
-        || /grenade|flashbang|molotov|incgrenade|decoy|smokegrenade/.test(weapon.name));
+      const items = format.inventory(player, list.dataset.list);
       if (!items.length) addItem(list, 'Aucune donnée');
       for (const weapon of items) {
         const ammo = isNum(weapon.ammo_clip) && weapon.type !== 'Grenade' ? ' · ' + weapon.ammo_clip : '';
@@ -57,7 +62,7 @@
     function renderWins(list, state) {
       const items = state.recent_wins || [];
       if (!items.length) addItem(list, 'Historique indisponible');
-      for (const win of items) addItem(list, '#' + win.round + ' · ' + win.winner);
+      for (const win of items) addItem(list, presentation?.roundLabel ? presentation.roundLabel(win) : '#' + win.round + ' · ' + win.winner);
     }
 
     function renderEvents(list, state) {
@@ -80,8 +85,8 @@
       }
     }
 
-    function updateBars(card, player) {
-      card.querySelectorAll('[data-p]').forEach(node => {
+    function updateBars(nodes, player) {
+      nodes.forEach(node => {
         let amount = 0;
         if (node.dataset.p === 'ammo' && isNum(player.ammo_max)
             && player.ammo_max > 0 && isNum(player.ammo_clip)) {
@@ -130,7 +135,8 @@
         message = 'En attente d’une pose';
       }
 
-      for (const card of document.querySelectorAll('.widget.w-bomb')) {
+      let geometryChanged = false;
+      for (const card of board.querySelectorAll('.widget.w-bomb')) {
         const clock = card.querySelector('[data-bomb-clock]');
         const bar = card.querySelector('[data-bomb-fill]');
         const label = card.querySelector('[data-bomb-msg]');
@@ -140,20 +146,42 @@
         bar.style.width = left === null ? '0%' : percent(100 * left / (timer.duration || 40));
         bar.className = 'bomb-fill ' + kind;
         label.textContent = message;
+        const layoutKey = message + ':' + clock.textContent.length;
+        if (bombLayoutKeys.get(card) !== layoutKey) { bombLayoutKeys.set(card,layoutKey); geometryChanged = true; }
       }
+      if (geometryChanged) { scheduleAccessibility(); onGeometryChange(); }
     }
 
     function updateValues(state, {modeDemo, anchor}) {
       if (!state) return;
-      const values = fields(state);
+      const values = fields(state, {modeDemo});
       const player = state.player || {};
+      let geometryChanged = false;
+      const signatures = {};
+      const listSignature = type => signatures[type] ??= JSON.stringify([
+        window.CS2I18N?.locale(), type === 'wins' ? state.recent_wins
+          : type === 'events' ? state.events : player.weapons]);
       for (const card of board.children) {
-        card.querySelectorAll('[data-v]').forEach(node => {
-          node.textContent = values[node.dataset.v] ?? '—';
+        let binding = bindings.get(card);
+        if (!binding) {
+          binding = {values: [...card.querySelectorAll('[data-v]')], bars: [...card.querySelectorAll('[data-p]')],
+            list: card.querySelector('[data-list]'), controls: card.querySelector('[data-demo-controls]'), shape: ''};
+          bindings.set(card,binding);
+        }
+        const shape = [];
+        binding.values.forEach(node => {
+          const next = values[node.dataset.v] ?? '—';
+          const expected = node.closest('[translate="no"]') ? next : window.CS2I18N?.translate(next) || next;
+          shape.push(WRAPPING_FIELDS.has(node.dataset.v) ? next : next.length);
+          if (node.textContent !== next && node.textContent !== expected) node.textContent = next;
         });
-        updateBars(card, player);
-        const list = card.querySelector('[data-list]');
-        if (list) {
+        const nextShape = JSON.stringify(shape);
+        if (binding.shape !== nextShape) { binding.shape = nextShape; geometryChanged = true; }
+        updateBars(binding.bars, player);
+        const list = binding.list;
+        if (list && listCache.get(list) !== listSignature(list.dataset.list)) {
+          listCache.set(list,listSignature(list.dataset.list));
+          geometryChanged = true;
           list.replaceChildren();
           if (list.dataset.list === 'weapons' || list.dataset.list === 'grenades') {
             renderInventory(list, player);
@@ -163,14 +191,45 @@
             renderEvents(list, state);
           }
         }
+        const previousState = card.dataset.dataState;
+        presentation?.update(card, state, {modeDemo});
+        if (previousState !== card.dataset.dataState) geometryChanged = true;
         if (card.dataset.kind === 'bomb') {
-          const controls = card.querySelector('[data-demo-controls]');
+          const controls = binding.controls;
           if (controls) controls.classList.toggle('hidden', !modeDemo);
         }
       }
       paintBomb(state, anchor);
+      if (geometryChanged) { scheduleAccessibility(); onGeometryChange(); }
     }
 
-    return {createCard, updateValues, paintBomb};
+    function refreshAccessibility() {
+      accessibilityFrame = null;
+      for (const list of board.querySelectorAll('[data-list]')) {
+        const overflow = list.scrollHeight > list.clientHeight + 1 || list.scrollWidth > list.clientWidth + 1;
+        if (overflow) {
+          list.tabIndex = 0;
+          list.setAttribute('role','region');
+          const title = list.closest('.widget')?.querySelector('.widget-heading')?.textContent || '';
+          if (list.getAttribute('aria-label') !== title) list.setAttribute('aria-label',title);
+        } else {
+          list.removeAttribute('tabindex'); list.removeAttribute('role'); list.removeAttribute('aria-label');
+        }
+      }
+    }
+    function scheduleAccessibility() {
+      if (accessibilityFrame === null) accessibilityFrame = requestAnimationFrame(refreshAccessibility);
+    }
+    const observer = new ResizeObserver(scheduleAccessibility);
+    observer.observe(board);
+    const onToggle = () => { scheduleAccessibility(); onGeometryChange(); };
+    board.addEventListener('toggle', onToggle, true);
+    return {createCard, updateValues, paintBomb, refreshAccessibility,
+      dispose() {
+        observer.disconnect();
+        board.removeEventListener('toggle',onToggle,true);
+        if (accessibilityFrame !== null) cancelAnimationFrame(accessibilityFrame);
+      },
+      setVariant(card, variant) { presentation?.setVariant(card, variant); scheduleAccessibility(); onGeometryChange(); }};
   };
 })();

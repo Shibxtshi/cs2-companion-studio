@@ -1,5 +1,12 @@
 # Changelog — user-visible changes
 
+## P7 — Widget presentation variants
+
+- Modernize all 29 kinds with Standard/Compact/Minimal using shared value nodes and preserved source warnings.
+- Activate Standard on legacy dashboards; target variants remain isolated without storage conversion.
+- Add measured display minima and accessible detail/list handling while preserving saved X/Y geometry.
+- Cache unchanged lists/value bindings and label demonstration connections correctly; preserve all GSI calculations.
+
 ## P6 — Dashboard and navigation
 
 - Shared full/compact/hidden navigation, current-editor entry, grouped settings and native/fallback fullscreen.

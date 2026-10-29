@@ -1,0 +1,106 @@
+/* Synthetic gallery framing only; the cards use actual production components. */
+.preview-head {
+  max-width:1440px;
+  margin:auto;
+  padding:24px 32px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:24px;
+  border-bottom:1px solid var(--line);
+}
+.preview-controls {
+  display:flex;
+  flex-wrap:wrap;
+  gap:16px;
+}
+.preview-controls label {
+  display:grid;
+  gap:6px;
+  font-size:11px;
+  color:var(--muted);
+}
+.preview-main {
+  max-width:1440px;
+  margin:auto;
+  padding:32px;
+}
+.preview-intro {
+  margin-bottom:40px;
+}
+.preview-eyebrow {
+  color:var(--ccs-accent);
+  letter-spacing:.14em;
+  font-size:11px;
+  font-weight:700;
+}
+.preview-intro h1 {
+  font:600 40px/1.15 var(--font-brand);
+  margin:12px 0;
+}
+.preview-intro p {
+  color:var(--muted);
+  font-size:13px;
+}
+.preview-section {
+  margin-bottom:32px;
+}
+.preview-section-heading {
+  display:flex;
+  align-items:baseline;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-bottom:16px;
+}
+.preview-section h3 {
+  font:600 24px/1.2 var(--font-brand);
+  margin:0;
+}
+.preview-section code {
+  color:var(--muted);
+  margin-left:auto;
+  font-size:11px;
+}
+.preview-row {
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:16px;
+  align-items:start;
+}
+.preview-variant-label {
+  color:var(--muted);
+  font-size:10px;
+  letter-spacing:.08em;
+  margin-bottom:8px;
+}
+.preview-board>.widget {
+  grid-column:auto;
+  width:100%;
+}
+@media (max-width:900px) {
+  .preview-row {
+    grid-template-columns:1fr;
+    gap:20px;
+  }
+}
+@media (max-width:480px) {
+  .preview-head {
+    padding:16px;
+    flex-wrap:wrap;
+  }
+  .preview-main {
+    padding:24px 16px;
+  }
+  .preview-intro h1 {
+    font-size:32px;
+  }
+}
+
+.preview-category-heading {font:600 32px var(--font-brand);color:var(--ccs-accent);padding-top:24px;border-top:1px solid var(--line);}
+
+.preview-categories {display:flex;flex-wrap:wrap;gap:8px;margin-top:24px}
+.preview-categories a {color:var(--text);border:1px solid var(--line);padding:8px 12px;border-radius:var(--radius-control);text-decoration:none;font-size:12px}
+.preview-categories a:focus-visible {outline:2px solid var(--ccs-focus);outline-offset:2px}
+body[data-preview-width="tablet"] .preview-main {max-width:768px}
+body[data-preview-width="phone"] .preview-main {max-width:390px}
+body:is([data-preview-width="tablet"],[data-preview-width="phone"]) .preview-row {grid-template-columns:1fr}

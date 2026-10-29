@@ -57,6 +57,8 @@ jobs:
           node tests/js/test_drafts.js
           node tests/js/test_profile_publication.js
           node tests/js/test_dashboard_layout.js
+          node tests/js/test_widget_presentation.js
+          node --check static/js/widget-presentation.js
           node --check static/js/dashboard-layout.js
           node --check static/js/dashboard-grid.js
           node --check static/js/dashboard-shell.js
@@ -143,6 +145,11 @@ jobs:
         run: |
           python tests/browser/test_dashboard_navigation.py --browser ${{ matrix.browser }}
           python tests/browser/test_dashboard_target.py --browser ${{ matrix.browser }}
+
+      - name: Verify all 87 widget presentations and states
+        env:
+          HOME: /root
+        run: python tests/browser/test_widget_preview.py --browser ${{ matrix.browser }}
 
   dependency-audit:
     name: Vulnerability report / SBOM

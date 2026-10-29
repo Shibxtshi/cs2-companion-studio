@@ -5,6 +5,17 @@
 const STORAGE='cs2-companion-language';
 const translations={
  EN:{
+ 'grenades reçues':'grenades received',
+ 'Données périmées · hors ligne':'Stale data · offline',
+ 'Arme active':'Active weapon',
+ 'Scénarios de démo':'Demo scenarios',
+ 'Plus de détails':'More details',
+ 'objets reçus':'items received',
+ 'Dernière manche reçue':'Last received round',
+ 'Données simulées':'Simulated data',
+ 'Hors ligne — données indisponibles':'Offline — data unavailable',
+ 'Valeur indisponible':'Value unavailable',
+ 'Munitions':'Ammunition',
  "Ouvre Customization Studio pour ajouter, déplacer et redimensionner tes widgets avec l’éditeur actuel. La sauvegarde automatique et le partage des profils entre appareils restent actifs. Tu peux aussi exporter un JSON.":"Open Customization Studio to add, move and resize widgets with the current editor. Automatic saving and profile sharing across devices remain active. You can also export JSON.",
  'Thème d’aperçu':'Theme preview',
  'Non enregistré · cet onglet':'Not saved · this tab',

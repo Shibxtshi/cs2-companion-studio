@@ -25,3 +25,7 @@ Start with the [project README](../README.md) for installation and features, or 
 The release checklist remains authoritative for publication gates. Historical notes are retained as records, not current instructions. Local assistant instructions and working context are not part of the distributed repository.
 
 - [Dashboard and navigation (P6)](development/dashboard.md) — active shell, inactive X/Y target and transition boundaries.
+
+## P7 widget presentations
+
+See [widget-presentations.md](development/widget-presentations.md) for the 29-kind, three-variant renderer, shared data nodes, measured minima, preserved legacy Standard path and inactive target persistence.

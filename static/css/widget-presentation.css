@@ -1,0 +1,685 @@
+/* P7 representative cards opt in explicitly; legacy cards keep their current presentation. */
+.presented-widget {
+  container-type:inline-size;
+  min-height:var(--widget-min-height)!important;
+  padding:20px;
+  gap:16px;
+  border-radius:var(--radius-card);
+}
+.presented-widget::before {
+  width:2px;
+  top:16px;
+  bottom:16px;
+  opacity:.65;
+}
+.presented-widget .widget-top {
+  margin:0;
+  min-height:20px;
+  gap:12px;
+}
+.presented-widget .widget-heading {
+  white-space:normal;
+  overflow:visible;
+  overflow-wrap:anywhere;
+  font-size:11px;
+  letter-spacing:.08em;
+  line-height:1.4;
+}
+.presented-widget .widget-icon {
+  color:var(--muted);
+  width:20px;
+  height:20px;
+  flex-shrink:0;
+}
+.presented-widget .widget-icon svg {
+  display:block;
+  width:100%;
+  height:100%;
+}
+.presented-widget .widget-body {
+  display:flex;
+  flex-direction:column;
+  gap:16px;
+  min-width:0;
+}
+.presented-widget .big {
+  font-size:clamp(32px,12cqi,48px);
+  line-height:1;
+  letter-spacing:-.045em;
+}
+.presented-widget .medium {
+  font-size:clamp(20px,8cqi,30px);
+}
+.presented-widget .space {
+  margin-top:0;
+}
+.presented-widget .widget-data-status {
+  color:var(--warning);
+  font-size:11px;
+  line-height:1.4;
+  border-top:1px solid var(--line);
+  padding-top:8px;
+}
+.presented-widget [hidden] {
+  display:none!important;
+}
+.presented-widget .widget-more,
+.presented-widget .bomb-demo-options {
+  font-size:12px;
+  color:var(--muted);
+  margin-top:auto;
+}
+.presented-widget summary {
+  cursor:pointer;
+  padding:8px 0;
+  min-height:32px;
+  color:var(--text);
+}
+.presented-widget summary:focus-visible {
+  outline:2px solid var(--ccs-focus);
+  outline-offset:2px;
+  border-radius:var(--radius-control);
+}
+.presented-widget .widget-more-content {
+  padding-top:8px;
+}
+.presented-widget .widget-more-content>* {
+  margin:0;
+}
+.presented-widget .score-values {
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:24px;
+  flex:1;
+}
+.presented-widget .score-team {
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+.presented-widget .score-team-label {
+  font:600 12px var(--font-ui);
+  color:var(--muted);
+  letter-spacing:.08em;
+}
+.presented-widget .score-context {
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.presented-widget .score-context .smallish {
+  font-size:13px;
+}
+.presented-widget .score-context .muted {
+  font-size:12px;
+}
+.presented-widget .health-reading {
+  display:flex;
+  align-items:baseline;
+  gap:8px;
+  flex:1;
+}
+.presented-widget .health-unit {
+  color:var(--muted);
+  font-size:13px;
+  font-weight:600;
+}
+.presented-widget .bar {
+  height:6px;
+  margin:0;
+}
+.presented-widget .weapon-text {
+  white-space:normal;
+  overflow:visible;
+  overflow-wrap:anywhere;
+  font-size:clamp(18px,8cqi,26px);
+}
+.presented-widget .weapon-ammunition {
+  margin:0;
+  align-items:baseline;
+  gap:8px;
+}
+.presented-widget .ammo-unit {
+  color:var(--muted);
+  font-size:11px;
+  margin-left:auto;
+}
+.presented-widget .inventory-summary {
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.presented-widget .inventory-active {
+  display:grid;
+  gap:4px;
+}
+.presented-widget .inventory-current {
+  overflow-wrap:anywhere;
+  font-size:20px;
+}
+.presented-widget .inventory-count {
+  color:var(--muted);
+  font-size:11px;
+}
+.presented-widget .inventory-count b {
+  color:var(--text);
+}
+.presented-widget .inventory-list {
+  margin:0;
+  display:grid;
+  gap:6px;
+}
+.presented-widget .inventory-list .item {
+  min-width:0;
+  overflow-wrap:anywhere;
+  padding:9px 12px;
+}
+.presented-widget .inventory-list .item.active {
+  color:var(--text);
+  border-color:var(--widget-accent,var(--accent));
+}
+.presented-widget .economy-values {
+  gap:12px;
+  flex-wrap:wrap;
+}
+.presented-widget .money-current,
+.presented-widget .money-forecast {
+  display:flex;
+  flex-direction:column;
+  gap:8px;
+  min-width:0;
+}
+.presented-widget .money-current .muted,
+.presented-widget .money-forecast .muted {
+  font-size:11px;
+}
+.presented-widget .economy-source {
+  color:var(--muted);
+  font-size:11px;
+  line-height:1.5;
+}
+.presented-widget.w-economy .divider {
+  margin:0;
+}
+.presented-widget.w-economy .flex.tiny {
+  display:flex;
+  align-items:flex-start;
+  gap:8px;
+  flex-direction:column;
+}
+.presented-widget .stat-tiles {
+  gap:12px;
+  flex:1;
+  align-items:center;
+}
+.presented-widget .stat-tiles>div {
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  min-width:0;
+}
+.presented-widget .stat-tiles b {
+  font-size:36px;
+  letter-spacing:-.04em;
+}
+.presented-widget .stat-short {
+  display:none;
+}
+.presented-widget .history-summary {
+  display:flex;
+  gap:12px;
+  align-items:baseline;
+  flex-wrap:wrap;
+}
+.presented-widget .history-summary strong {
+  margin-left:auto;
+}
+.presented-widget .history-list {
+  margin:0;
+  gap:6px;
+}
+.presented-widget .history-list .item {
+  padding:8px 10px;
+}
+.presented-widget.w-round_history .tiny.space {
+  font-size:11px;
+  line-height:1.5;
+}
+.presented-widget.w-bomb .widget-body {
+  gap:12px;
+}
+.presented-widget .bomb-clock {
+  font:700 58px/1 var(--font-ui);
+  letter-spacing:-.055em;
+  font-variant-numeric:tabular-nums;
+  margin:0;
+}
+.presented-widget .bomb-track {
+  margin:0;
+  height:6px;
+}
+.presented-widget .bomb-legend {
+  font-size:12px;
+  line-height:1.5;
+  margin:0;
+}
+.presented-widget.w-bomb .pill {
+  white-space:nowrap;
+  font-size:11px;
+}
+.presented-widget .demo-controls {
+  margin-top:8px;
+}
+.presented-widget.w-connection .widget-body {
+  align-items:flex-start;
+}
+.presented-widget .connection-indicator {
+  display:block;
+  width:8px;
+  height:8px;
+  border-radius:50%;
+  background:var(--success);
+}
+.presented-widget[data-data-state="offline"] .connection-indicator,
+.presented-widget[data-data-state="demo"] .connection-indicator {
+  background:var(--warning);
+}
+
+/* Compact reorganizes the same nodes rather than computing different values. */
+.presented-widget[data-variant="compact"] {
+  padding:16px;
+  gap:12px;
+}
+.presented-widget[data-variant="compact"] .widget-body {
+  gap:12px;
+}
+.presented-widget[data-variant="compact"] .widget-heading {
+  font-size:10px;
+}
+.presented-widget[data-variant="compact"] .widget-icon {
+  width:16px;
+  height:16px;
+}
+.presented-widget[data-variant="compact"] .big {
+  font-size:34px;
+}
+.presented-widget[data-variant="compact"] .score-values {
+  justify-content:space-between;
+  font-size:36px;
+}
+.presented-widget:is(.w-health,.w-armor)[data-variant="compact"] .widget-body {
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  align-items:center;
+  gap:24px;
+}
+.presented-widget.w-weapon[data-variant="compact"] .weapon-presentation {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+}
+.presented-widget.w-weapon[data-variant="compact"] .weapon-ammunition {
+  gap:4px;
+}
+.presented-widget.w-weapon[data-variant="compact"] .ammo-unit {
+  display:none;
+}
+.presented-widget[data-variant="compact"] .inventory-list {
+  display:flex;
+  flex-wrap:wrap;
+}
+.presented-widget[data-variant="compact"] .inventory-list .item {
+  padding:6px 8px;
+}
+.presented-widget[data-variant="compact"] .inventory-current {
+  font-size:16px;
+}
+.presented-widget[data-variant="compact"] .stat-tiles>div {
+  flex-direction:row;
+  align-items:baseline;
+  gap:6px;
+  flex-wrap:wrap;
+}
+.presented-widget[data-variant="compact"] .stat-tiles b {
+  order:-1;
+  font-size:30px;
+}
+.presented-widget.w-connection[data-variant="compact"] .widget-body {
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  align-items:center;
+}
+.presented-widget.w-connection[data-variant="compact"] [data-v="lastpacket"] {
+  grid-column:2;
+  font-size:12px;
+}
+.presented-widget[data-variant="compact"] .bomb-clock {
+  font-size:44px;
+}
+
+/* Minimal retains critical state/source text and uses native disclosure for secondary data. */
+.presented-widget[data-variant="minimal"] {
+  padding:12px 14px;
+  gap:8px;
+}
+.presented-widget[data-variant="minimal"] .widget-icon {
+  display:none;
+}
+.presented-widget[data-variant="minimal"] .widget-heading {
+  font-size:10px;
+  letter-spacing:.04em;
+}
+.presented-widget[data-variant="minimal"] .widget-body {
+  gap:8px;
+}
+.presented-widget[data-variant="minimal"] .big {
+  font-size:28px;
+}
+.presented-widget[data-variant="minimal"] .score-values {
+  justify-content:flex-start;
+  font-size:32px;
+  gap:16px;
+}
+.presented-widget[data-variant="minimal"] .score-team {
+  gap:6px;
+}
+.presented-widget:is(.w-health,.w-armor)[data-variant="minimal"] {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+}
+.presented-widget:is(.w-health,.w-armor)[data-variant="minimal"] .widget-top {
+  grid-column:1;
+  grid-row:1;
+}
+.presented-widget:is(.w-health,.w-armor)[data-variant="minimal"] .widget-body {
+  display:contents;
+}
+.presented-widget:is(.w-health,.w-armor)[data-variant="minimal"] .health-reading {
+  grid-column:2;
+  grid-row:1;
+}
+.presented-widget:is(.w-health,.w-armor)[data-variant="minimal"] .bar,
+.presented-widget:is(.w-health,.w-armor)[data-variant="minimal"] .widget-data-status {
+  grid-column:1/-1;
+}
+.presented-widget:is(.w-health,.w-armor)[data-variant="minimal"] .bar {
+  height:3px;
+}
+.presented-widget.w-weapon[data-variant="minimal"] .weapon-presentation {
+  display:flex;
+  flex-direction:row;
+  align-items:baseline;
+  flex-wrap:wrap;
+}
+.presented-widget.w-weapon[data-variant="minimal"] .weapon-text {
+  font-size:16px;
+  flex:1;
+}
+.presented-widget.w-weapon[data-variant="minimal"] .weapon-ammunition {
+  margin-left:auto;
+  gap:4px;
+}
+.presented-widget.w-weapon[data-variant="minimal"] .ammo-unit {
+  display:none;
+}
+.presented-widget[data-variant="minimal"] .inventory-current {
+  font-size:17px;
+}
+.presented-widget[data-variant="minimal"] .economy-values {
+  flex-direction:column;
+  align-items:flex-start;
+  gap:10px;
+}
+.presented-widget[data-variant="minimal"] .money-current,
+.presented-widget[data-variant="minimal"] .money-forecast {
+  flex-direction:row;
+  align-items:baseline;
+  flex-wrap:wrap;
+  gap:8px;
+}
+.presented-widget[data-variant="minimal"] .money-forecast .medium {
+  font-size:20px;
+}
+.presented-widget[data-variant="minimal"] .stat-tiles {
+  flex-wrap:nowrap;
+}
+.presented-widget[data-variant="minimal"] .stat-tiles>div {
+  flex-direction:row;
+  align-items:baseline;
+  gap:6px;
+}
+.presented-widget[data-variant="minimal"] .stat-short {
+  display:inline;
+  font-size:11px;
+  color:var(--muted);
+}
+.presented-widget[data-variant="minimal"] .stat-tiles b {
+  font-size:24px;
+}
+.presented-widget[data-variant="minimal"] .stat-tiles .tiny {
+  position:absolute;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+  clip-path:inset(50%);
+}
+.presented-widget[data-variant="minimal"] .history-summary {
+  gap:8px;
+}
+.presented-widget[data-variant="minimal"] .history-summary strong {
+  margin-left:0;
+}
+.presented-widget[data-variant="minimal"] .bomb-clock {
+  font-size:34px;
+}
+.presented-widget[data-variant="minimal"] .bomb-track {
+  display:none;
+}
+.presented-widget.w-connection[data-variant="minimal"] .widget-body {
+  display:grid;
+  grid-template-columns:auto minmax(0,1fr);
+  align-items:center;
+}
+.presented-widget.w-connection[data-variant="minimal"] [data-v="connection"] {
+  font-size:16px;
+}
+.presented-widget.w-connection[data-variant="minimal"] [data-v="lastpacket"] {
+  grid-column:2;
+  font-size:11px;
+}
+@media (pointer:coarse) {
+  .presented-widget summary {
+    min-height:44px;
+    padding:12px 0;
+  }
+}
+@media (prefers-reduced-motion:reduce) {
+  .presented-widget,
+  .presented-widget * {
+    transition:none!important;
+    animation:none!important;
+  }
+}
+
+/* Compact history avoids repeating the latest round already present in the list. */
+.presented-widget.w-round_history[data-variant="compact"] .history-summary {
+  display:none;
+}
+
+/* The remaining families reuse the same presentation grammar and shipped value nodes. */
+.presented-widget .single-reading {
+  overflow-wrap:anywhere;
+  min-width:0;
+}
+.presented-widget .presentation-caption,
+.presented-widget .estimate-label {
+  font-size:11px;
+  line-height:1.5;
+}
+.presented-widget .estimate-label {
+  color:var(--warning);
+}
+.presented-widget.single-reading-widget[data-variant="compact"] .widget-body {
+  flex-direction:row;
+  align-items:baseline;
+  flex-wrap:wrap;
+}
+.presented-widget.single-reading-widget[data-variant="compact"] .single-reading {
+  margin-right:auto;
+}
+.presented-widget.single-reading-widget[data-variant="minimal"] {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,2fr);
+  align-items:center;
+}
+.presented-widget.single-reading-widget[data-variant="minimal"] .widget-top {
+  grid-column:1;
+  grid-row:1;
+}
+.presented-widget.single-reading-widget[data-variant="minimal"] .widget-body {
+  display:contents;
+}
+.presented-widget.single-reading-widget[data-variant="minimal"] .single-reading {
+  grid-column:2;
+  grid-row:1;
+  text-align:right;
+  font-size:clamp(18px,8cqi,28px);
+}
+.presented-widget.single-reading-widget[data-variant="minimal"] .presentation-caption,
+.presented-widget.single-reading-widget[data-variant="minimal"] .widget-more,
+.presented-widget.single-reading-widget[data-variant="minimal"] .widget-data-status,
+.presented-widget.single-reading-widget[data-variant="minimal"] .rowgap {
+  grid-column:1/-1;
+}
+.presented-widget:is(.w-cash,.w-kd,.w-mvp,.w-personal_score,.w-equip_value)[data-variant="minimal"] .presentation-caption {
+  position:absolute;
+  width:1px;
+  height:1px;
+  overflow:hidden;
+  clip-path:inset(50%);
+}
+.presented-widget.w-player[data-variant="minimal"] .single-reading {
+  grid-column:1/-1;
+  grid-row:auto;
+  text-align:left;
+  font-size:20px;
+}
+.presented-widget.w-ammo .ammo-reading,
+.presented-widget .grenade-summary {
+  display:flex;
+  flex-wrap:wrap;
+  align-items:baseline;
+  gap:8px;
+}
+.presented-widget.w-ammo[data-variant="compact"] .widget-body {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) auto;
+  align-items:center;
+}
+.presented-widget.w-ammo[data-variant="compact"] .bar {
+  grid-column:1/-1;
+  grid-row:2;
+}
+.presented-widget.w-ammo[data-variant="minimal"] .bar {
+  display:none;
+}
+.presented-widget .grenade-summary .muted {
+  font-size:12px;
+}
+.presented-widget.w-grenades[data-variant="compact"] .grenade-summary {
+  justify-content:space-between;
+}
+.presented-widget.w-grenades[data-variant="minimal"] .grenade-summary .big {
+  font-size:24px;
+}
+.presented-widget.w-gear[data-variant="compact"] .widget-body {
+  flex-direction:row;
+  align-items:baseline;
+  flex-wrap:wrap;
+}
+.presented-widget.w-gear[data-variant="minimal"] .tag {
+  padding:4px 6px;
+  font-size:11px;
+}
+.presented-widget.w-forecast[data-variant="compact"] .widget-body {
+  gap:8px;
+}
+.presented-widget.w-effects[data-variant="minimal"] .stat-tiles {
+  flex-wrap:wrap;
+}
+.presented-widget.w-effects[data-variant="minimal"] .stat-tiles>div {
+  flex-direction:column;
+  gap:4px;
+}
+.presented-widget.w-effects[data-variant="minimal"] .stat-tiles .stat-short {
+  order:1;
+}
+.presented-widget .inventory-list,
+.presented-widget .history-list,
+.presented-widget .event-list {
+  max-height:216px;
+  overflow:auto;
+  overscroll-behavior:contain;
+  scrollbar-width:thin;
+}
+.presented-widget .event-list {
+  display:flex;
+  flex-direction:column;
+  flex-wrap:nowrap;
+  margin:0;
+}
+.presented-widget .event-list .item {
+  display:flex;
+  align-items:baseline;
+  justify-content:space-between;
+  gap:12px;
+  overflow-wrap:anywhere;
+}
+.presented-widget .event-list .item>span:first-child {
+  min-width:0;
+}
+.presented-widget .event-list .item>.tiny {
+  white-space:nowrap;
+}
+.presented-widget .event-preview {
+  display:none;
+  overflow-wrap:anywhere;
+}
+.presented-widget.w-events[data-variant="compact"] .event-list .item {
+  background:transparent;
+  border-width:0 0 1px;
+  border-radius:0;
+  padding:8px 0;
+}
+.presented-widget.w-events[data-variant="minimal"] .event-preview {
+  display:block;
+  font-size:17px;
+}
+.presented-widget .widget-body {
+  overflow-wrap:anywhere;
+}
+.presented-widget .widget-top,
+.presented-widget .widget-data-status {
+  flex-shrink:0;
+}
+.presented-widget .stat-tiles b {
+  overflow-wrap:anywhere;
+}
+.presented-widget .widget-body:focus-visible,
+.presented-widget [data-list]:focus-visible {
+  outline:2px solid var(--ccs-focus);
+  outline-offset:2px;
+}
+.presented-widget[data-data-state="stale"] .connection-indicator,
+.presented-widget[data-data-state="waiting"] .connection-indicator {
+  background:var(--warning);
+}
+.xy-board>.presented-widget .widget-body {
+  flex:none;
+}

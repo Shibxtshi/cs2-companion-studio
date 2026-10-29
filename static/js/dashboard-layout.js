@@ -10,12 +10,12 @@
     economy: [280, 192], inventory: [280, 192], events: [280, 232],
     weapon: [240, 192], gear: [240, 192], effects: [240, 192],
   });
-  const minimum = kind => MINIMUMS[kind] || [200, 152];
+  const minimum = (kind, variant = 'standard') => window.CCSWidgetPresentation?.minimum(kind, variant) || MINIMUMS[kind] || [200, 152];
   const intersects = (a, b) => a.x < b.x + b.width && a.x + a.width > b.x
     && a.y < b.y + b.height && a.y + a.height > b.y;
   const rows = height => Math.ceil((height + GAP) / (ROW_HEIGHT + GAP));
 
-  function project(layout, availableWidth) {
+  function project(layout, availableWidth, minimumFor = minimum) {
     if (!Number.isFinite(availableWidth) || availableWidth <= 0) throw new Error('invalid_container');
     if (!Number.isInteger(layout.columns) || layout.columns < 1 || layout.columns > 64
         || !Array.isArray(layout.widgets) || layout.widgets.length > 60) throw new Error('invalid_layout');
@@ -35,7 +35,7 @@
           || widget.x + widget.width > columns || widget.y + widget.height > 4096) {
         throw new Error('invalid_geometry');
       }
-      const [minWidth, minHeight] = minimum(widget.kind);
+      const [minWidth, minHeight] = minimumFor(widget.kind, widget.variant || 'standard', widget.id);
       const minColumns = Math.min(count, Math.ceil((minWidth + GAP) / (cellWidth + GAP)));
       const width = Math.min(count, Math.max(minColumns, Math.ceil(widget.width * count / columns)));
       const height = Math.max(widget.height, rows(minHeight));

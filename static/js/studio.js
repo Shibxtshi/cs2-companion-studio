@@ -1,7 +1,7 @@
 (()=>{'use strict';
 const tr=text=>window.CS2I18N?.translate(text)||text,$=id=>document.getElementById(id);
 const {isNum}=window.CS2DisplayFormat;
-const widgetRenderer=window.CS2WidgetRenderer({board:$('board'),format:window.CS2DisplayFormat});
+const widgetRenderer=window.CS2WidgetRenderer({board:$('board'),format:window.CS2DisplayFormat,presentation:window.CCSWidgetPresentation});
 const W=window.CS2WidgetCatalog;
 if(!W)throw new Error('Widget catalog must load before studio.js');
 const VERSION='1.0.0', COLOR='#f3ac52', DEFAULT_IDS=['score','weapon','economy','stats','bomb'];
@@ -197,7 +197,7 @@ $('download-support').addEventListener('click',()=>{if(!modeDemo&&profilesReady&
 $('connect').addEventListener('click',login);$('pin').addEventListener('keydown',e=>{if(e.key==='Enter')login();});$('demo').addEventListener('click',demo);$('demoagain').addEventListener('click',demo);
 $('board').addEventListener('click',e=>{const b=e.target.closest('[data-demo]');if(b&&modeDemo){const n=b.dataset.demo;demoBomb(n==='stop'?'stop':Number(n));}});
 $('logout').addEventListener('click',()=>{if(!allowDiscardPending())return;reconnect.stop();clearPrivateProfiles();pin='';$('pin').value='';$('download-support').classList.add('hidden');document.dispatchEvent(new Event('cs2:logout'));modeDemo=false;dashboardClient.close();last=null;anchor=null;$('view').classList.add('hidden');$('login').classList.remove('hidden');setStatus('Non connecté');});
-$('locale-select').addEventListener('change',()=>setTimeout(()=>{renderCatalog();showSaveState(profileSync.status);},0));
+$('locale-select').addEventListener('change',()=>setTimeout(()=>{renderCatalog();updateValues();showSaveState(profileSync.status);},0));
 // Repaint the countdown only while it is running and the tab is visible.
 setInterval(()=>{
  if(!document.hidden&&last?.bomb_timer?.status==='active')paintBomb();
@@ -209,5 +209,6 @@ const retrySave=makeBtn('Enregistrer ma version','Remplacer la version du serveu
 const discardSave=makeBtn('Charger la version du serveur','Abandonner mes modifications non enregistrées',()=>profileSync.resolve(false));discardSave.id='profile-save-discard';
 savePanel.append(saveMessage,retrySave,discardSave);$('custom-tools').after(savePanel);
 window.addEventListener('beforeunload',event=>{if(profileSync.dirty){event.preventDefault();event.returnValue='';}});
+window.addEventListener('pagehide',event=>{if(!event.persisted)widgetRenderer.dispose();});
 initialize();
 })();
