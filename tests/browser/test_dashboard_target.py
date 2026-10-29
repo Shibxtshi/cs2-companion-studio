@@ -29,6 +29,7 @@ def run(browserName, output):
     first['configuration']['layout']['widgets'][1].update(x=0,y=0)
     second = copy.deepcopy(first)
     second.update(id='p-second',name='Second Screen',revision=1)
+    second['configuration']['theme']='creator-purple'
     document = {'format':'ccs-dashboard-store','version':1,'storeId':'1'*32,'catalogRevision':7,
                 'profiles':[first,second],'tombstones':[],'receipts':[]}
     measurements = []
@@ -64,6 +65,9 @@ def run(browserName, output):
                 c=page(device)
                 b.select_option('#dashboard-profile-menu','p-second')
                 c.select_option('#dashboard-profile-menu','p-second')
+                expect(a.locator('html')).to_have_attribute('data-theme','tactical-blue')
+                expect(b.locator('html')).to_have_attribute('data-theme','creator-purple')
+                expect(c.locator('#theme-preview')).to_have_value('creator-purple')
                 c.locator('[data-section="settings"]').tap()
                 c.select_option('#navigation-mode','hidden')
                 c.uncheck('#navigation-floating')

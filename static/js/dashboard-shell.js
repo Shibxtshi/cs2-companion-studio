@@ -200,7 +200,9 @@
   window.CCSDashboardShell = Object.freeze({
     setTargetProfile(profile) {
       target = true; targetName = profile.name;
-      root.dataset.theme = profile.configuration.theme;
+      const theme = byId('theme-preview');
+      theme.value = profile.configuration.theme;
+      theme.dispatchEvent(new Event('change'));
       navigation = profile.configuration.navigation.mode;
       floating = profile.configuration.navigation.floatingButton;
       showConnection = profile.configuration.fullscreen.showConnectionStatus;
