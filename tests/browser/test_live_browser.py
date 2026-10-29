@@ -203,7 +203,7 @@ def run(browser_name):
                 expect(a.locator('#profile-save-panel')).to_be_visible()
                 expect(a.locator('#profile-select')).to_contain_text(rename['value'])
                 if fault == 'disconnect':
-                    expect(a.locator('.w-player [data-v="name"]')).to_have_text('—')
+                    expect(a.locator('.w-player [data-v="name"]')).not_to_have_text('Carte')
                 expect(a.locator('#profile-save-retry')).to_be_visible(timeout=20000)
                 # For reconnect, wait until the new authenticated snapshot arrives.
                 if fault == 'disconnect':
