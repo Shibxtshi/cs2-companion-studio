@@ -71,13 +71,47 @@ def run(browserName, output):
                 c.locator('[data-section="dashboard"]').tap()
                 expect(c.locator('#board')).to_be_visible()
                 raw=target.read_bytes()
+                a.bring_to_front()
+                settle(a)
+                measured = a.evaluate("""layout => {
+                    const samples=[];
+                    const measure=(operation,action)=>{
+                        const started=performance.now(); action();
+                        document.getElementById('board').getBoundingClientRect();
+                        samples.push({operation,ms:performance.now()-started});
+                    };
+                    for(let i=0;i<5;i++){
+                        measure('profile60',()=>{const select=document.getElementById('dashboard-profile-menu');select.value=i%2?'p-first':'p-second';select.dispatchEvent(new Event('change'));});
+                        measure('theme',()=>{const select=document.getElementById('theme-preview');select.value=document.documentElement.dataset.theme==='tactical-blue'?'competitive-red':'tactical-blue';select.dispatchEvent(new Event('change'));});
+                    }
+                    const select=document.getElementById('dashboard-profile-menu');select.value='p-first';select.dispatchEvent(new Event('change'));
+                    document.documentElement.requestFullscreen=undefined;
+                    for(let i=0;i<5;i++){
+                        measure('immersiveEnter',()=>document.getElementById('dashboard-fullscreen').click());
+                        measure('immersiveExit',()=>document.querySelector('.immersive-exit').click());
+                    }
+                    for(const width of [1600,900,600,390,320]){
+                        const started=performance.now();
+                        for(let i=0;i<100;i++) CCSDashboardLayout.project(layout,width);
+                        samples.push({operation:'project60',width,count:100,ms:(performance.now()-started)/100});
+                    }
+                    return samples;
+                }""",first['configuration']['layout'])
+                measurements.extend(measured)
                 a.evaluate('window.originalCard=document.querySelector("#board").firstElementChild')
+                a.evaluate("""() => {
+                    window.resizePaintMs=null;
+                    addEventListener('resize',()=>{
+                        const start=performance.now();
+                        requestAnimationFrame(()=>requestAnimationFrame(()=>{window.resizePaintMs=performance.now()-start;}));
+                    });
+                }""")
                 saved_geometry=copy.deepcopy(first['configuration']['layout'])
                 for width,height in [(1920,1080),(1366,768),(1280,900),(1024,768),(768,1024),(390,844),(320,740),(1920,1080)]:
                     start=time.perf_counter()
                     a.set_viewport_size({'width':width,'height':height})
                     settle(a)
-                    measurements.append({'operation':'reflow','width':width,'ms':(time.perf_counter()-start)*1000})
+                    measurements.append({'operation':'reflow','width':width,'ms':(time.perf_counter()-start)*1000,'eventToTwoFramesMs':a.evaluate('window.resizePaintMs')})
                     assert a.evaluate('document.documentElement.scrollWidth <= innerWidth'),width
                     assert a.locator('#board .widget').count()==60
                     assert a.evaluate('window.originalCard===document.querySelector("#board").firstElementChild')
@@ -113,6 +147,20 @@ def run(browserName, output):
                 wait_state(publisher,'published')
                 expect(b.locator('#dashboard-profile-menu')).to_have_value('p-first')
                 expect(c.locator('#dashboard-profile-menu')).to_have_value('p-first')
+                content={'name':'Empty target','configuration':copy.deepcopy(first['configuration'])}
+                content['configuration']['layout']['widgets']=[]
+                publisher.evaluate("([id,content])=>publicationHarness.create(id,content)",['p-empty',content])
+                wait_state(publisher,'published')
+                a.select_option('#dashboard-profile-menu','p-empty')
+                expect(a.locator('#empty-board')).to_be_visible()
+                expect(a.locator('#board .widget')).to_have_count(0)
+                content['name']='One widget'
+                content['configuration']['layout']['widgets']=[first['configuration']['layout']['widgets'][0]]
+                publisher.evaluate("([id,content])=>publicationHarness.create(id,content)",['p-one',content])
+                wait_state(publisher,'published')
+                a.select_option('#dashboard-profile-menu','p-one')
+                expect(a.locator('#board .widget')).to_have_count(1)
+                a.select_option('#dashboard-profile-menu','p-first')
                 assert not faults,faults
                 if output:
                     output.mkdir(parents=True,exist_ok=True)

@@ -145,7 +145,7 @@ def run(browserName, output):
                         page.locator('#main-content').screenshot(path=str(output / f'{theme}-{width}-login.png'))
                         page.locator('#open-help').click()
                         expect(page.locator('#help-dialog')).to_be_visible()
-                        expect(page.locator('#help-dialog')).to_contain_text('Open “My dashboard”')
+                        expect(page.locator('#help-dialog')).to_contain_text('Open Customization Studio')
                         page.locator('#help-dialog').screenshot(path=str(output / f'{theme}-{width}-help.png'))
                         page.keyboard.press('Escape')
                     page.route('**/health', lambda route: route.fulfill(status=503, body='Synthetic service outage'))
