@@ -55,3 +55,7 @@ The shared dashboard shell is active, while studio.js retains legacy profiles/au
 ## P7 widget presentations
 
 See [widget-presentations.md](widget-presentations.md) for the 29-kind, three-variant renderer, shared data nodes, measured minima, preserved legacy Standard path and inactive target persistence.
+
+## P8 isolated Studio
+
+See [Customization Studio](customization-studio.md) for configuration-only model, transient data, keyed canvas, workspace controls, P4/P5 lifecycle composition, transport and same-origin preview responsibilities. These assets are not loaded by production index.html; historical behavior remains active until a separate coordinated transition.

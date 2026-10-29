@@ -58,6 +58,16 @@ jobs:
           node tests/js/test_profile_publication.js
           node tests/js/test_dashboard_layout.js
           node tests/js/test_widget_presentation.js
+          node tests/js/test_studio_model.js
+          node --check static/js/profile-selection.js
+          node --check static/js/studio-model.js
+          node --check static/js/studio-data.js
+          node --check static/js/studio-canvas.js
+          node --check static/js/studio-workspace.js
+          node --check static/js/studio-lifecycle.js
+          node --check static/js/studio-preview.js
+          node --check static/js/studio-preview-host.js
+          node --check static/js/studio-target.js
           node --check static/js/widget-presentation.js
           node --check static/js/dashboard-layout.js
           node --check static/js/dashboard-grid.js
@@ -150,6 +160,14 @@ jobs:
         env:
           HOME: /root
         run: python tests/browser/test_widget_preview.py --browser ${{ matrix.browser }}
+
+      - name: Verify isolated Studio, drafts, conflicts and responsive catalog
+        env:
+          HOME: /root
+        run: |
+          python tests/browser/test_customization_studio.py --browser ${{ matrix.browser }}
+          python tests/browser/test_studio_workflows.py --browser ${{ matrix.browser }}
+          python tests/browser/test_studio_matrix.py --browser ${{ matrix.browser }}
 
   dependency-audit:
     name: Vulnerability report / SBOM

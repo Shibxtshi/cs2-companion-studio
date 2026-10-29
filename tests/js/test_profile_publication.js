@@ -234,6 +234,22 @@ async function run() {
   const deleted = remove.deleteProfile(1); await until(() => genericSent.length === 2);
   assert.equal(genericSent[1].operation.kind, 'delete');
   await remove.receive({type: 'profile_operation_ack', storeId: catalog.storeId, receipt: receipt(genericSent[1].operation), replayed: false}); await deleted; remove.dispose();
+  require('../../static/js/profile-selection.js');
+  const sharedPreference = new Map();
+  const tabA = new Map(), tabB = new Map();
+  const storageFor = entries => ({getItem: key => entries.get(key) || null, setItem: (key, value) => entries.set(key, value)});
+  globalThis.localStorage = storageFor(sharedPreference);
+  globalThis.sessionStorage = storageFor(tabA);
+  const realm = {storeId: '1'.repeat(32), accessId: '3'.repeat(32)};
+  CCSProfileSelection.remember(realm, 'p-first');
+  globalThis.sessionStorage = storageFor(tabB);
+  assert.equal(CCSProfileSelection.read(realm), 'p-first');
+  CCSProfileSelection.remember(realm, 'p-second');
+  globalThis.sessionStorage = storageFor(tabA);
+  assert.equal(CCSProfileSelection.read(realm), 'p-first');
+  globalThis.sessionStorage = storageFor(new Map());
+  assert.equal(CCSProfileSelection.read(realm), 'p-second');
+  assert.equal(CCSProfileSelection.read({...realm, storeId: '2'.repeat(32)}), null);
   console.log('OK: explicit publication, stable retries, tab selection, immutable snapshots, consent conflicts, later edits, cleanup failures and local/server error separation');
 }
 run().catch(error => { console.error(error); process.exitCode = 1; });

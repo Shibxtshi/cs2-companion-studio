@@ -112,3 +112,13 @@ Run node tests/js/test_dashboard_layout.js, python tests/browser/test_dashboard_
 Run node tests/js/test_widget_presentation.js and python tests/browser/test_widget_preview.py --browser chromium (also firefox/webkit). The synthetic review server is not packaged into Docker or started by production. --output PATH optionally writes the standalone gallery and screenshots outside the source tree. P1 JSON fixture bytes stay unchanged; reviewed display-only normalizations are explicit in the characterization comparator. P6 target tests additionally cover all 87 combinations and intrinsic-height clipping at seven resolutions.
 
 Optional matched-board timings: python tests/browser/benchmark_widget_updates.py --browser chromium --repeats 5 --output PATH. Run baseline/candidate sequentially with matching browser/viewport/fixtures. It reports DOM counts and card/list identity as well as 29/60-widget render/update samples; no latency threshold is enforced.
+
+## P8 Customization Studio
+
+Run node tests/js/test_studio_model.js and all three browser journeys: test_customization_studio.py, test_studio_workflows.py and test_studio_matrix.py under tests/browser/, each with --browser chromium (also firefox/webkit). These use the guarded synthetic P5 launcher, native IndexedDB, the actual P7 renderer and existing authenticated transport. Production remains historical; no personal files are loaded or reset.
+
+The workflow journey injects native quota/transaction/cleanup failures, real disk refusal, lost acknowledgements, reload/server restart and cross-tab conflicts. The matrix covers 29 x 3 presentations at seven resolutions, four themes, 60 instances, keyboard/touch and unchanged desktop geometry. Optional --output PATH records private synthetic captures and raw descriptive timing samples. No timing threshold is a CI gate. See [Studio architecture and activation boundary](../docs/development/customization-studio.md).
+
+Hosted Actions may be refused before startup by account billing restrictions. Record that as not executed; local Windows/Linux/Docker/browser evidence does not make hosted checks green. Keep workflow definitions and triggers intact for future reactivation.
+
+Optional sequential Studio measurements: python tests/browser/benchmark_studio.py --repeats 5 --output PATH. This reports native UI timings separately from labelled automation/debounce, IndexedDB put-to-completion, post-GC Chromium heap, serialized history and DOM counts. It uses temporary data and explicitly publishes only to the synthetic target. P7 had no integrated target Studio, so do not present these as a like-for-like P7 Studio speedup.

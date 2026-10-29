@@ -13,6 +13,7 @@
   let anchor = null;
   let disposed = false;
   let displayed = null;
+  let selectionContext = null;
   const selection = document.createElement('select');
   selection.className = 'select';
   selection.id = 'dashboard-profile-menu';
@@ -22,6 +23,13 @@
     send: command => client.send(command),
     onChange({catalog, selectedProfileId, selectedProfileChanged}) {
       if (!catalog) { displayed = null; byId('board').replaceChildren(); return; }
+      const nextContext = JSON.stringify(profiles.context);
+      if (selectionContext !== nextContext) {
+        selectionContext = nextContext;
+        const preferred = CCSProfileSelection.read(profiles.context);
+        if (preferred && preferred !== selectedProfileId && catalog.profiles.some(profile => profile.id === preferred)) { profiles.select(preferred); return; }
+      }
+      CCSProfileSelection.remember(profiles.context, selectedProfileId);
       selection.replaceChildren(...catalog.profiles.map(profile => {
         const option = new Option(profile.name, profile.id);
         option.setAttribute('translate', 'no');
@@ -35,7 +43,7 @@
         renderer.createCard(widget, CS2WidgetCatalog[widget.kind]));
       byId('board').replaceChildren(...cards);
       byId('board').dataset.view = 'target';
-      byId('board').dataset.density = profile.configuration.appearance.density;
+      byId('board').dataset.studioDensity = profile.configuration.appearance.density;
       document.documentElement.style.setProperty('--profile-accent',
         profile.configuration.appearance.accent || 'var(--ccs-accent)');
       if (profile.configuration.appearance.background) byId('board').style.background = profile.configuration.appearance.background;

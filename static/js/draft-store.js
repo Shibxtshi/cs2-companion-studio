@@ -120,6 +120,25 @@
         request.onsuccess = () => done(decodeRecord(request.result, key, contextKey));
       });
     }
+    function list() {
+      const prefix = contextKey.slice(0, -1) + ',';
+      const range = window.IDBKeyRange.bound(prefix, prefix + '\uffff');
+      return run('readonly', (tx, done, abort) => {
+        const records = [];
+        const request = tx.objectStore('drafts').openCursor(range);
+        request.onsuccess = () => {
+          try {
+            const cursor = request.result;
+            if (!cursor) { done(records); return; }
+            if (records.length >= 128) contract.fail('draft_list_limit');
+            const parts = JSON.parse(cursor.key);
+            const profileId = contract.profileId(parts.at(-1));
+            records.push({profileId, ...decodeRecord(cursor.value, cursor.key, contextKey)});
+            cursor.continue();
+          } catch (error) { abort(error); }
+        };
+      });
+    }
     async function save(value, expectedToken) {
       const draft = contract.validateDraft(value);
       if (draft.storeId !== context.storeId) contract.fail('context_mismatch');
@@ -180,7 +199,7 @@
         }));
       });
     }
-    return Object.freeze({read, save, remove, clearContext,
+    return Object.freeze({read, list, save, remove, clearContext,
       ...window.CCSDraftPublications({run, keyFor, contextKey, context, randomId}), context: Object.freeze({...context}), close: () => database.close()});
   }
   window.CCSDraftStore = Object.freeze({open});

@@ -20,11 +20,19 @@
       return {status: 'storage_unavailable', code: error.code || 'storage_unavailable', token: null};
     }
   }
-  async function start({store, published, choice, now = Date.now, randomId = contract.uuid,
-                        debounceMs = 200, onStatus = () => {}}) {
-    const profile = contract.validateProfile(published);
+  async function start({store, published = null, creation = null, choice, now = Date.now, randomId = contract.uuid,
+                        debounceMs = 200, persistOnStart = true, onStatus = () => {}}) {
+    if ((!published && !creation) || (published && creation)) contract.fail('profile_required');
+    const profile = published ? contract.validateProfile(published)
+      : {id: contract.profileId(creation.id), revision: 0, ...contract.content({name: creation.name, configuration: creation.configuration})};
     if (!Number.isInteger(debounceMs) || debounceMs < 0 || debounceMs > 1000) contract.fail('invalid_delay');
-    const found = await inspect({store, profileId: profile.id, published: profile});
+    if (typeof persistOnStart !== 'boolean') contract.fail('invalid_delay');
+    const found = published ? await inspect({store, profileId: profile.id, published: profile})
+      : await store.read(profile.id);
+    if (!published && found.status === 'valid') {
+      if (found.draft.baseRevision !== 0) contract.fail('revision_mismatch');
+      found.status = 'available';
+    }
     let base;
     let token;
     if (choice === 'resume' && found.status === 'available') {
@@ -37,7 +45,7 @@
       token = null;
     } else contract.fail(found.status === 'none' ? 'draft_missing' : found.status === 'available' ? 'draft_exists' : found.status);
     const history = new History(CONTENT(base));
-    let generation = choice === 'new' ? 1 : 0;
+    let generation = choice === 'new' && persistOnStart ? 1 : 0;
     let savedGeneration = 0;
     let timer = null;
     let inFlight = null;
@@ -45,7 +53,7 @@
     let leaving = false;
     let publicationLocked = false;
     let finalizing = false;
-    let status = generation ? 'pending' : 'saved';
+    let status = generation ? 'pending' : token ? 'saved' : 'pristine';
     let errorCode = null;
 
     function notify(code, error = null) {
@@ -80,6 +88,7 @@
       if (closed) return Promise.reject(new contract.DraftError('session_closed'));
       if (history.activeGesture) return Promise.reject(new contract.DraftError('gesture_active'));
       if (inFlight) return inFlight;
+      if (generation === savedGeneration && token === null) generation++;
       if (generation === savedGeneration) return Promise.resolve();
       inFlight = (async () => {
         try {
@@ -141,13 +150,13 @@
       get preview() { return history.value; },
       get draft() { return snapshot(); },
       get state() { return {status, error: errorCode, dirty: generation !== savedGeneration || history.activeGesture,
-        closed, publicationLocked: publicationLocked || finalizing, gestureActive: history.activeGesture, canUndo: history.canUndo, canRedo: history.canRedo, history: history.stats}; },
+        closed, hasPersistedDraft: token !== null, publicationLocked: publicationLocked || finalizing, gestureActive: history.activeGesture, canUndo: history.canUndo, canRedo: history.canRedo, history: history.stats}; },
       edit(next) { editable(); if (history.commit(next)) changed(); },
       undo() { editable(); if (history.undo()) changed(); },
       redo() { editable(); if (history.redo()) changed(); },
       beginGesture() { editable(); clearTimeout(timer); timer = null; history.beginGesture(); notify('editing'); },
       previewGesture(next) { editable(); history.preview(next); notify('editing'); },
-      endGesture() { editable(); if (history.endGesture()) changed(); else { notify(generation === savedGeneration ? 'saved' : 'pending'); schedule(); } },
+      endGesture() { editable(); if (history.endGesture()) changed(); else { notify(generation === savedGeneration ? token ? 'saved' : 'pristine' : 'pending'); schedule(); } },
       cancelGesture() { editable(); history.cancelGesture(); notify(generation === savedGeneration ? 'saved' : 'pending'); schedule(); },
       flush, keepAndLeave, discard,
       async publicationSnapshot() {
