@@ -1,0 +1,2 @@
+/* Target density affects card spacing, independently of widget presentation. */
+.xy-board[data-studio-density="compact"] > .widget { padding:12px; }

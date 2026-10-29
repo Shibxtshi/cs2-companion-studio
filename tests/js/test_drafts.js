@@ -233,6 +233,27 @@ async function run() {
   await burst.keepAndLeave();
   const serialized = JSON.stringify([...coalesced.records]);
   for (const forbidden of ['synthetic-forbidden-secret', 'GSI_TOKEN', 'DASHBOARD_PIN', 'weapons', 'diagnostics']) assert(!serialized.includes(forbidden));
+  const localCreation = new ControlledStore();
+  const creation = {id: 'new-local-profile', name: 'Unpublished', configuration: structuredClone(published.configuration)};
+  const created = await CCSDraftSession.start({store: localCreation, creation, choice: 'new'});
+  await created.flush();
+  assert.equal(created.draft.baseRevision, 0);
+  await created.keepAndLeave();
+  const creationResumed = await CCSDraftSession.start({store: localCreation, creation, choice: 'resume'});
+  assert.equal(creationResumed.draft.baseRevision, 0);
+  assert.equal(creationResumed.state.history.entries, 0);
+  await creationResumed.discard();
+  const deferredStore = new ControlledStore();
+  const suspendedSession = await CCSDraftSession.start({store: deferredStore, published, choice: 'new', persistOnStart: false});
+  await delay(250);
+  assert.equal(deferredStore.writes, 0);
+  assert.equal(suspendedSession.state.status, 'pristine');
+  assert.equal(suspendedSession.state.hasPersistedDraft, false);
+  const deferredSnapshot = await suspendedSession.publicationSnapshot();
+  assert.equal(deferredStore.writes, 1);
+  assert.equal(suspendedSession.state.hasPersistedDraft, true);
+  assert.equal(deferredSnapshot.baseRevision, published.revision);
+  suspendedSession.dispose();
   console.log('OK: P3 semantic corpus, all 29 kinds, history/gestures, isolated copies, ordered local persistence, quota/abort/conflict, resume/exit/logout and coalescing');
 }
 run().catch(error => { console.error(error); process.exitCode = 1; });

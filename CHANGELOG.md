@@ -1,5 +1,12 @@
 # Changelog — user-visible changes
 
+## P8 — Isolated Customization Studio
+
+- Add a three-panel target Studio with search/categories, per-instance properties, cell-snapped move/resize, undo/redo and responsive panel navigation.
+- Compose persistent local drafts and explicit versioned publication, profile creation/duplication/deletion, recovery copies and reviewed conflict actions.
+- Preserve uncertain operations, newer tab work and confirmed-logout cleanup; preview the same dashboard shell in a same-origin window without weakening frame protection.
+- Keep the production historical editor/store/autosave unchanged; no real conversion or reset is activated.
+
 ## P7 — Widget presentation variants
 
 - Modernize all 29 kinds with Standard/Compact/Minimal using shared value nodes and preserved source warnings.

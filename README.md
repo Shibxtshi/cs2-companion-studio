@@ -112,3 +112,7 @@ Use Dashboard for viewing, Customization Studio for the current automatically sa
 ### Widget presentations
 
 The main dashboard uses the modern Standard presentation for all 29 widgets. Compact and Minimal are supported by the existing target profile contract and isolated renderer tests; their final Studio selection/persistence awaits the coordinated transition. Surface styles remain independent, and estimates/source warnings stay visible. See [widget presentation boundaries](docs/development/widget-presentations.md).
+
+### Target Customization Studio foundations
+
+The isolated P8 Studio composes local IndexedDB drafts, undo/redo, per-widget variants, X/Y editing and explicit versioned publication. It is exercised only with authenticated synthetic target storage. The distributed application still uses its current editor and automatic server save; this PR does not migrate, convert or reset personal profiles. Activation requires a separately reviewed, backed-up and explicitly confirmed transition, including target import/export. See [Studio boundaries](docs/development/customization-studio.md).

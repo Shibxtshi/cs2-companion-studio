@@ -17,6 +17,20 @@ def run(runtime, port):
     import uvicorn
 
     server.profile_store = PublishedProfileProtocol(PublishedProfileStore(runtime / 'target/profiles.json'))
+    originalSend = server.profile_store._send
+    async def send(socket, message):
+        if message.get('type') == 'profile_operation_ack':
+            drop = runtime / 'drop-studio-ack.once'
+            if drop.exists():
+                drop.unlink()
+                return True
+            import asyncio
+            for _ in range(100):
+                if not (runtime / 'hold-studio-ack').exists():
+                    break
+                await asyncio.sleep(.1)
+        return await originalSend(socket, message)
+    server.profile_store._send = send
     originalWrite = profile_publication.atomic_write
     def write(path, content):
         failure = runtime / 'fail-write.once'
@@ -39,10 +53,21 @@ def run(runtime, port):
     def dashboard():
         html = (ROOT / 'static/index.html').read_text('utf-8')
         dependencies = ''.join('<script defer src="/static/js/' + module + '.js"></script>'
-                               for module in ('draft-schema', 'draft-contract', 'published-profiles'))
+                               for module in ('draft-schema', 'draft-contract', 'profile-selection', 'published-profiles'))
         html = html.replace('<script defer src="/static/js/studio.js?v=1.0.0"></script>', '')
+        html = html.replace('</head>', '<link rel="stylesheet" href="/static/css/studio-density.css"></head>')
         html = html.replace('</body>', dependencies + '<script defer src="/static/js/dashboard-target.js"></script></body>')
         return HTMLResponse(html)
+    @server.app.get('/__studio_test__')
+    def studio():
+        return HTMLResponse((ROOT / 'tests/browser/studio-preview.html').read_text('utf-8'))
+    @server.app.get('/__studio_preview__')
+    def studio_preview():
+        html = (ROOT / 'static/index.html').read_text('utf-8')
+        html = html.replace('<script defer src="/static/js/studio.js?v=1.0.0"></script>', '')
+        dependencies = ''.join('<script defer src="/static/js/' + module + '.js"></script>'
+                               for module in ('draft-schema', 'draft-contract', 'studio-data', 'studio-preview-host'))
+        return HTMLResponse(html.replace('</body>', dependencies + '</body>'))
     uvicorn.run(server.app, host='127.0.0.1', port=port, log_level='error', access_log=False,
                 ws_max_size=262144, ws_max_queue=8)
 

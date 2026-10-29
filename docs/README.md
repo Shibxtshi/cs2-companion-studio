@@ -29,3 +29,5 @@ The release checklist remains authoritative for publication gates. Historical no
 ## P7 widget presentations
 
 See [widget-presentations.md](development/widget-presentations.md) for the 29-kind, three-variant renderer, shared data nodes, measured minima, preserved legacy Standard path and inactive target persistence.
+
+- [Target Customization Studio and activation boundary](development/customization-studio.md)

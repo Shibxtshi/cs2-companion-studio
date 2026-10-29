@@ -6,7 +6,9 @@ import subprocess
 import textwrap
 
 MODULES = ('draft-schema', 'draft-contract', 'edit-history', 'draft-publications', 'draft-store',
-           'draft-session', 'published-profiles', 'profile-publication', 'dashboard-target')
+           'draft-session', 'published-profiles', 'profile-publication', 'dashboard-target',
+           'studio-model', 'studio-data', 'studio-canvas', 'studio-workspace', 'studio-lifecycle',
+           'studio-preview', 'studio-preview-host', 'studio-target', 'profile-selection')
 
 
 def main():
@@ -26,6 +28,8 @@ def main():
         assert all('/static/js/' + name + '.js' in html for name in ('dashboard-layout', 'dashboard-grid', 'dashboard-shell'))
         assert Path('static/css/dashboard.css').is_file()
         assert Path('static/css/widget-presentation.css').is_file()
+        assert Path('static/css/customization-studio.css').is_file()
+        assert Path('static/css/studio-density.css').is_file()
         assert '/static/js/widget-presentation.js' in html
         with TemporaryDirectory(prefix='ccs-publication-', dir='/tmp') as temporary:
             path = Path(temporary) / 'profiles.json'
