@@ -160,6 +160,18 @@ def run(browserName, output):
                 wait_state(publisher,'published')
                 a.select_option('#dashboard-profile-menu','p-one')
                 expect(a.locator('#board .widget')).to_have_count(1)
+                content['name']='Bounded fallback'
+                content['configuration']['layout']['widgets']=[
+                    {**base,'id':'overflow-'+str(i),'kind':'health','x':0,'y':0,'width':24,'height':4096}
+                    for i in range(3)]
+                publisher.evaluate("([id,content])=>publicationHarness.create(id,content)",['p-fallback',content])
+                wait_state(publisher,'published')
+                a.select_option('#dashboard-profile-menu','p-fallback')
+                expect(a.locator('#board .widget')).to_have_count(3)
+                expect(a.locator('#board .layout-fallback')).to_have_count(1)
+                boxes=a.locator('#board>.widget').evaluate_all('(cards)=>cards.map(card=>{const r=card.getBoundingClientRect();return {y:r.y,bottom:r.bottom};})')
+                assert boxes[1]['y']>=boxes[0]['bottom'] and boxes[2]['y']>=boxes[1]['bottom']
+                expect(a.locator('#notice')).to_contain_text('remaining widgets')
                 a.select_option('#dashboard-profile-menu','p-first')
                 assert not faults,faults
                 if output:

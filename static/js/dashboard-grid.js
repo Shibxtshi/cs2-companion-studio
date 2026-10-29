@@ -27,12 +27,16 @@
         const expected = board.children[renderIndex++];
         if (expected !== card) board.insertBefore(card, expected || null);
       }
+      let fallbackY = Math.max(0, ...projection.items.map(item => item.y + item.height));
       for (const item of projection.fallback) {
         const card = cards.get(item.id);
         if (!card) continue;
         card.classList.add('layout-fallback');
         card.style.gridColumn = '1 / -1';
-        card.style.gridRow = 'auto';
+        const minimumHeight = window.CCSDashboardLayout.minimum(card.dataset.kind)[1];
+        const fallbackRows = Math.max(5, Math.ceil((minimumHeight + 8) / 40));
+        card.style.gridRow = (fallbackY + 1) + ' / span ' + fallbackRows;
+        fallbackY += fallbackRows;
         const expected = board.children[renderIndex++];
         if (expected !== card) board.insertBefore(card, expected || null);
       }
