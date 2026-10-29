@@ -127,6 +127,7 @@ def run(output, repeats):
                             samples.append({'operation':'reflowIncludingAutomationTwoFrames','width':width,'widgets':count,'repeat':repeat,'ms':(time.perf_counter()-start)*1000})
                         samples.extend({'operation':'nativeIDBPutToTransactionComplete','widgets':count,'repeat':repeat,**sample}
                                        for sample in page.evaluate('window.studioWriteTimes'))
+                        page.evaluate('window.studioWriteTimes=[]')
                     context.close()
                 output.parent.mkdir(parents=True,exist_ok=True)
                 output.write_text(json.dumps({'browser':browser.version,'viewport':[1920,1080],'repeats':repeats,
