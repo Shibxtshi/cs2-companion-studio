@@ -94,7 +94,7 @@
     },
   });
   const reconnect = CS2Reconnect({connect: isCurrent => client.connect(isCurrent)});
-  byId('locale-select').addEventListener('change', () => setTimeout(() => { updateValues(); grid.requestRefresh(); }, 0));
+  document.addEventListener('cs2:locale-changed', () => { updateValues(); grid.requestRefresh(); });
   selection.addEventListener('change', () => profiles.select(selection.value));
   function login() {
     pin = byId('pin').value.trim();

@@ -221,6 +221,7 @@ function enqueue(n){pending.add(n);if(!scheduled){scheduled=true;queueMicrotask(
 function setLocale(next){if(!Object.prototype.hasOwnProperty.call(translations,next))return;code=next;document.documentElement.lang=code.toLowerCase();try{localStorage.setItem(STORAGE,code);}catch{}
  const select=document.getElementById('locale-select');if(select)select.value=code;const label=document.querySelector('.language-label');if(label)label.textContent=code==='FR'?'Langue':'Language';
  enqueue(document.body);
+ if(typeof CustomEvent==='function')document.dispatchEvent(new CustomEvent('cs2:locale-changed',{detail:{locale:code}}));
 }
 const messages={
  'profile.pending':'Modifications non enregistrées.',

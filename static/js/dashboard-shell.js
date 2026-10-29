@@ -141,7 +141,7 @@
   byId('navigation-mode').addEventListener('change', event => { navigation = event.target.value; revealed = false; paint(); });
   byId('navigation-floating').addEventListener('change', event => { floating = event.target.checked; paint(); });
   byId('fullscreen-status').addEventListener('change', event => { showConnection = event.target.checked; paint(); });
-  byId('locale-select').addEventListener('change', () => setTimeout(paint, 0));
+  document.addEventListener('cs2:locale-changed', paint);
   byId('edit').addEventListener('click', () => {
     section = byId('edit').getAttribute('aria-pressed') === 'true' ? 'studio' : 'dashboard';
     paint();

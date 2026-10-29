@@ -197,7 +197,7 @@ $('download-support').addEventListener('click',()=>{if(!modeDemo&&profilesReady&
 $('connect').addEventListener('click',login);$('pin').addEventListener('keydown',e=>{if(e.key==='Enter')login();});$('demo').addEventListener('click',demo);$('demoagain').addEventListener('click',demo);
 $('board').addEventListener('click',e=>{const b=e.target.closest('[data-demo]');if(b&&modeDemo){const n=b.dataset.demo;demoBomb(n==='stop'?'stop':Number(n));}});
 $('logout').addEventListener('click',()=>{if(!allowDiscardPending())return;reconnect.stop();clearPrivateProfiles();pin='';$('pin').value='';$('download-support').classList.add('hidden');document.dispatchEvent(new Event('cs2:logout'));modeDemo=false;dashboardClient.close();last=null;anchor=null;$('view').classList.add('hidden');$('login').classList.remove('hidden');setStatus('Non connecté');});
-$('locale-select').addEventListener('change',()=>setTimeout(()=>{renderCatalog();updateValues();showSaveState(profileSync.status);},0));
+document.addEventListener('cs2:locale-changed',()=>{renderCatalog();updateValues();showSaveState(profileSync.status);});
 // Repaint the countdown only while it is running and the tab is visible.
 setInterval(()=>{
  if(!document.hidden&&last?.bomb_timer?.status==='active')paintBomb();
