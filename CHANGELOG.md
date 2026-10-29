@@ -1,5 +1,12 @@
 # Changelog — user-visible changes
 
+## P9 — Secondary screens and feedback
+
+- Unify sign-in, optional quick start, topic-based help and grouped Settings using the approved CCS identity and four themes.
+- Distinguish server, WebSocket, GSI, match freshness and synthetic demonstration; keep errors actionable and persistent, and avoid exposing import parser content.
+- Clarify dashboard density, widget presentation and geometry, preserve the historical editor/autosave, and document a separately approved target activation lot before P10.
+- Preserve the requested Settings destination when leaving the current editor.
+
 ## P8 — Isolated Customization Studio
 
 - Add a three-panel target Studio with search/categories, per-instance properties, cell-snapped move/resize, undo/redo and responsive panel navigation.

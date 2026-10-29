@@ -67,6 +67,7 @@
     last = {type: 'state', online: false, gsi_connected: false, player: {}, bomb_timer: {status: 'stale'}};
     anchor = null;
     updateValues();
+    document.dispatchEvent(new Event('cs2:connection-lost'));
   }
   const client = CS2DashboardClient({
     version: '1.0.0', getPin: () => pin, isDemo: () => false,
@@ -79,7 +80,10 @@
       if (authorized && !disposed) reconnect.failed();
     },
     onMessage(message) {
-      if (message.type === 'auth_ok') { reconnect.connected(); byId('pin').value = ''; }
+      if (message.type === 'auth_ok') {
+        reconnect.connected(); byId('pin').value = '';
+        document.dispatchEvent(new Event('cs2:authenticated'));
+      }
       if (message.type === 'auth_error') {
         reconnect.stop();
         byId('loginerror').textContent = CS2I18N.locale() === 'FR' ? 'PIN incorrect.' : 'Incorrect PIN.';
@@ -91,6 +95,10 @@
         grid.refresh();
       }
       if (message.type === 'state') {
+        document.dispatchEvent(new CustomEvent('cs2:state', {detail: {
+          online: !!message.online, gsi_connected: !!message.gsi_connected,
+          age_seconds: Number.isFinite(message.age_seconds) ? message.age_seconds : null, demo: false,
+        }}));
         last = message;
         anchor = message.bomb_timer?.status === 'active' && Number.isFinite(message.bomb_timer.remaining)
           ? {at: performance.now(), left: message.bomb_timer.remaining} : null;

@@ -121,4 +121,14 @@ The workflow journey injects native quota/transaction/cleanup failures, real dis
 
 Hosted Actions may be refused before startup by account billing restrictions. Record that as not executed; local Windows/Linux/Docker/browser evidence does not make hosted checks green. Keep workflow definitions and triggers intact for future reactivation.
 
+## P9 secondary screens and feedback
+
+Run `node tests/js/test_experience.js` and `python tests/browser/test_experience.py --browser chromium` (also `firefox`/`webkit`). The runner uses disposable profiles, the existing PIN/WebSocket path and synthetic GSI. It covers optional onboarding/dismissal, native help/focus, four themes, EN/FR, seven widths, import/download faults without parser-content disclosure, diagnostics, real server interruption and demo isolation. `--output PATH` writes synthetic screenshots outside the source tree. Preparing a browser download does not prove it reached disk.
+
+Node checks verify persistent errors/pending states, explicit dismissal and that unrelated success cannot hide an error. Do not regenerate P1 widget fixtures. See [UI responsibilities](../docs/development/user-experience.md) and the separate [activation proposal](../docs/development/target-activation-plan.md).
+
+Also run `python tests/browser/test_experience_edges.py --browser chromium` (Firefox/WebKit supported) for real throttling, unavailable-server/demo transitions, ended-session messaging and keyboard focus under 200% CSS zoom. CSS zoom is a bounded automated check, not certification of every browser/OS zoom mode.
+
+Optional sequential measurements: `python tests/browser/benchmark_experience.py --repeats 5 --output PATH`. Compare the same browser/viewport/fixtures on baseline/candidate. Opening includes HTTP/fonts/automation; named UI samples use real clocks, microtasks and forced layout inside the browser. There is no timing gate or general speedup claim.
+
 Optional sequential Studio measurements: python tests/browser/benchmark_studio.py --repeats 5 --output PATH. This reports native UI timings separately from labelled automation/debounce, IndexedDB put-to-completion, post-GC Chromium heap, serialized history and DOM counts. It uses temporary data and explicitly publishes only to the synthetic target. P7 had no integrated target Studio, so do not present these as a like-for-like P7 Studio speedup.

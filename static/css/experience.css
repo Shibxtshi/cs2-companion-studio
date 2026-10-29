@@ -1,0 +1,92 @@
+/* P9 secondary screens share P2 tokens; no storage or widget geometry changes. */
+.login {width:min(100%,1000px);box-sizing:border-box;max-width:1000px;margin:clamp(24px,7vh,88px) auto;padding:0;display:grid;grid-template-columns:1fr 1fr;overflow:hidden;background:var(--ccs-surface);border:1px solid var(--ccs-border);border-radius:var(--radius-dialog)}
+.login.hidden {display:none}
+.login-story {padding:40px;display:flex;flex-direction:column;justify-content:center;background:var(--ccs-nav);border-right:1px solid var(--ccs-border)}
+.login-story .brandmark {width:40px;height:40px;margin-bottom:24px}
+.login-story h2 {font:700 clamp(36px,4vw,52px)/1.05 var(--font-brand);margin:0 0 20px;max-width:330px}
+.login-story p {color:var(--ccs-muted);line-height:1.7;font-size:14px}
+.login-story .login-proof {font-size:11px;letter-spacing:.04em;margin-top:28px;color:var(--ccs-accent)}
+.login-form {padding:36px;min-width:0}
+.login-form h1 {font:600 30px var(--font-brand);margin:8px 0 12px}
+.login-form .hint {font-size:13px;line-height:1.65;margin-bottom:24px}
+.login-form .input {width:100%;min-height:48px;box-sizing:border-box}
+.login-form .login-actions {display:grid;grid-template-columns:1fr;margin-top:16px;gap:10px}
+.login-form .login-actions .btn {min-height:44px;margin:0}
+.login-demo-help {font-size:12px;color:var(--ccs-muted);line-height:1.5}
+.login-service {font-size:12px;min-height:20px;color:var(--ccs-muted);margin:0 0 20px}
+.login-service[data-state="ok"] {color:var(--success)}
+.login-service[data-state="bad"] {color:var(--warning)}
+.welcome-steps {margin-top:24px;padding:16px;border:1px solid var(--ccs-border);border-radius:var(--radius-card);background:transparent}
+.welcome-steps p {font-size:12px;color:var(--ccs-muted);line-height:1.6}
+.welcome-steps .welcome-actions {display:flex;gap:12px;flex-wrap:wrap}
+#dashboard-settings {max-width:1120px;width:100%;min-width:0}
+.settings-intro {color:var(--ccs-muted);font-size:13px;line-height:1.7;max-width:760px;margin-bottom:24px}
+.settings-card {padding:24px;margin-bottom:16px;border:1px solid var(--ccs-border);border-radius:var(--radius-card);background:var(--ccs-surface);min-width:0}
+#dashboard-settings .settings-card h2 {margin:0 0 14px;font-size:24px}
+.settings-card .display-preferences {padding:0;border:0;background:transparent}
+.settings-card .theme-preview {margin:18px 0 0;flex-wrap:wrap}
+.settings-explainer {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin:20px 0 0}
+.settings-explainer div {border-top:1px solid var(--ccs-border);padding-top:16px}
+.settings-explainer dt {font-size:13px;font-weight:600;margin-bottom:8px}
+.settings-explainer dd {font-size:12px;line-height:1.7;color:var(--ccs-muted);margin:0}
+.settings-about {display:flex;justify-content:space-between;gap:20px;align-items:flex-start}
+.settings-about p {font-size:12px;line-height:1.7;color:var(--ccs-muted);max-width:720px}
+.settings-version {color:var(--ccs-accent);white-space:nowrap;font:600 22px var(--font-brand)}
+.diagnostics-grid {grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.diagnostics-heading {flex-wrap:wrap;gap:12px}
+.diagnostic-line {background:var(--ccs-input);border:1px solid var(--ccs-border);border-radius:var(--radius-control);padding:16px;align-items:flex-start;min-width:0}
+.diagnostic-line strong {font-size:12px}
+.diagnostic-line p {font-size:12px;line-height:1.6;overflow-wrap:anywhere}
+.diagnostic-line[data-condition="warning"] {border-color:var(--warning)}
+.help-dialog {width:min(1000px,calc(100vw - 32px));max-width:1000px;padding:0}
+.help-body {display:grid;grid-template-columns:210px minmax(0,1fr);padding:0;max-height:min(66vh,680px);overflow:auto}
+.help-topics {display:flex;flex-direction:column;gap:6px;padding:20px;background:var(--ccs-nav);border-right:1px solid var(--ccs-border)}
+.help-topics button {background:transparent;color:var(--ccs-muted);border:1px solid transparent;border-radius:var(--radius-control);text-align:left;padding:12px;font:500 13px var(--font-ui);min-height:44px;cursor:pointer}
+.help-topics button[aria-pressed="true"] {background:var(--ccs-tint);color:var(--ccs-text);border-color:var(--ccs-border)}
+.help-topic-content {padding:28px;min-width:0}
+.help-body .help-topic-content section {padding:0;border:0;background:transparent;margin:0}
+.help-body .help-topic-content p {font-size:13px;line-height:1.8;color:var(--ccs-muted)}
+.help-body .help-topic-content h3 {font:600 28px var(--font-brand);margin:0 0 16px}
+.quick-progress {font:600 12px var(--font-ui);color:var(--ccs-accent);letter-spacing:.05em}
+.quick-actions {display:flex;gap:10px;margin-top:24px;flex-wrap:wrap}
+.help-footer {flex-wrap:wrap}
+.help-footer .text-link {margin-right:auto}
+#loginerror:empty {display:none}
+#loginerror {padding:12px;background:var(--error-bg);border-left:3px solid var(--error);color:var(--error);font-size:13px;line-height:1.6;overflow-wrap:anywhere}
+.toast {max-width:min(480px,calc(100vw - 32px));overflow-wrap:anywhere}
+.toast:not(.hidden) {display:flex;align-items:center;gap:12px;background:var(--ccs-raised);border:1px solid var(--ccs-control-border)}
+.toast[data-kind="error"] {border-color:var(--error);color:var(--error)}
+.toast[data-kind="warning"] {border-color:var(--warning);color:var(--warning)}
+.toast[data-kind="success"] {border-color:var(--success)}
+.toast .btn {flex-shrink:0;min-width:44px;min-height:44px}
+.studio-alert,.studio-save-status {overflow-wrap:anywhere}
+@media(max-width:800px) {
+  .login {max-width:520px;grid-template-columns:1fr;margin:20px auto}
+  .login-story {padding:24px;border-right:0;border-bottom:1px solid var(--ccs-border)}
+  .login-story .brandmark {width:28px;height:28px;margin-bottom:16px}
+  .login-story h2 {font-size:34px;max-width:none;margin-bottom:12px}
+  .login-story .login-proof {margin:8px 0 0}
+  .login-form {padding:24px}
+  .settings-explainer {grid-template-columns:1fr}
+  .diagnostics-grid {grid-template-columns:repeat(2,minmax(0,1fr))}
+  .settings-about {flex-direction:column}
+  .help-body {grid-template-columns:1fr}
+  .help-topics {flex-direction:row;overflow:auto;padding:12px;border-right:0;border-bottom:1px solid var(--ccs-border);flex-wrap:wrap}
+  .help-topics button {flex:1 1 130px}
+  .help-topic-content {padding:20px}
+}
+@media(max-width:450px) {
+  .settings-card {padding:16px}
+  .diagnostics-grid {grid-template-columns:1fr}
+  .login-story p {font-size:13px}
+  .login-story {padding:20px}
+  .login-story .brandmark,.login-story p {display:none}
+  .login-story h2 {font-size:30px;margin:0}
+  .login-form {padding:20px}
+  .help-dialog {width:calc(100vw - 16px);max-height:calc(100dvh - 16px)}
+}
+
+.welcome-steps[hidden] {display:none}
+@media(pointer:coarse) {
+  .text-link,#help-close {min-height:44px;min-width:44px}
+}

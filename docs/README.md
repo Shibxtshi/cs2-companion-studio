@@ -31,3 +31,8 @@ The release checklist remains authoritative for publication gates. Historical no
 See [widget-presentations.md](development/widget-presentations.md) for the 29-kind, three-variant renderer, shared data nodes, measured minima, preserved legacy Standard path and inactive target persistence.
 
 - [Target Customization Studio and activation boundary](development/customization-studio.md)
+
+## P9 UI completion
+
+- [Secondary screens, help and feedback](development/user-experience.md)
+- [Proposed target activation lot — separate approval](development/target-activation-plan.md)

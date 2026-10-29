@@ -1,5 +1,7 @@
 # Frontend boundaries — P1
 
+P9 secondary screens and feedback are described in [user-experience.md](user-experience.md). Authentication and profile writers remain with their existing owners; the new UI modules do not activate target storage.
+
 P1 prepares the existing frontend for later work without changing the current UI, profiles or protocol. There is no new framework, build step, runtime dependency or backend refactor.
 
 | Module | Responsibility |
