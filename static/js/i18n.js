@@ -5,7 +5,7 @@
 const STORAGE='cs2-companion-language';
 const translations={
  EN:{
- "Ouvre « Mon dashboard », puis « Personnaliser » pour ajouter, déplacer et redimensionner tes widgets. Les profils sont sauvegardés dans cette instance Docker et partagés entre les appareils connectés. Tu peux aussi exporter un JSON.":"Open “My dashboard”, then “Customize”, to add, move and resize widgets. Profiles are saved on this Docker instance and shared across authenticated devices. You can also export JSON.",
+ "Ouvre Customization Studio pour ajouter, déplacer et redimensionner tes widgets avec l’éditeur actuel. La sauvegarde automatique et le partage des profils entre appareils restent actifs. Tu peux aussi exporter un JSON.":"Open Customization Studio to add, move and resize widgets with the current editor. Automatic saving and profile sharing across devices remain active. You can also export JSON.",
  'Thème d’aperçu':'Theme preview',
  'Non enregistré · cet onglet':'Not saved · this tab',
  'Renommer':'Rename',
@@ -24,7 +24,7 @@ const translations={
  'Personnaliser':'Customize','✎ Personnaliser':'✎ Customize','✓ Terminer':'✓ Done','＋ Widget':'＋ Widget',
  'Profil':'Profile','Nouveau':'New','Dupliquer':'Duplicate','Supprimer':'Delete','Exporter':'Export','Importer':'Import','Réinitialiser':'Reset',
  'Bibliothèque de widgets':'Widget library','Rechercher un widget…':'Find a widget…','Rechercher':'Search','Fermer':'Close',
- 'Ton dashboard est vide. Clique sur « ＋ Widget » pour choisir tes modules.':'Your dashboard is empty. Click ＋ Widget to add modules.',
+ 'Ton dashboard est vide. Ouvre Customization Studio pour ajouter des widgets.':'Your dashboard is empty. Open Customization Studio to add widgets.',
  'Déconnexion':'Log out','Quitter la démo':'Exit demo','Profils enregistrés uniquement sur cet appareil · GSI officiel CS2 · Aucune injection dans le jeu':'Layouts stored on this device only · Official CS2 GSI · No game injection',
  'Partie':'Match','Armement':'Weapons','Économie':'Economy','Statistiques':'Statistics','Joueur':'Player','Bombe':'Bomb','Système':'System',
  'Carte':'Map','Manche':'Round','Score détaillé':'Detailed score','Phase du match':'Match phase','Historique des manches':'Round history',

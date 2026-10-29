@@ -89,3 +89,7 @@ P4 supplies inactive, configuration-only IndexedDB persistence and bounded sessi
 ## Explicit publication foundations
 
 The production store constructor remains legacy-only. P5 supplies an independently serialized target adapter that isolated tests substitute into the existing authenticated /ws handler; it creates no second active store, public toggle or ASGI entry point. See [publication architecture and activation conditions](profile-publication.md).
+
+## P6 dashboard boundary
+
+The active legacy frontend now uses the shared navigation shell. The X/Y projection and inactive read-only target host are described in [dashboard.md](dashboard.md); target storage and explicit Studio publication remain inactive.

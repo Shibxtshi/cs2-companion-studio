@@ -76,6 +76,7 @@ def run(browserName, output):
                 document = copy.deepcopy(fixture.document)
                 revision = fixture.revision
                 storage = page.evaluate('JSON.stringify([Object.entries(localStorage),Object.entries(sessionStorage)])')
+                page.locator('[data-section="settings"]').click()
                 for theme in THEMES:
                     page.locator('#theme-preview').select_option(theme)
                     expect(page.locator('html')).to_have_attribute('data-theme', theme)
@@ -115,7 +116,7 @@ def run(browserName, output):
                             page.locator('#main-content').screenshot(path=str(output / f'{theme}-{width}-{locale}.png'))
                     results.append({'theme': theme, 'width': width, 'contrast': ratios})
                 # Inspect the existing editor and catalog at narrow widths as well.
-                page.locator('#edit').click()
+                page.locator('[data-section="studio"]').click()
                 page.locator('#add').click()
                 expect(page.locator('#catalog')).to_be_visible()
                 page.locator('#search-widgets').fill('map')
@@ -128,6 +129,7 @@ def run(browserName, output):
                 page.locator('#close-catalog').click()
                 page.locator('#edit').click()
                 # The preview remains independent across tabs and resets after reload.
+                page.locator('[data-section="settings"]').click()
                 page.locator('#theme-preview').select_option('creator-purple')
                 other = context.new_page()
                 other.goto(url)
@@ -143,7 +145,7 @@ def run(browserName, output):
                         page.locator('#main-content').screenshot(path=str(output / f'{theme}-{width}-login.png'))
                         page.locator('#open-help').click()
                         expect(page.locator('#help-dialog')).to_be_visible()
-                        expect(page.locator('#help-dialog')).to_contain_text('Open “My dashboard”')
+                        expect(page.locator('#help-dialog')).to_contain_text('Open Customization Studio')
                         page.locator('#help-dialog').screenshot(path=str(output / f'{theme}-{width}-help.png'))
                         page.keyboard.press('Escape')
                     page.route('**/health', lambda route: route.fulfill(status=503, body='Synthetic service outage'))

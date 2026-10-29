@@ -1,5 +1,12 @@
 # Changelog — user-visible changes
 
+## P6 — Dashboard and navigation
+
+- Shared full/compact/hidden navigation, current-editor entry, grouped settings and native/fallback fullscreen.
+- Bounded display-only X/Y projection and inactive P5 target catalog host; legacy storage/autosave remain active.
+- Clear stale live values after disconnect and rebuild the public demo board on entry.
+- Add collision/reflow, navigation and multi-screen target checks without resetting real profiles.
+
 **Current release candidate:** 1.0.0. The previous V1P labels below record internal development milestones; no public release has been published yet.
 
 ## Unreleased

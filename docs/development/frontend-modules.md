@@ -47,3 +47,7 @@ The future draft path is separate from profile-sync and studio.js. Its generated
 ## P5 publication foundations
 
 Target publication uses profile-publication.js, published-profiles.js and the IndexedDB journal in draft-publications.js. It reuses the P1 transport and P4 session contracts while leaving the current profile-sync.js and editor wiring unchanged. The modules remain absent from index.html. See [explicit publication](profile-publication.md) for acknowledgements, tab selection, uncertainty and conflict consent.
+
+## P6 navigation and display
+
+The shared dashboard shell is active, while studio.js retains legacy profiles/autosave. dashboard-layout.js and dashboard-grid.js project X/Y data without writes. dashboard-target.js is an inactive P5-catalog consumer loaded only by the isolated target browser harness. See [dashboard.md](dashboard.md). The authenticated-to-demo board is now rebuilt deliberately to prevent private cards remaining visible; all other golden widget cases are preserved.

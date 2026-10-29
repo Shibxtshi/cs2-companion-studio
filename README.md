@@ -104,3 +104,7 @@ The backend lives in `companion/`, web assets in `static/css/` and `static/js/`,
 ## Identity and theme preview
 
 CCS uses the Repère identity and local Inter / Barlow Condensed fonts. Tactical Blue is the default; the header offers Competitive Red, Performance Green and Creator Purple previews. The choice is not saved, affects only this tab and resets on reload. Existing profile/widget color choices remain intact; theme persistence will be connected to a later profile contract. See [design foundations](docs/development/design-system.md) and [font licenses/provenance](static/fonts/README.md).
+
+### Dashboard navigation
+
+Use Dashboard for viewing, Customization Studio for the current automatically saved editor, and Settings for display previews, help and diagnostics. Full, compact and hidden navigation plus native/fallback fullscreen are available. Navigation previews are not saved in legacy profiles. The X/Y target renderer and per-tab profile selection remain isolated test foundations until the coordinated storage transition; see [P6 boundaries](docs/development/dashboard.md). Streamer Studio is explicitly marked coming soon.

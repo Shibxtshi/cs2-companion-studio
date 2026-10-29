@@ -35,6 +35,14 @@ def run(runtime, port):
     @server.app.get('/__publication_harness__.js')
     def harness():
         return Response((ROOT / 'tests/browser/publication-harness.js').read_text('utf-8'), media_type='application/javascript')
+    @server.app.get('/__dashboard_test__')
+    def dashboard():
+        html = (ROOT / 'static/index.html').read_text('utf-8')
+        dependencies = ''.join('<script defer src="/static/js/' + module + '.js"></script>'
+                               for module in ('draft-schema', 'draft-contract', 'published-profiles'))
+        html = html.replace('<script defer src="/static/js/studio.js?v=1.0.0"></script>', '')
+        html = html.replace('</body>', dependencies + '<script defer src="/static/js/dashboard-target.js"></script></body>')
+        return HTMLResponse(html)
     uvicorn.run(server.app, host='127.0.0.1', port=port, log_level='error', access_log=False,
                 ws_max_size=262144, ws_max_queue=8)
 

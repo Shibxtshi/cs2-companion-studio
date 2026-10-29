@@ -23,3 +23,5 @@ Start with the [project README](../README.md) for installation and features, or 
 | Consult older V1P records | [Historical index](history/README.md) |
 
 The release checklist remains authoritative for publication gates. Historical notes are retained as records, not current instructions. Local assistant instructions and working context are not part of the distributed repository.
+
+- [Dashboard and navigation (P6)](development/dashboard.md) — active shell, inactive X/Y target and transition boundaries.

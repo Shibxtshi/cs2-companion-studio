@@ -129,6 +129,7 @@ def run(browser_name):
             a.locator('#tab-custom').click()
             initial_dialog = lambda dialog: dialog.accept('Shared v1.0.0 setup')
             a.on('dialog', initial_dialog)
+            a.locator('[data-section="studio"]').click()
             a.locator('#rename-profile').click()
             expect(a.locator('#profile-select')).to_contain_text('Shared v1.0.0 setup', timeout=8000)
 
@@ -153,7 +154,7 @@ def run(browser_name):
             expect(b.locator('#session-banner')).to_have_attribute('data-state', 'live', timeout=8000)
 
             # Search must work in either language, and no JS runtime errors.
-            a.locator('#edit').click()
+            expect(a.locator('#edit')).to_have_attribute('aria-pressed', 'true')
             a.locator('#add').click()
             a.locator('#search-widgets').fill('player')
             a.locator('#catalog-items [data-kind="player"]').click()
@@ -201,6 +202,8 @@ def run(browser_name):
                 a.locator('#rename-profile').click()
                 expect(a.locator('#profile-save-panel')).to_be_visible()
                 expect(a.locator('#profile-select')).to_contain_text(rename['value'])
+                if fault == 'disconnect':
+                    expect(a.locator('.w-player [data-v="name"]')).not_to_have_text('Carte')
                 expect(a.locator('#profile-save-retry')).to_be_visible(timeout=20000)
                 # For reconnect, wait until the new authenticated snapshot arrives.
                 if fault == 'disconnect':

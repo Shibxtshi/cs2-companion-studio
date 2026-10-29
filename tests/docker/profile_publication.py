@@ -6,7 +6,7 @@ import subprocess
 import textwrap
 
 MODULES = ('draft-schema', 'draft-contract', 'edit-history', 'draft-publications', 'draft-store',
-           'draft-session', 'published-profiles', 'profile-publication')
+           'draft-session', 'published-profiles', 'profile-publication', 'dashboard-target')
 
 
 def main():
@@ -21,7 +21,10 @@ def main():
         expected = EXPECTED_HASHES
         for name, digest in expected.items():
             assert hashlib.sha256((Path('static/js') / (name + '.js')).read_bytes()).hexdigest() == digest
-        assert all(name + '.js' not in Path('static/index.html').read_text() for name in expected)
+        html = Path('static/index.html').read_text()
+        assert all(name + '.js' not in html for name in expected)
+        assert all('/static/js/' + name + '.js' in html for name in ('dashboard-layout', 'dashboard-grid', 'dashboard-shell'))
+        assert Path('static/css/dashboard.css').is_file()
         with TemporaryDirectory(prefix='ccs-publication-', dir='/tmp') as temporary:
             path = Path(temporary) / 'profiles.json'
             document = new_server_document()
