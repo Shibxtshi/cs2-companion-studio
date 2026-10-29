@@ -56,6 +56,11 @@ jobs:
           node tests/js/test_theme_preview.js
           node tests/js/test_drafts.js
           node tests/js/test_profile_publication.js
+          node tests/js/test_dashboard_layout.js
+          node --check static/js/dashboard-layout.js
+          node --check static/js/dashboard-grid.js
+          node --check static/js/dashboard-shell.js
+          node --check static/js/dashboard-target.js
           node --check static/js/draft-publications.js
           node --check static/js/published-profiles.js
           node --check static/js/profile-publication.js
@@ -131,6 +136,13 @@ jobs:
         env:
           HOME: /root
         run: python tests/browser/test_profile_publication.py --browser ${{ matrix.browser }}
+
+      - name: Verify dashboard navigation and read-only target geometry
+        env:
+          HOME: /root
+        run: |
+          python tests/browser/test_dashboard_navigation.py --browser ${{ matrix.browser }}
+          python tests/browser/test_dashboard_target.py --browser ${{ matrix.browser }}
 
   dependency-audit:
     name: Vulnerability report / SBOM

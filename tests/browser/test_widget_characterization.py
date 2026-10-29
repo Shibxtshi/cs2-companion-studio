@@ -201,7 +201,7 @@ def characterize(browser, url, record, output):
                 page.locator('#view').screenshot(path=str(output / (name + '-' + locale + '.png')),
                                                 animations='disabled')
             page.set_viewport_size({'width': 1280, 'height': 900})
-        # Preserve the historical authenticated-to-demo transition as observed.
+        # P6 deliberately rebuilds the demo board so authenticated cards cannot remain visible.
         page.locator('#demoagain').click()
         settle(page)
         cases['demo-after-session'] = page.evaluate(SNAPSHOT)
@@ -226,6 +226,8 @@ def characterize(browser, url, record, output):
             write_cases(target, cases)
         else:
             expected = json.loads(target.read_text(encoding='utf-8'))
+            assert cases['demo-after-session'] == cases['demo-default']
+            expected['demo-after-session'] = expected['demo-default']
             assert cases == expected, 'Widget characterization differs for ' + locale
         context.close()
     print('OK: 29 widgets, complete/missing/zero/estimated data, bomb states, native demo, EN/FR')

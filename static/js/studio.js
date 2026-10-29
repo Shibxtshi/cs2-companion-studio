@@ -76,7 +76,7 @@ function renderBoard(){updateChrome();const board=$('board');board.replaceChildr
  article.addEventListener('drop',e=>{e.preventDefault();const from=dragId||e.dataTransfer?.getData('text/plain');clearDragStyle();if(from)reorder(from,w.id);dragId=null;});
  }board.append(article);
  }
- if(currentView==='custom'&&editing)attachTouchHandles();updateValues();}
+ if(currentView==='custom'&&editing)attachTouchHandles();updateValues();document.dispatchEvent(new Event('cs2:board-rendered'));}
 function attachResizeGrip(grip,card,w){
  let resizing=null;
  grip.addEventListener('pointerdown',e=>{if(e.button!==0)return;e.preventDefault();e.stopPropagation();const board=$('board');const gap=parseFloat(getComputedStyle(board).columnGap)||14;const col=(board.clientWidth-11*gap)/12;if(col<=0)return;resizing={x:e.clientX,start:w.span,col:col+gap,id:e.pointerId};card.draggable=false;grip.setPointerCapture(e.pointerId);card.classList.add('resizing');});
@@ -131,10 +131,11 @@ const dashboardClient=window.CS2DashboardClient({
   document.dispatchEvent(new CustomEvent('cs2:connection-lost'));
   anchor=null;
   if(last){
-   last.bomb_timer={status:'stale'};
-   last.online=false;
+   last={type:'state',online:false,gsi_connected:false,player:{},bomb_timer:{status:'stale'}};
+   anchor=null;
    setOnline(last);
-   paintBomb();
+   updateValues();
+   setStatus('Reconnexion…','bad','lost');
   }
   reconnect.failed();
  }
@@ -179,7 +180,7 @@ function handleServerMessage(message){
  if(message.type==='state')renderData(message);
 }
 const SAMPLE={type:'state',online:true,gsi_connected:true,age_seconds:0,map:'de_mirage',map_mode:'competitive',map_phase:'live',round:14,round_phase:'live',ct:8,t:5,round_winner:'',recent_wins:[{round:10,winner:'ct_win'},{round:11,winner:'t_win'},{round:12,winner:'ct_win'}],bomb_state:'',bomb_timer:{enabled:false,status:'disabled',duration:40},economy:{on_loss:5600,loss_bonus:2400,loss_streak_known:true,source:'gsi'},events:[{message:'Élimination · 18 au total',at:Date.now()/1000,category:'kill'},{message:'Nouvelle manche · MIRAGE',at:Date.now()/1000-35,category:'round'}],provider:{version:'CS2'},player:{name:'Player',team:'CT',activity:'playing',money:3200,health:87,armor:94,helmet:true,defusekit:true,equip_value:4300,flashed:0,smoked:0,burning:0,weapon:'weapon_ak47',ammo_clip:21,ammo_max:30,ammo_reserve:90,kills:18,assists:4,deaths:11,mvps:3,score:42,round_kills:2,round_killhs:1,round_totaldmg:167,weapons:[{name:'weapon_ak47',type:'Rifle',state:'active',ammo_clip:21},{name:'weapon_usp_silencer',type:'Pistol',state:'holstered',ammo_clip:12},{name:'weapon_smokegrenade',type:'Grenade',state:'holstered'},{name:'weapon_flashbang',type:'Grenade',state:'holstered'}]}};
-function demo(){if(!allowDiscardPending())return;reconnect.stop();clearPrivateProfiles();pin='';$('pin').value='';$('download-support').classList.add('hidden');modeDemo=true;dashboardClient.close();renderData(structuredClone(SAMPLE));}function demoBomb(n){if(!modeDemo)return;const s=structuredClone(SAMPLE);s.bomb_state=n==='stop'?'defused':'planted';s.bomb_timer=n==='stop'?{enabled:true,status:'idle',duration:40}:{enabled:true,status:'active',remaining:n,duration:40};renderData(s);}
+function demo(){if(!allowDiscardPending())return;reconnect.stop();clearPrivateProfiles();pin='';$('pin').value='';$('download-support').classList.add('hidden');modeDemo=true;dashboardClient.close();renderBoard();renderData(structuredClone(SAMPLE));}function demoBomb(n){if(!modeDemo)return;const s=structuredClone(SAMPLE);s.bomb_state=n==='stop'?'defused':'planted';s.bomb_timer=n==='stop'?{enabled:true,status:'idle',duration:40}:{enabled:true,status:'active',remaining:n,duration:40};renderData(s);}
 function initialize(){updateProfiles();renderBoard();renderCatalog();}
 $('tab-default').addEventListener('click',()=>{currentView='default';editing=false;catalogOpen=false;renderBoard();});$('tab-custom').addEventListener('click',()=>{if(modeDemo||!profilesReady)return;currentView='custom';renderBoard();});
 $('edit').addEventListener('click',()=>{editing=!editing;if(!editing)catalogOpen=false;renderBoard();});$('add').addEventListener('click',()=>{catalogOpen=!catalogOpen;updateChrome();if(catalogOpen)$('search-widgets').focus();});$('close-catalog').addEventListener('click',()=>{catalogOpen=false;updateChrome();});$('search-widgets').addEventListener('input',e=>{search=e.target.value.toLowerCase();renderCatalog();});$('catalog-category').addEventListener('change',e=>{category=e.target.value;renderCatalog();});

@@ -102,3 +102,7 @@ Run node tests/js/test_profile_publication.js and python tests/browser/test_prof
 The browser journey uses the real P1 transport and native IndexedDB to verify journal-before-send, acknowledgement loss, reload/server restart, retries, explicit conflicts, later local edits, cleanup failures, profile independence, local tab conflicts, deletion/orphans, confirmed logout, generation changes and preservation of P4 database-version-1 records. --output ../publication-evidence records seven 60-widget publications with three real clients.
 
 Optional backend measurements: python tests/benchmarks/profile_publication.py --output ../publication-evidence/backend.json. These use temporary data only, with 12 profiles × 60 widgets and 64 receipts, nine samples per operation and fast in-memory fan-out peers. Run performance measurements sequentially; scheduling results are not LAN latency and no timing threshold is a CI gate. Existing demo/GSI/widget/theme/browser suites are retained. See [publication boundaries](../docs/development/profile-publication.md).
+
+## P6 dashboard checks
+
+Run node tests/js/test_dashboard_layout.js, python tests/browser/test_dashboard_navigation.py --browser chromium and python tests/browser/test_dashboard_target.py --browser chromium (also firefox/webkit in CI). The target test uses disposable P5 storage, real authenticated transport and synthetic GSI; it never accesses personal profiles. Add --output PATH to the target test for local screenshots and reflow timings. Keep those artifacts outside the source tree.
