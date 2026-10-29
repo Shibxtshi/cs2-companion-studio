@@ -20,6 +20,7 @@
     try {
       const content = CCSDraftContract.content(event.data.content);
       CS2I18N.setLocale(event.data.locale);
+      close.textContent = CS2I18N.locale() === 'FR' ? 'Fermer l’aperçu' : 'Close preview';
       label.textContent = CS2I18N.locale() === 'FR' ? 'Aperçu du brouillon · non publié' : 'Draft preview · not published';
       board.replaceChildren(...content.configuration.layout.widgets.map(widget => renderer.createCard(widget, CS2WidgetCatalog[widget.kind])));
       board.dataset.studioDensity = content.configuration.appearance.density;

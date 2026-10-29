@@ -4,6 +4,7 @@
   const COPY = {
     preview_blocked: ['Preview window blocked. Allow pop-ups for this local CCS origin.', 'Fenêtre d’aperçu bloquée. Autorise les fenêtres pour cette origine locale CCS.'],
     disk: ['Disk write failed · published data unchanged. Retry the same operation.', 'Échec d’écriture disque · version publiée inchangée. Réessaie la même opération.'],
+    language: ['Language', 'Langue'],
     manage: ['Manage', 'Gérer'], newProfile: ['New profile', 'Nouveau profil'], copyProfile: ['Duplicate profile', 'Dupliquer le profil'],
     deleteProfile: ['Delete published profile…', 'Supprimer le profil publié…'], drafts: ['Local drafts', 'Brouillons locaux'],
     retry: ['Verify / retry', 'Vérifier / réessayer'], discardDraft: ['Discard local draft…', 'Abandonner le brouillon…'],
@@ -212,6 +213,12 @@
     function locale() {
       for (const node of document.querySelectorAll('[data-copy]')) { node.setAttribute('translate', 'no'); node.textContent = text(node.dataset.copy); }
       byId('studio-search').placeholder = text('search');
+      byId('studio-category').setAttribute('aria-label', french() ? 'Catégorie' : 'Category');
+      document.querySelector('.studio-panel-tabs').setAttribute('aria-label', french() ? 'Panneaux du Studio' : 'Studio panels');
+      document.querySelector('.studio-header nav').setAttribute('aria-label', french() ? 'Espace de travail' : 'Workspace');
+      for (const [direction,en,fr] of [['-1,0','Move left','Déplacer à gauche'], ['0,-1','Move up','Déplacer vers le haut'], ['0,1','Move down','Déplacer vers le bas'], ['1,0','Move right','Déplacer à droite']]) {
+        document.querySelector('[data-nudge="'+direction+'"]').setAttribute('aria-label', french() ? fr : en);
+      }
       byId('studio-logout').textContent = french() ? 'Déconnexion' : 'Log out';
       byId('studio-undo').setAttribute('aria-label', french() ? 'Annuler' : 'Undo');
       byId('studio-redo').setAttribute('aria-label', french() ? 'Rétablir' : 'Redo');
