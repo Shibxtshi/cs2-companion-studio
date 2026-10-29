@@ -116,3 +116,7 @@ The main dashboard uses the modern Standard presentation for all 29 widgets. Com
 ### Target Customization Studio foundations
 
 The isolated P8 Studio composes local IndexedDB drafts, undo/redo, per-widget variants, X/Y editing and explicit versioned publication. It is exercised only with authenticated synthetic target storage. The distributed application still uses its current editor and automatic server save; this PR does not migrate, convert or reset personal profiles. Activation requires a separately reviewed, backed-up and explicitly confirmed transition, including target import/export. See [Studio boundaries](docs/development/customization-studio.md).
+
+### Secondary screens and help
+
+P9 unifies sign-in, optional quick start, Settings and diagnostics in EN/FR. The current installation still uses historical profiles and automatic saving. The isolated target Studio remains a distinct, explicitly published workflow; activation is not part of this UI change. See [UI responsibilities](docs/development/user-experience.md) and the separate [activation proposal](docs/development/target-activation-plan.md).

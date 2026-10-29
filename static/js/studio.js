@@ -6,7 +6,7 @@ const W=window.CS2WidgetCatalog;
 if(!W)throw new Error('Widget catalog must load before studio.js');
 const VERSION='1.0.0', COLOR='#f3ac52', DEFAULT_IDS=['score','weapon','economy','stats','bomb'];
 let profilesReady=false;
-let modeDemo=false,last=null,anchor=null,pin='',currentView='default',editing=false,search='',category='all',openedSettings=new Set(),catalogOpen=false,profiles=[],activeProfile='',seq=1,notifyTimeout=null,dragId=null,pointerDrag=null;
+let modeDemo=false,last=null,anchor=null,pin='',currentView='default',editing=false,search='',category='all',openedSettings=new Set(),catalogOpen=false,profiles=[],activeProfile='',seq=1,dragId=null,pointerDrag=null;
 const WIDTHS=[3,4,6,8,12], STYLES=['solid','glass','outline'];
 const TEMPLATES={
  competitive:{name:'Compétitif compact',widgets:[['score',12],['weapon',4],['economy',8],['stats',12],['bomb',12]]},
@@ -49,9 +49,23 @@ function clearPrivateProfiles(){
 function allowDiscardPending(){
  return !profileSync.dirty||confirm(window.CS2I18N.message('profile.discardPrompt'));
 }
-function toast(message){const t=$('toast');t.textContent=message;t.classList.remove('hidden');clearTimeout(notifyTimeout);notifyTimeout=setTimeout(()=>t.classList.add('hidden'),3000);}
+function toast(message,kind='info'){CCSNotifications.show({message,kind});}
+function download(data,fileName){
+ let url=null;
+ try{
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  url=URL.createObjectURL(blob);
+  const link=document.createElement('a');
+  link.href=url;link.download=fileName;link.click();
+  CCSNotifications.show({key:'exportPrepared',kind:'info'});
+ }catch{
+  CCSNotifications.show({key:'exportFailed',kind:'error'});
+ }finally{
+  if(url)setTimeout(()=>URL.revokeObjectURL(url),1000);
+ }
+}
 function setStatus(msg,kind='',code=''){const x=$('status');x.textContent=msg;x.className='badge '+kind;document.dispatchEvent(new CustomEvent('cs2:status',{detail:{message:msg,kind,code}}));}
-function setOnline(s){if(modeDemo)setStatus('Mode démo','ok');else setStatus(s?.online?'Partie connectée':s?.gsi_connected?'GSI actif · en attente de partie':'CS2 hors ligne',s?.online?'ok':'bad');$('notice').classList.toggle('hidden',!!s?.online&&!modeDemo);$('notice').textContent=modeDemo?'Données simulées':(!s?.online?'En attente de données de partie CS2.':'');document.dispatchEvent(new CustomEvent('cs2:state',{detail:{online:!!s?.online,gsi_connected:!!s?.gsi_connected,demo:modeDemo}}));}
+function setOnline(s){if(modeDemo)setStatus('Mode démo','ok');else setStatus(s?.online?'Partie connectée':s?.gsi_connected?'GSI actif · en attente de partie':'CS2 hors ligne',s?.online?'ok':'bad');$('notice').classList.toggle('hidden',!!s?.online&&!modeDemo);$('notice').textContent=modeDemo?'Données simulées':(!s?.online?'En attente de données de partie CS2.':'');document.dispatchEvent(new CustomEvent('cs2:state',{detail:{online:!!s?.online,gsi_connected:!!s?.gsi_connected,demo:modeDemo,age_seconds:Number.isFinite(s?.age_seconds)?s.age_seconds:null}}));}
 function updateProfiles(){const x=$('profile-select');x.replaceChildren();for(const p of profiles){const o=document.createElement('option');o.value=p.id;o.textContent=p.name;o.setAttribute('translate','no');x.append(o);}x.value=activeProfile;$('accent').value=profile()?.accent||COLOR;$('density').value=profile()?.density||'normal';$('delete-profile').disabled=profiles.length<=1;if(currentView==='custom')document.documentElement.style.setProperty('--profile-accent',profile()?.accent||COLOR);else document.documentElement.style.removeProperty('--profile-accent');}
 function updateChrome(){const custom=currentView==='custom'&&!modeDemo&&profilesReady;$('tab-custom').classList.toggle('hidden',modeDemo||!profilesReady);$('tab-default').classList.toggle('active',!custom);$('tab-custom').classList.toggle('active',custom);$('tab-default').setAttribute('aria-selected',String(!custom));$('tab-custom').setAttribute('aria-selected',String(custom));$('tab-default').tabIndex=custom?-1:0;$('tab-custom').tabIndex=custom?0:-1;$('custom-tools').classList.toggle('hidden',!custom);$('edit').classList.toggle('hidden',!custom);$('add').classList.toggle('hidden',!custom);$('edit').textContent=editing?'✓ Terminer':'✎ Personnaliser';$('edit').setAttribute('aria-pressed',String(editing));$('add').disabled=!editing;$('catalog').classList.toggle('hidden',!custom||!editing||!catalogOpen);$('edit-hint').classList.toggle('hidden',!custom||!editing);updateProfiles();}
 function currentWidgets(){return currentView==='default'||modeDemo||!profilesReady?DEFAULT_IDS.map((k,i)=>({id:'default'+i,kind:k,span:W[k].size,title:'',color:''})):profile().widgets;}
@@ -107,10 +121,10 @@ const dashboardClient=window.CS2DashboardClient({
  onConnecting:()=>setStatus('Connexion…','','connecting'),
  onHealthError:(error,versionMismatch)=>{
   if(versionMismatch){
-   $('loginerror').textContent='Redémarre Docker avec la version 1.0.0.';
+   $('loginerror').textContent=CCSExperienceCopy.text('version');$('loginerror').dataset.experienceText='version';$('loginerror').setAttribute('translate','no');
    setStatus('Mise à jour requise','bad','error');
   }else{
-   $('loginerror').textContent='Serveur indisponible : '+error.message;
+   $('loginerror').textContent=CCSExperienceCopy.text('unavailable');$('loginerror').dataset.experienceText='unavailable';$('loginerror').setAttribute('translate','no');
    setStatus('Hors ligne','bad','error');
   }
  },
@@ -122,7 +136,7 @@ const dashboardClient=window.CS2DashboardClient({
  onClose:({authorized,failed})=>{
   profileSync.disconnected();
   if(!authorized){
-   if(!failed)$('loginerror').textContent='Impossible de se connecter au WebSocket.';
+   if(!failed){$('loginerror').textContent=CCSExperienceCopy.text('refused');$('loginerror').dataset.experienceText='refused';$('loginerror').setAttribute('translate','no');}
    setStatus('Déconnecté','bad','lost');
    if(!failed)reconnect.failed();
    return;
@@ -142,15 +156,15 @@ const dashboardClient=window.CS2DashboardClient({
 });
 const reconnect=window.CS2Reconnect({connect:isCurrent=>dashboardClient.connect(isCurrent)});
 function login(){
- modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerror').textContent='';$('pin').setAttribute('aria-invalid','false');
- if(pin.length<6){$('loginerror').textContent='Code PIN trop court.';$('pin').setAttribute('aria-invalid','true');return;}
+ modeDemo=false;pin=$('pin').value.trim()||pin;$('loginerror').textContent='';delete $('loginerror').dataset.experienceText;$('pin').setAttribute('aria-invalid','false');
+ if(pin.length<6){$('loginerror').textContent=CCSExperienceCopy.text('shortPin');$('loginerror').dataset.experienceText='shortPin';$('loginerror').setAttribute('translate','no');$('pin').setAttribute('aria-invalid','true');return;}
  reconnect.stop();dashboardClient.close();
  reconnect.start();
 }
 function handleServerMessage(message){
  if(message.type==='auth_error'){
   reconnect.stop();
-  $('loginerror').textContent=message.message||'Code incorrect.';
+  $('loginerror').textContent=CCSExperienceCopy.text('invalidPin');$('loginerror').dataset.experienceText='invalidPin';$('loginerror').setAttribute('translate','no');
   $('pin').setAttribute('aria-invalid','true');
   setStatus('PIN incorrect','bad','error');
   return;
@@ -168,19 +182,13 @@ function handleServerMessage(message){
  if(message.type==='profiles_state'){profileSync.receive(message);return;}
  if(message.type==='profiles_error'){profileSync.failed(message.code);return;}
  if(message.type==='diagnostics_data'){
-  const blob=new Blob([JSON.stringify(message.report,null,2)],{type:'application/json'});
-  const downloadUrl=URL.createObjectURL(blob);
-  const downloadLink=document.createElement('a');
-  downloadLink.href=downloadUrl;
-  downloadLink.download='CS2_Companion_support.json';
-  downloadLink.click();
-  setTimeout(()=>URL.revokeObjectURL(downloadUrl),1000);
+  download(message.report,'CS2_Companion_support.json');
   return;
  }
  if(message.type==='state')renderData(message);
 }
 const SAMPLE={type:'state',online:true,gsi_connected:true,age_seconds:0,map:'de_mirage',map_mode:'competitive',map_phase:'live',round:14,round_phase:'live',ct:8,t:5,round_winner:'',recent_wins:[{round:10,winner:'ct_win'},{round:11,winner:'t_win'},{round:12,winner:'ct_win'}],bomb_state:'',bomb_timer:{enabled:false,status:'disabled',duration:40},economy:{on_loss:5600,loss_bonus:2400,loss_streak_known:true,source:'gsi'},events:[{message:'Élimination · 18 au total',at:Date.now()/1000,category:'kill'},{message:'Nouvelle manche · MIRAGE',at:Date.now()/1000-35,category:'round'}],provider:{version:'CS2'},player:{name:'Player',team:'CT',activity:'playing',money:3200,health:87,armor:94,helmet:true,defusekit:true,equip_value:4300,flashed:0,smoked:0,burning:0,weapon:'weapon_ak47',ammo_clip:21,ammo_max:30,ammo_reserve:90,kills:18,assists:4,deaths:11,mvps:3,score:42,round_kills:2,round_killhs:1,round_totaldmg:167,weapons:[{name:'weapon_ak47',type:'Rifle',state:'active',ammo_clip:21},{name:'weapon_usp_silencer',type:'Pistol',state:'holstered',ammo_clip:12},{name:'weapon_smokegrenade',type:'Grenade',state:'holstered'},{name:'weapon_flashbang',type:'Grenade',state:'holstered'}]}};
-function demo(){if(!allowDiscardPending())return;reconnect.stop();clearPrivateProfiles();pin='';$('pin').value='';$('download-support').classList.add('hidden');modeDemo=true;dashboardClient.close();renderBoard();renderData(structuredClone(SAMPLE));}function demoBomb(n){if(!modeDemo)return;const s=structuredClone(SAMPLE);s.bomb_state=n==='stop'?'defused':'planted';s.bomb_timer=n==='stop'?{enabled:true,status:'idle',duration:40}:{enabled:true,status:'active',remaining:n,duration:40};renderData(s);}
+function demo(){if(!allowDiscardPending())return;CCSNotifications.dismiss();reconnect.stop();clearPrivateProfiles();pin='';$('pin').value='';$('download-support').classList.add('hidden');modeDemo=true;dashboardClient.close();renderBoard();renderData(structuredClone(SAMPLE));}function demoBomb(n){if(!modeDemo)return;const s=structuredClone(SAMPLE);s.bomb_state=n==='stop'?'defused':'planted';s.bomb_timer=n==='stop'?{enabled:true,status:'idle',duration:40}:{enabled:true,status:'active',remaining:n,duration:40};renderData(s);}
 function initialize(){updateProfiles();renderBoard();renderCatalog();}
 $('tab-default').addEventListener('click',()=>{currentView='default';editing=false;catalogOpen=false;renderBoard();});$('tab-custom').addEventListener('click',()=>{if(modeDemo||!profilesReady)return;currentView='custom';renderBoard();});
 $('edit').addEventListener('click',()=>{editing=!editing;if(!editing)catalogOpen=false;renderBoard();});$('add').addEventListener('click',()=>{catalogOpen=!catalogOpen;updateChrome();if(catalogOpen)$('search-widgets').focus();});$('close-catalog').addEventListener('click',()=>{catalogOpen=false;updateChrome();});$('search-widgets').addEventListener('input',e=>{search=e.target.value.toLowerCase();renderCatalog();});$('catalog-category').addEventListener('change',e=>{category=e.target.value;renderCatalog();});
@@ -191,9 +199,9 @@ $('rename-profile').addEventListener('click',()=>{if(!profilesReady||modeDemo)re
 $('duplicate-profile').addEventListener('click',()=>{if(profiles.length>=12){toast('Maximum 12 profils.');return;}const p=profile(),copy={id:freshProfileId(),name:(p.name+' copie').slice(0,32),accent:p.accent,density:safeDensity(p.density),widgets:p.widgets.map(x=>sanitizeWidget(x))};profiles.push(copy);activeProfile=copy.id;save();renderBoard();});
 $('delete-profile').addEventListener('click',()=>{if(profiles.length<=1)return;if(!confirm(tr('Supprimer ce profil ?')))return;profiles=profiles.filter(p=>p.id!==activeProfile);activeProfile=profiles[0].id;save();renderBoard();});
 $('reset').addEventListener('click',()=>{if(!confirm(tr('Remettre ce profil à sa disposition initiale ?')))return;profile().widgets=seedWidgets();profile().accent=COLOR;profile().density='normal';openedSettings.clear();save();renderBoard();});
-$('export').addEventListener('click',()=>{const data={format:'cs2-companion-layout',version:2,profile:{name:profile().name,accent:profile().accent,density:profile().density,widgets:profile().widgets.map(({kind,span,title,color,background,opacity,style})=>({kind,span,title,color,background,opacity,style}))}};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'}),url=URL.createObjectURL(blob),a=document.createElement('a');a.href=url;a.download='CS2_Companion_'+profile().name.replace(/[^a-z0-9_-]+/gi,'_')+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(url),500);toast('Profil exporté');});
-$('import').addEventListener('click',()=>$('import-file').click());$('import-file').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;if(file.size>150000){toast('Fichier trop volumineux.');return;}try{const data=JSON.parse(await file.text());if(data.format!=='cs2-companion-layout'||data.version!==2||!data.profile||!Array.isArray(data.profile.widgets))throw Error('Format inconnu');if(profiles.length>=12)throw Error('Maximum 12 profils');const items=data.profile.widgets.slice(0,60).map(sanitizeWidget).filter(Boolean);const p={id:freshProfileId(),name:String(data.profile.name||'Import').slice(0,32),accent:safeColor(data.profile.accent)||COLOR,density:safeDensity(data.profile.density),widgets:items};profiles.push(p);activeProfile=p.id;editing=true;save();renderBoard();toast('Profil importé · '+items.length+' widgets');}catch(err){toast('Import impossible : '+err.message);}});
-$('download-support').addEventListener('click',()=>{if(!modeDemo&&profilesReady&&dashboardClient.isOpen)dashboardClient.send({type:'diagnostics_request'});});
+$('export').addEventListener('click',()=>{const data={format:'cs2-companion-layout',version:2,profile:{name:profile().name,accent:profile().accent,density:profile().density,widgets:profile().widgets.map(({kind,span,title,color,background,opacity,style})=>({kind,span,title,color,background,opacity,style}))}};download(data,'CS2_Companion_'+profile().name.replace(/[^a-z0-9_-]+/gi,'_')+'.json');});
+$('import').addEventListener('click',()=>$('import-file').click());$('import-file').addEventListener('change',async e=>{const file=e.target.files?.[0];e.target.value='';if(!file)return;if(file.size>150000){toast('Fichier trop volumineux.','error');return;}try{const data=JSON.parse(await file.text());if(data.format!=='cs2-companion-layout'||data.version!==2||!data.profile||!Array.isArray(data.profile.widgets))throw Error('Format inconnu');if(profiles.length>=12)throw Error('Maximum 12 profils');const items=data.profile.widgets.slice(0,60).map(sanitizeWidget).filter(Boolean);const p={id:freshProfileId(),name:String(data.profile.name||'Import').slice(0,32),accent:safeColor(data.profile.accent)||COLOR,density:safeDensity(data.profile.density),widgets:items};profiles.push(p);activeProfile=p.id;editing=true;save();renderBoard();toast('Profil importé · '+items.length+' widgets');}catch(err){CCSNotifications.show({key:'importFailed',kind:'error'});}});
+$('download-support').addEventListener('click',()=>{if(!modeDemo&&profilesReady&&dashboardClient.isOpen){try{dashboardClient.send({type:'diagnostics_request'});}catch{CCSNotifications.show({key:'diagnosticsFailed',kind:'error'});}}});
 $('connect').addEventListener('click',login);$('pin').addEventListener('keydown',e=>{if(e.key==='Enter')login();});$('demo').addEventListener('click',demo);$('demoagain').addEventListener('click',demo);
 $('board').addEventListener('click',e=>{const b=e.target.closest('[data-demo]');if(b&&modeDemo){const n=b.dataset.demo;demoBomb(n==='stop'?'stop':Number(n));}});
 $('logout').addEventListener('click',()=>{if(!allowDiscardPending())return;reconnect.stop();clearPrivateProfiles();pin='';$('pin').value='';$('download-support').classList.add('hidden');document.dispatchEvent(new Event('cs2:logout'));modeDemo=false;dashboardClient.close();last=null;anchor=null;$('view').classList.add('hidden');$('login').classList.remove('hidden');setStatus('Non connecté');});

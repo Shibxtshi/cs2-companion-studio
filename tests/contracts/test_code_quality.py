@@ -120,8 +120,6 @@ def test_connection_states_do_not_depend_on_localized_messages():
     experience = read("static/js/experience.js")
     assert "detail:{message:msg,kind,code}" in studio
     assert "setStatus('Connexion…','','connecting')" in studio
-    assert "const code=ev.detail?.code;" in experience
-    assert "if(code==='connecting')" in experience
-    assert "else if(code==='error')" in experience
-    assert "else if(code==='lost')" in experience
+    assert "['connecting','error','lost'].includes(event.detail?.code)" in experience
+    assert "socketState = event.detail.code" in experience
     assert "if(/Connexion…/.test(msg))" not in experience

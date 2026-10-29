@@ -105,6 +105,8 @@
       byId('tab-custom').click();
       if (byId('edit').getAttribute('aria-pressed') !== 'true') byId('edit').click();
     } else if (byId('edit').getAttribute('aria-pressed') === 'true') byId('edit').click();
+    // Finishing legacy editing emits its own section update; preserve the requested destination.
+    section = next;
     paint();
     byId('dashboard-title').focus({preventScroll: true});
   }

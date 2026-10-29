@@ -2,6 +2,16 @@
 (() => {
   'use strict';
   const COPY = {
+    generic: ['Action could not be completed. Keep your work and review the draft or connection status.', 'Action impossible à terminer. Conserve ton travail et vérifie l’état du brouillon ou de la connexion.'],
+    eyebrow: ['PERSONAL WORKSPACE', 'ESPACE PERSONNEL'], help: ['Help', 'Aide'],
+    close: ['Close', 'Fermer'],
+    none: ['No local draft', 'Aucun brouillon local'],
+    aborted: ['Local operation interrupted · review the last confirmed draft', 'Opération locale interrompue · vérifie le dernier brouillon confirmé'],
+    invalid_configuration: ['Invalid configuration · nothing published', 'Configuration invalide · aucune publication'],
+    dialog_busy: ['Close the current dialog before starting another action.', 'Ferme le dialogue actuel avant de lancer une autre action.'],
+    operation_id_reused: ['This operation identifier was already used. Keep your draft and review the pending operation.', 'Cet identifiant d’opération a déjà été utilisé. Conserve le brouillon et vérifie l’opération en attente.'],
+    invalid_operation: ['Publication operation is invalid · draft retained', 'Opération de publication invalide · brouillon conservé'],
+    timeout: ['No confirmation received · review before retrying', 'Aucune confirmation reçue · vérifie avant de réessayer'],
     preview_blocked: ['Preview window blocked. Allow pop-ups for this local CCS origin.', 'Fenêtre d’aperçu bloquée. Autorise les fenêtres pour cette origine locale CCS.'],
     disk: ['Disk write failed · published data unchanged. Retry the same operation.', 'Échec d’écriture disque · version publiée inchangée. Réessaie la même opération.'],
     language: ['Language', 'Langue'],
@@ -64,7 +74,7 @@
     local_error: ['Local storage error · not published', 'Erreur de stockage local · non publié'],
     local_conflict: ['Another tab changed this draft · no overwrite', 'Un autre onglet a modifié ce brouillon · aucun écrasement'],
     revision_conflict: ['Server version changed · your draft is kept', 'Version serveur modifiée · ton brouillon est conservé'],
-    network_error: ['Disconnected · your draft is kept locally', 'Déconnecté · ton brouillon local est conservé'],
+    network_error: ['Connection interrupted · check the local draft status before leaving', 'Connexion interrompue · vérifie l’état local du brouillon avant de quitter'],
     publication_uncertain: ['Reply missing · publication outcome uncertain', 'Réponse absente · résultat de publication incertain'],
     reconciliation_required: ['Pending operation · reconcile before editing', 'Opération en attente · vérifier avant de reprendre'],
     profile_deleted: ['Published profile deleted · draft retained', 'Profil publié supprimé · brouillon conservé'],
@@ -99,7 +109,7 @@
   };
   const byId = id => document.getElementById(id);
   const french = () => CS2I18N.locale() === 'FR';
-  const text = key => COPY[key]?.[french() ? 1 : 0] || (french() ? 'Action impossible · ' : 'Action unavailable · ') + key;
+  const text = key => (COPY[key] || COPY.generic)[french() ? 1 : 0];
   function choose(title, message, choices, {name = null, review = null} = {}) {
     const dialog = byId('studio-dialog');
     if (dialog.open) CCSDraftContract.fail('dialog_busy');
@@ -116,8 +126,13 @@
     byId('studio-dialog-title').textContent = title;
     byId('studio-dialog-message').textContent = message;
     const actions = byId('studio-dialog-actions'); actions.replaceChildren();
+    const previousFocus = document.activeElement;
     return new Promise(resolve => {
-      function close() { dialog.removeEventListener('close', close); resolve(dialog.returnValue || 'cancel'); }
+      function close() {
+        dialog.removeEventListener('close', close);
+        if (previousFocus?.isConnected) previousFocus.focus();
+        resolve(dialog.returnValue || 'cancel');
+      }
       dialog.addEventListener('close', close);
       for (const [value, label] of choices) {
         const button = document.createElement('button'); button.type = 'submit'; button.value = value; button.formNoValidate = value === 'cancel';
@@ -232,6 +247,7 @@
         [...byId(id).options].forEach((option, index) => { option.textContent = labels[index]; });
       }
       library(); paintSelection(); status(saveCode, publicationCode);
+      if (!byId('studio-alert').hidden) byId('studio-alert').textContent = text(byId('studio-alert').dataset.code);
     }
     function status(localCode, remoteCode = null) {
       saveCode = localCode; publicationCode = remoteCode;
@@ -270,6 +286,10 @@
     byId('studio-discard-draft').addEventListener('click', () => attempt(discardDraft));
     byId('studio-recover-copy').addEventListener('click', () => attempt(recoverCopy));
     byId('studio-open-preview').addEventListener('click', () => attempt(openPreview));
+    byId('studio-help').addEventListener('click', () => attempt(() => choose(text('help'), french()
+      ? 'Les modifications restent dans un brouillon local. Enregistrer et appliquer attend la confirmation du serveur. Conserver et quitter attend uniquement l’enregistrement local. Propriétés → Widget : présentation et dimensions ; Propriétés → Profil : densité, thème et navigation. Une fermeture normale conserve les brouillons confirmés ; une déconnexion volontaire confirmée les efface. Le parcours cible reste isolé de ton installation actuelle.'
+      : 'Changes stay in a local draft. Save and apply waits for server confirmation. Keep and leave waits only for local persistence. Properties → Widget: presentation and dimensions; Properties → Profile: density, theme and navigation. Normal closure preserves confirmed drafts; confirmed voluntary logout erases them. This target remains isolated from your current installation.',
+      [['cancel', text('close')]])));
     byId('studio-publish').addEventListener('click', () => attempt(publish));
     byId('studio-leave').addEventListener('click', () => attempt(leave)); byId('studio-logout').addEventListener('click', () => attempt(logout));
     for (const action of ['keep','server','local']) byId('studio-conflict-' + action).addEventListener('click', () => attempt(() => resolveConflict(action)));

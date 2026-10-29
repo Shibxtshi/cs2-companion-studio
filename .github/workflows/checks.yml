@@ -59,6 +59,10 @@ jobs:
           node tests/js/test_dashboard_layout.js
           node tests/js/test_widget_presentation.js
           node tests/js/test_studio_model.js
+          node tests/js/test_experience.js
+          node --check static/js/experience-copy.js
+          node --check static/js/experience.js
+          node --check static/js/notifications.js
           node --check static/js/profile-selection.js
           node --check static/js/studio-model.js
           node --check static/js/studio-data.js
@@ -168,6 +172,13 @@ jobs:
           python tests/browser/test_customization_studio.py --browser ${{ matrix.browser }}
           python tests/browser/test_studio_workflows.py --browser ${{ matrix.browser }}
           python tests/browser/test_studio_matrix.py --browser ${{ matrix.browser }}
+
+      - name: Verify secondary screens, notifications, help and diagnostics
+        env:
+          HOME: /root
+        run: |
+          python tests/browser/test_experience.py --browser ${{ matrix.browser }}
+          python tests/browser/test_experience_edges.py --browser ${{ matrix.browser }}
 
   dependency-audit:
     name: Vulnerability report / SBOM
