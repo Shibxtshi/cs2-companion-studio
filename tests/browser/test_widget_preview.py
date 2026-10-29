@@ -171,7 +171,10 @@ def run(browserName,output):
                     previous_viewport=page.viewport_size
                     page.set_viewport_size({'width':1280,'height':900})
                     page.bring_to_front()
+                    # Capture timing with the native clock, not the frozen screenshot clock.
+                    page.evaluate('delete performance.now')
                     (output/'variant-performance.json').write_text(json.dumps({'viewport':[1280,900],'samples':page.evaluate('widgetPreview.benchmark()')},indent=2),encoding='utf8')
+                    page.evaluate('performance.now=()=>1000')
                     page.set_viewport_size(previous_viewport)
                     (output/'dom-metrics.json').write_text(json.dumps(page.evaluate('widgetPreview.metrics()'),indent=2),encoding='utf8')
                 for name,sample,mode in corpus:
