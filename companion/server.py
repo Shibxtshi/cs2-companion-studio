@@ -505,6 +505,12 @@ async def ws(websocket: WebSocket):
             if len(rawMsg) > 225_000:
                 await websocket.close(code=1009)
                 break
+            # The default legacy store has no target dispatcher. Tests substitute one
+            # isolated target store; no second runtime writer or public switch exists.
+            targetDispatch = getattr(profile_store, 'dispatch', None)
+            if targetDispatch is not None:
+                if await targetDispatch(rawMsg, websocket, connected):
+                    continue
             try:
                 command = decode_message(rawMsg)
             except (ValueError, UnicodeDecodeError):

@@ -55,6 +55,10 @@ jobs:
           node tests/js/test_dashboard_client.js
           node tests/js/test_theme_preview.js
           node tests/js/test_drafts.js
+          node tests/js/test_profile_publication.js
+          node --check static/js/draft-publications.js
+          node --check static/js/published-profiles.js
+          node --check static/js/profile-publication.js
           node --check static/js/draft-schema.js
           node --check static/js/draft-contract.js
           node --check static/js/edit-history.js
@@ -123,6 +127,11 @@ jobs:
           HOME: /root
         run: python tests/browser/test_drafts.py --browser ${{ matrix.browser }}
 
+      - name: Verify explicit publication, retries and conflict resolution
+        env:
+          HOME: /root
+        run: python tests/browser/test_profile_publication.py --browser ${{ matrix.browser }}
+
   dependency-audit:
     name: Vulnerability report / SBOM
     runs-on: ubuntu-latest
@@ -183,6 +192,8 @@ jobs:
         run: python tests/docker/settings.py
       - name: Verify packaged profile contracts and isolated recovery
         run: python tests/docker/profile_contracts.py
+      - name: Verify packaged inactive publication service and assets
+        run: python tests/docker/profile_publication.py
       - name: Verify unprivileged container
         run: test "$(docker compose exec -T cs2-companion-studio id -u)" = '10001'
       - name: Cleanup

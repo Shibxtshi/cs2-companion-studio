@@ -2,6 +2,386 @@
 (() => {
   'use strict';
   window.CCSDraftSchema = {
+  "catalog": {
+    "$defs": {
+      "Appearance": {
+        "additionalProperties": false,
+        "properties": {
+          "accent": {
+            "maxLength": 7,
+            "pattern": "^(#[a-fA-F0-9]{6})?$",
+            "title": "Accent",
+            "type": "string"
+          },
+          "background": {
+            "maxLength": 7,
+            "pattern": "^(#[a-fA-F0-9]{6})?$",
+            "title": "Background",
+            "type": "string"
+          },
+          "density": {
+            "enum": [
+              "normal",
+              "compact"
+            ],
+            "title": "Density",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accent",
+          "background",
+          "density"
+        ],
+        "title": "Appearance",
+        "type": "object"
+      },
+      "Configuration": {
+        "additionalProperties": false,
+        "properties": {
+          "appearance": {
+            "$ref": "#/$defs/Appearance"
+          },
+          "fullscreen": {
+            "$ref": "#/$defs/Fullscreen"
+          },
+          "layout": {
+            "$ref": "#/$defs/Layout"
+          },
+          "navigation": {
+            "$ref": "#/$defs/Navigation"
+          },
+          "theme": {
+            "enum": [
+              "tactical-blue",
+              "competitive-red",
+              "performance-green",
+              "creator-purple"
+            ],
+            "title": "Theme",
+            "type": "string"
+          }
+        },
+        "required": [
+          "theme",
+          "appearance",
+          "navigation",
+          "fullscreen",
+          "layout"
+        ],
+        "title": "Configuration",
+        "type": "object"
+      },
+      "Fullscreen": {
+        "additionalProperties": false,
+        "properties": {
+          "showConnectionStatus": {
+            "title": "Showconnectionstatus",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "showConnectionStatus"
+        ],
+        "title": "Fullscreen",
+        "type": "object"
+      },
+      "Layout": {
+        "additionalProperties": false,
+        "properties": {
+          "columns": {
+            "maximum": 64,
+            "minimum": 1,
+            "title": "Columns",
+            "type": "integer"
+          },
+          "widgets": {
+            "items": {
+              "$ref": "#/$defs/Widget"
+            },
+            "maxItems": 60,
+            "title": "Widgets",
+            "type": "array"
+          }
+        },
+        "required": [
+          "columns",
+          "widgets"
+        ],
+        "title": "Layout",
+        "type": "object"
+      },
+      "Navigation": {
+        "additionalProperties": false,
+        "properties": {
+          "floatingButton": {
+            "title": "Floatingbutton",
+            "type": "boolean"
+          },
+          "mode": {
+            "enum": [
+              "full",
+              "compact",
+              "hidden"
+            ],
+            "title": "Mode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mode",
+          "floatingButton"
+        ],
+        "title": "Navigation",
+        "type": "object"
+      },
+      "Profile": {
+        "additionalProperties": false,
+        "properties": {
+          "configuration": {
+            "$ref": "#/$defs/Configuration"
+          },
+          "id": {
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "name": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          },
+          "revision": {
+            "maximum": 9007199254740991,
+            "minimum": 1,
+            "title": "Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "name",
+          "configuration",
+          "id",
+          "revision"
+        ],
+        "title": "Profile",
+        "type": "object"
+      },
+      "Tombstone": {
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "revision": {
+            "maximum": 9007199254740991,
+            "minimum": 1,
+            "title": "Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "revision"
+        ],
+        "title": "Tombstone",
+        "type": "object"
+      },
+      "Widget": {
+        "additionalProperties": false,
+        "properties": {
+          "background": {
+            "maxLength": 7,
+            "pattern": "^(#[a-fA-F0-9]{6})?$",
+            "title": "Background",
+            "type": "string"
+          },
+          "color": {
+            "maxLength": 7,
+            "pattern": "^(#[a-fA-F0-9]{6})?$",
+            "title": "Color",
+            "type": "string"
+          },
+          "height": {
+            "maximum": 4096,
+            "minimum": 1,
+            "title": "Height",
+            "type": "integer"
+          },
+          "id": {
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "ammo",
+              "armor",
+              "bomb",
+              "bomb_state",
+              "cash",
+              "connection",
+              "economy",
+              "effects",
+              "equip_value",
+              "events",
+              "forecast",
+              "gear",
+              "grenades",
+              "health",
+              "inventory",
+              "kd",
+              "map",
+              "match_phase",
+              "mvp",
+              "personal_score",
+              "player",
+              "provider",
+              "round",
+              "round_history",
+              "round_stats",
+              "score",
+              "score_split",
+              "stats",
+              "weapon"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "opacity": {
+            "maximum": 100,
+            "minimum": 60,
+            "multipleOf": 5,
+            "title": "Opacity",
+            "type": "integer"
+          },
+          "style": {
+            "enum": [
+              "solid",
+              "glass",
+              "outline"
+            ],
+            "title": "Style",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 36,
+            "title": "Title",
+            "type": "string"
+          },
+          "variant": {
+            "enum": [
+              "standard",
+              "compact",
+              "minimal"
+            ],
+            "title": "Variant",
+            "type": "string"
+          },
+          "width": {
+            "maximum": 64,
+            "minimum": 1,
+            "title": "Width",
+            "type": "integer"
+          },
+          "x": {
+            "exclusiveMaximum": 64,
+            "minimum": 0,
+            "title": "X",
+            "type": "integer"
+          },
+          "y": {
+            "exclusiveMaximum": 4096,
+            "minimum": 0,
+            "title": "Y",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "x",
+          "y",
+          "width",
+          "height",
+          "variant",
+          "style",
+          "title",
+          "color",
+          "background",
+          "opacity"
+        ],
+        "title": "Widget",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "accessId": {
+        "maxLength": 32,
+        "pattern": "^[a-f0-9]{32}$",
+        "title": "Accessid",
+        "type": "string"
+      },
+      "catalogRevision": {
+        "maximum": 9007199254740991,
+        "minimum": 1,
+        "title": "Catalogrevision",
+        "type": "integer"
+      },
+      "format": {
+        "const": "ccs-dashboard-catalog",
+        "title": "Format",
+        "type": "string"
+      },
+      "profiles": {
+        "items": {
+          "$ref": "#/$defs/Profile"
+        },
+        "maxItems": 12,
+        "minItems": 1,
+        "title": "Profiles",
+        "type": "array"
+      },
+      "storeId": {
+        "maxLength": 32,
+        "pattern": "^[a-f0-9]{32}$",
+        "title": "Storeid",
+        "type": "string"
+      },
+      "tombstones": {
+        "items": {
+          "$ref": "#/$defs/Tombstone"
+        },
+        "maxItems": 1024,
+        "title": "Tombstones",
+        "type": "array"
+      },
+      "version": {
+        "maximum": 1,
+        "minimum": 1,
+        "title": "Version",
+        "type": "integer"
+      }
+    },
+    "required": [
+      "format",
+      "version",
+      "storeId",
+      "accessId",
+      "catalogRevision",
+      "profiles",
+      "tombstones"
+    ],
+    "title": "ProfileCatalog",
+    "type": "object"
+  },
   "draft": {
     "$defs": {
       "Appearance": {
@@ -342,8 +722,488 @@
     "depth": 24,
     "draftBytes": 80000,
     "nodes": 40000,
+    "operationBytes": 80000,
     "profileBytes": 64000,
-    "rows": 4096
+    "rows": 4096,
+    "storeBytes": 1000000
+  },
+  "operation": {
+    "$defs": {
+      "Appearance": {
+        "additionalProperties": false,
+        "properties": {
+          "accent": {
+            "maxLength": 7,
+            "pattern": "^(#[a-fA-F0-9]{6})?$",
+            "title": "Accent",
+            "type": "string"
+          },
+          "background": {
+            "maxLength": 7,
+            "pattern": "^(#[a-fA-F0-9]{6})?$",
+            "title": "Background",
+            "type": "string"
+          },
+          "density": {
+            "enum": [
+              "normal",
+              "compact"
+            ],
+            "title": "Density",
+            "type": "string"
+          }
+        },
+        "required": [
+          "accent",
+          "background",
+          "density"
+        ],
+        "title": "Appearance",
+        "type": "object"
+      },
+      "Configuration": {
+        "additionalProperties": false,
+        "properties": {
+          "appearance": {
+            "$ref": "#/$defs/Appearance"
+          },
+          "fullscreen": {
+            "$ref": "#/$defs/Fullscreen"
+          },
+          "layout": {
+            "$ref": "#/$defs/Layout"
+          },
+          "navigation": {
+            "$ref": "#/$defs/Navigation"
+          },
+          "theme": {
+            "enum": [
+              "tactical-blue",
+              "competitive-red",
+              "performance-green",
+              "creator-purple"
+            ],
+            "title": "Theme",
+            "type": "string"
+          }
+        },
+        "required": [
+          "theme",
+          "appearance",
+          "navigation",
+          "fullscreen",
+          "layout"
+        ],
+        "title": "Configuration",
+        "type": "object"
+      },
+      "CreateOperation": {
+        "additionalProperties": false,
+        "properties": {
+          "expectedRevision": {
+            "maximum": 0,
+            "minimum": 0,
+            "title": "Expectedrevision",
+            "type": "integer"
+          },
+          "format": {
+            "const": "ccs-dashboard-operation",
+            "title": "Format",
+            "type": "string"
+          },
+          "kind": {
+            "const": "create",
+            "title": "Kind",
+            "type": "string"
+          },
+          "operationId": {
+            "maxLength": 32,
+            "pattern": "^[a-f0-9]{32}$",
+            "title": "Operationid",
+            "type": "string"
+          },
+          "profile": {
+            "$ref": "#/$defs/ProfileContent"
+          },
+          "profileId": {
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+            "title": "Profileid",
+            "type": "string"
+          },
+          "storeId": {
+            "maxLength": 32,
+            "pattern": "^[a-f0-9]{32}$",
+            "title": "Storeid",
+            "type": "string"
+          },
+          "version": {
+            "maximum": 1,
+            "minimum": 1,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "format",
+          "version",
+          "storeId",
+          "operationId",
+          "profileId",
+          "kind",
+          "expectedRevision",
+          "profile"
+        ],
+        "title": "CreateOperation",
+        "type": "object"
+      },
+      "DeleteOperation": {
+        "additionalProperties": false,
+        "properties": {
+          "expectedRevision": {
+            "maximum": 9007199254740991,
+            "minimum": 1,
+            "title": "Expectedrevision",
+            "type": "integer"
+          },
+          "format": {
+            "const": "ccs-dashboard-operation",
+            "title": "Format",
+            "type": "string"
+          },
+          "kind": {
+            "const": "delete",
+            "title": "Kind",
+            "type": "string"
+          },
+          "operationId": {
+            "maxLength": 32,
+            "pattern": "^[a-f0-9]{32}$",
+            "title": "Operationid",
+            "type": "string"
+          },
+          "profileId": {
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+            "title": "Profileid",
+            "type": "string"
+          },
+          "storeId": {
+            "maxLength": 32,
+            "pattern": "^[a-f0-9]{32}$",
+            "title": "Storeid",
+            "type": "string"
+          },
+          "version": {
+            "maximum": 1,
+            "minimum": 1,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "format",
+          "version",
+          "storeId",
+          "operationId",
+          "profileId",
+          "kind",
+          "expectedRevision"
+        ],
+        "title": "DeleteOperation",
+        "type": "object"
+      },
+      "Fullscreen": {
+        "additionalProperties": false,
+        "properties": {
+          "showConnectionStatus": {
+            "title": "Showconnectionstatus",
+            "type": "boolean"
+          }
+        },
+        "required": [
+          "showConnectionStatus"
+        ],
+        "title": "Fullscreen",
+        "type": "object"
+      },
+      "Layout": {
+        "additionalProperties": false,
+        "properties": {
+          "columns": {
+            "maximum": 64,
+            "minimum": 1,
+            "title": "Columns",
+            "type": "integer"
+          },
+          "widgets": {
+            "items": {
+              "$ref": "#/$defs/Widget"
+            },
+            "maxItems": 60,
+            "title": "Widgets",
+            "type": "array"
+          }
+        },
+        "required": [
+          "columns",
+          "widgets"
+        ],
+        "title": "Layout",
+        "type": "object"
+      },
+      "Navigation": {
+        "additionalProperties": false,
+        "properties": {
+          "floatingButton": {
+            "title": "Floatingbutton",
+            "type": "boolean"
+          },
+          "mode": {
+            "enum": [
+              "full",
+              "compact",
+              "hidden"
+            ],
+            "title": "Mode",
+            "type": "string"
+          }
+        },
+        "required": [
+          "mode",
+          "floatingButton"
+        ],
+        "title": "Navigation",
+        "type": "object"
+      },
+      "ProfileContent": {
+        "additionalProperties": false,
+        "properties": {
+          "configuration": {
+            "$ref": "#/$defs/Configuration"
+          },
+          "name": {
+            "maxLength": 32,
+            "minLength": 1,
+            "title": "Name",
+            "type": "string"
+          }
+        },
+        "required": [
+          "name",
+          "configuration"
+        ],
+        "title": "ProfileContent",
+        "type": "object"
+      },
+      "UpdateOperation": {
+        "additionalProperties": false,
+        "properties": {
+          "expectedRevision": {
+            "maximum": 9007199254740991,
+            "minimum": 1,
+            "title": "Expectedrevision",
+            "type": "integer"
+          },
+          "format": {
+            "const": "ccs-dashboard-operation",
+            "title": "Format",
+            "type": "string"
+          },
+          "kind": {
+            "const": "update",
+            "title": "Kind",
+            "type": "string"
+          },
+          "operationId": {
+            "maxLength": 32,
+            "pattern": "^[a-f0-9]{32}$",
+            "title": "Operationid",
+            "type": "string"
+          },
+          "profile": {
+            "$ref": "#/$defs/ProfileContent"
+          },
+          "profileId": {
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+            "title": "Profileid",
+            "type": "string"
+          },
+          "storeId": {
+            "maxLength": 32,
+            "pattern": "^[a-f0-9]{32}$",
+            "title": "Storeid",
+            "type": "string"
+          },
+          "version": {
+            "maximum": 1,
+            "minimum": 1,
+            "title": "Version",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "format",
+          "version",
+          "storeId",
+          "operationId",
+          "profileId",
+          "kind",
+          "expectedRevision",
+          "profile"
+        ],
+        "title": "UpdateOperation",
+        "type": "object"
+      },
+      "Widget": {
+        "additionalProperties": false,
+        "properties": {
+          "background": {
+            "maxLength": 7,
+            "pattern": "^(#[a-fA-F0-9]{6})?$",
+            "title": "Background",
+            "type": "string"
+          },
+          "color": {
+            "maxLength": 7,
+            "pattern": "^(#[a-fA-F0-9]{6})?$",
+            "title": "Color",
+            "type": "string"
+          },
+          "height": {
+            "maximum": 4096,
+            "minimum": 1,
+            "title": "Height",
+            "type": "integer"
+          },
+          "id": {
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+            "title": "Id",
+            "type": "string"
+          },
+          "kind": {
+            "enum": [
+              "ammo",
+              "armor",
+              "bomb",
+              "bomb_state",
+              "cash",
+              "connection",
+              "economy",
+              "effects",
+              "equip_value",
+              "events",
+              "forecast",
+              "gear",
+              "grenades",
+              "health",
+              "inventory",
+              "kd",
+              "map",
+              "match_phase",
+              "mvp",
+              "personal_score",
+              "player",
+              "provider",
+              "round",
+              "round_history",
+              "round_stats",
+              "score",
+              "score_split",
+              "stats",
+              "weapon"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "opacity": {
+            "maximum": 100,
+            "minimum": 60,
+            "multipleOf": 5,
+            "title": "Opacity",
+            "type": "integer"
+          },
+          "style": {
+            "enum": [
+              "solid",
+              "glass",
+              "outline"
+            ],
+            "title": "Style",
+            "type": "string"
+          },
+          "title": {
+            "maxLength": 36,
+            "title": "Title",
+            "type": "string"
+          },
+          "variant": {
+            "enum": [
+              "standard",
+              "compact",
+              "minimal"
+            ],
+            "title": "Variant",
+            "type": "string"
+          },
+          "width": {
+            "maximum": 64,
+            "minimum": 1,
+            "title": "Width",
+            "type": "integer"
+          },
+          "x": {
+            "exclusiveMaximum": 64,
+            "minimum": 0,
+            "title": "X",
+            "type": "integer"
+          },
+          "y": {
+            "exclusiveMaximum": 4096,
+            "minimum": 0,
+            "title": "Y",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "x",
+          "y",
+          "width",
+          "height",
+          "variant",
+          "style",
+          "title",
+          "color",
+          "background",
+          "opacity"
+        ],
+        "title": "Widget",
+        "type": "object"
+      }
+    },
+    "discriminator": {
+      "mapping": {
+        "create": "#/$defs/CreateOperation",
+        "delete": "#/$defs/DeleteOperation",
+        "update": "#/$defs/UpdateOperation"
+      },
+      "propertyName": "kind"
+    },
+    "oneOf": [
+      {
+        "$ref": "#/$defs/CreateOperation"
+      },
+      {
+        "$ref": "#/$defs/UpdateOperation"
+      },
+      {
+        "$ref": "#/$defs/DeleteOperation"
+      }
+    ]
   },
   "profile": {
     "$defs": {
@@ -638,6 +1498,75 @@
       "revision"
     ],
     "title": "Profile",
+    "type": "object"
+  },
+  "receipt": {
+    "$defs": {
+      "Result": {
+        "additionalProperties": false,
+        "properties": {
+          "catalogRevision": {
+            "maximum": 9007199254740991,
+            "minimum": 1,
+            "title": "Catalogrevision",
+            "type": "integer"
+          },
+          "kind": {
+            "enum": [
+              "create",
+              "update",
+              "delete"
+            ],
+            "title": "Kind",
+            "type": "string"
+          },
+          "profileId": {
+            "maxLength": 64,
+            "pattern": "^[a-zA-Z0-9_-]{1,64}$",
+            "title": "Profileid",
+            "type": "string"
+          },
+          "revision": {
+            "maximum": 9007199254740991,
+            "minimum": 1,
+            "title": "Revision",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "kind",
+          "profileId",
+          "revision",
+          "catalogRevision"
+        ],
+        "title": "Result",
+        "type": "object"
+      }
+    },
+    "additionalProperties": false,
+    "properties": {
+      "operationId": {
+        "maxLength": 32,
+        "pattern": "^[a-f0-9]{32}$",
+        "title": "Operationid",
+        "type": "string"
+      },
+      "requestDigest": {
+        "maxLength": 64,
+        "pattern": "^[a-f0-9]{64}$",
+        "title": "Requestdigest",
+        "type": "string"
+      },
+      "result": {
+        "$ref": "#/$defs/Result"
+      }
+    },
+    "required": [
+      "operationId",
+      "requestDigest",
+      "result"
+    ],
+    "title": "Receipt",
     "type": "object"
   }
 };

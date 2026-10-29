@@ -10,6 +10,9 @@ companion/                 Backend implementation
   profile_contracts.py     Inactive target data models and strict validation
   profile_operations.py    Pure target transitions; no active publication path
   profile_recovery.py      Explicit offline snapshots, reset and recovery
+  profile_publication.py   Inactive target commit service and recovery generation
+  profile_protocol.py      Inactive authenticated target WebSocket adapter
+  profile_wire.py          Closed catalog wire model
   security.py              Origin checks and login throttling
   support_diagnostics.py   Privacy-conscious event counters and summaries
   dashboard_delivery.py    Bounded, ordered dashboard fan-out
@@ -82,3 +85,7 @@ P3 prepares strict target contracts and pure per-profile revision transitions wi
 ## Local drafts
 
 P4 supplies inactive, configuration-only IndexedDB persistence and bounded session history. The current editor/autosave are not connected to it. See [local draft boundaries, lifecycle and integration requirements](local-drafts.md) before P5/P8.
+
+## Explicit publication foundations
+
+The production store constructor remains legacy-only. P5 supplies an independently serialized target adapter that isolated tests substitute into the existing authenticated /ws handler; it creates no second active store, public toggle or ASGI entry point. See [publication architecture and activation conditions](profile-publication.md).

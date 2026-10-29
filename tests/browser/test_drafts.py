@@ -11,7 +11,7 @@ import tempfile
 from playwright.sync_api import sync_playwright
 from test_live_browser import PIN, TOKEN, ROOT, login, start_server
 
-MODULES = ('draft-schema', 'draft-contract', 'edit-history', 'draft-store', 'draft-session')
+MODULES = ('draft-schema', 'draft-contract', 'edit-history', 'draft-publications', 'draft-store', 'draft-session')
 CORPUS = json.loads((ROOT / 'tests/browser/fixtures/draft-contracts.json').read_text('utf-8'))
 HARNESS = (ROOT / 'tests/browser/draft-harness.js').read_text('utf-8')
 

@@ -4,6 +4,8 @@
 
 ## Unreleased
 
+- Prepare inactive explicit profile publication with atomic commits, per-profile conflicts, persisted operation retries, authenticated catalogs and independent tab selection. Preserve the current editor/autosave; no real profile transition or reset is activated.
+
 - Prepare inactive browser-only IndexedDB drafts, bounded undo/redo and coherent gesture history for the future Studio. Current editor/autosave remain unchanged; no draft publication is activated.
 
 - Prepare inactive, versioned dashboard profile/export/draft contracts and per-profile revision validation for the upcoming editor; current profiles and autosave remain active.

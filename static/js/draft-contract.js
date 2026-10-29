@@ -44,6 +44,7 @@
   }
   function matches(value, rule, root) {
     if (rule.$ref) return matches(value, root.$defs[rule.$ref.split('/').pop()], root);
+    if (rule.oneOf) return rule.oneOf.filter(option => matches(value, option, root)).length === 1;
     if (rule.const !== undefined && value !== rule.const) return false;
     if (rule.enum && !rule.enum.includes(value)) return false;
     if (rule.type === 'object') {
@@ -75,6 +76,14 @@
   function printable(value) {
     return value === value.trim() && Array.from(value).every(char => char === ' ' || !/[\p{C}\p{Z}]/u.test(char));
   }
+  function model(value, kind, limit) {
+    bounded(value);
+    const rule = schema[kind];
+    if (!rule || !matches(value, rule, rule)) fail('invalid_document');
+    const serialized = canonical(value);
+    if (encoder.encode(serialized).length > limit) fail('size_limit');
+    return JSON.parse(serialized);
+  }
   function validate(value, kind) {
     bounded(value);
     const rule = schema[kind];
@@ -97,6 +106,29 @@
     const checked = validate({id: 'content-check', revision: 1, ...value}, 'profile');
     if (Object.keys(value).some(key => !['name', 'configuration'].includes(key))) fail('invalid_document');
     return {name: checked.name, configuration: checked.configuration};
+  }
+  function operation(value) {
+    const result = model(value, 'operation', schema.limits.operationBytes);
+    if (result.profile) content(result.profile);
+    return result;
+  }
+  function catalog(value) {
+    const result = model(value, 'catalog', schema.limits.storeBytes);
+    const ids = new Set();
+    for (const item of [...result.profiles, ...result.tombstones]) {
+      if (ids.has(item.id) || item.revision > result.catalogRevision) fail('invalid_document');
+      ids.add(item.id);
+    }
+    for (const profile of result.profiles) validate(profile, 'profile');
+    return result;
+  }
+  function checkReceipt(operationValue, receiptValue) {
+    const command = operation(operationValue);
+    const receipt = model(receiptValue, 'receipt', schema.limits.operationBytes);
+    if (receipt.operationId !== command.operationId || receipt.result.kind !== command.kind
+        || receipt.result.profileId !== command.profileId || receipt.result.revision !== command.expectedRevision + 1
+        || receipt.result.catalogRevision < receipt.result.revision) fail('invalid_receipt');
+    return receipt;
   }
   function access(value) {
     if (!value || value.authenticated !== true || typeof value.storeId !== 'string' || typeof value.accessId !== 'string'
@@ -124,5 +156,6 @@
     return Array.from(bytes, byte => byte.toString(16).padStart(2, '0')).join('');
   }
   window.CCSDraftContract = Object.freeze({DraftError, fail, canonical, bounded, content, access, contextKey,
-    profileId, uuid, validateDraft: value => validate(value, 'draft'), validateProfile: value => validate(value, 'profile')});
+    profileId, uuid, checkReceipt, validateOperation: operation, validateCatalog: catalog,
+    validateReceipt: value => model(value, 'receipt', schema.limits.operationBytes), validateDraft: value => validate(value, 'draft'), validateProfile: value => validate(value, 'profile')});
 })();

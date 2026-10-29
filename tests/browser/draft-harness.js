@@ -74,7 +74,7 @@
   };
   async function raw(action) {
     const database = await new Promise((resolve, reject) => {
-      const request = indexedDB.open('ccs-local-drafts', 1);
+      const request = indexedDB.open('ccs-local-drafts', 2);
       request.onsuccess = () => resolve(request.result);
       request.onerror = () => reject(request.error);
     });
@@ -239,7 +239,7 @@
   async function futureDatabase() {
     store.close();
     await new Promise((resolve, reject) => {
-      const request = indexedDB.open('ccs-local-drafts', 2);
+      const request = indexedDB.open('ccs-local-drafts', 3);
       request.onsuccess = () => { request.result.close(); resolve(); };
       request.onerror = () => reject(request.error);
     });

@@ -43,3 +43,7 @@ Measured P1 results and limitations: [validation record](p1-validation.md).
 ## P4 draft foundations
 
 The future draft path is separate from profile-sync and studio.js. Its generated contract, native IndexedDB store, session-only history and lifecycle modules are documented in [local-drafts.md](local-drafts.md). They are not loaded by index.html or connected to current autosave.
+
+## P5 publication foundations
+
+Target publication uses profile-publication.js, published-profiles.js and the IndexedDB journal in draft-publications.js. It reuses the P1 transport and P4 session contracts while leaving the current profile-sync.js and editor wiring unchanged. The modules remain absent from index.html. See [explicit publication](profile-publication.md) for acknowledgements, tab selection, uncertainty and conflict consent.
