@@ -2,7 +2,7 @@
 (() => {
   'use strict';
 
-  window.CS2WidgetRenderer = ({board, format, presentation = null, onGeometryChange = () => {}}) => {
+  window.CS2WidgetRenderer = ({board, format, presentation = null, onGeometryChange = () => {}, headingLevel = 2}) => {
     const {isNum, percent, weaponName, fields} = format;
     const WRAPPING_FIELDS = new Set(['name','weapon','map','map_mode','provider','activity','round',
       'round_phase','round_winner','map_phase','bomb_state','connection','econ_note']);
@@ -26,6 +26,10 @@
       top.className = 'widget-top';
       const title = document.createElement('div');
       title.className = 'widget-heading';
+      title.id = 'widget-heading-' + widget.id;
+      title.setAttribute('role','heading');
+      title.setAttribute('aria-level',String(headingLevel));
+      article.setAttribute('aria-labelledby',title.id);
       title.textContent = widget.title || definition.title;
       if (widget.title) title.setAttribute('translate', 'no');
       const icon = document.createElement('span');
@@ -142,10 +146,11 @@
         const label = card.querySelector('[data-bomb-msg]');
         if (!clock || !bar || !label) continue;
         clock.textContent = left === null ? '--.- s' : left.toFixed(1) + ' s';
-        clock.className = 'bomb-clock ' + kind;
+        if (clock.className !== 'bomb-clock ' + kind) clock.className = 'bomb-clock ' + kind;
         bar.style.width = left === null ? '0%' : percent(100 * left / (timer.duration || 40));
-        bar.className = 'bomb-fill ' + kind;
-        label.textContent = message;
+        if (bar.className !== 'bomb-fill ' + kind) bar.className = 'bomb-fill ' + kind;
+        const translated = window.CS2I18N?.translate(message) || message;
+        if (label.textContent !== message && label.textContent !== translated) label.textContent = message;
         const layoutKey = message + ':' + clock.textContent.length;
         if (bombLayoutKeys.get(card) !== layoutKey) { bombLayoutKeys.set(card,layoutKey); geometryChanged = true; }
       }

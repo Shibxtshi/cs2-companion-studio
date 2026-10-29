@@ -100,6 +100,7 @@ def run(browserName,output):
                 settle(page)
                 initial=page.evaluate('JSON.stringify(widgetPreview.configuration())')
                 assert page.locator('.presented-widget').count()==87
+                assert page.get_by_role('heading',level=4).count()==87
                 for kind in KINDS:
                     cards=page.locator('[data-preview-kind="'+kind+'"] .widget')
                     values=cards.evaluate_all('(cards)=>cards.map(card=>Object.fromEntries([...card.querySelectorAll("[data-v]")].map(n=>[n.dataset.v,n.textContent])))')
@@ -197,6 +198,13 @@ def run(browserName,output):
                 for surface in ['solid','glass','outline']:
                     page.evaluate('style=>widgetPreview.customize({style})',surface)
                     assert page.locator('.widget').first.get_attribute('data-style')==surface
+                page.evaluate('state=>widgetPreview.render(state,false)',EMPTY)
+                expect(page.locator('[data-inventory-count]').first).to_have_text('—')
+                expect(page.locator('[data-grenade-count]').first).to_have_text('—')
+                no_grenades=copy.deepcopy(state)
+                no_grenades['player']['weapons']=[no_grenades['player']['weapons'][0]]
+                page.evaluate('state=>widgetPreview.render(state,false)',no_grenades)
+                expect(page.locator('[data-grenade-count]').first).to_have_text('0')
                 page.evaluate('state=>widgetPreview.render(state,false)',EMPTY)
                 for variant in ['standard','compact','minimal']:
                     expect(page.locator('.w-health[data-variant="'+variant+'"] [data-v="health"]')).to_have_text('—')

@@ -12,11 +12,11 @@
   stateLabel.append(stateSelect); stateLabel.hidden=true;
   const widthLabel = document.createElement('label');
   widthLabel.append(document.createTextNode('Format'));
-  const widthSelect = document.createElement('select'); widthSelect.className='select';
+  const widthSelect = document.createElement('select'); widthSelect.className='select'; widthSelect.id='preview-width';
   for (const [value,label] of [['auto','Auto'],['tablet','Tablette / Tablet'],['phone','Téléphone / Phone']]) widthSelect.add(new Option(label,value));
   widthLabel.append(widthSelect); controls.append(stateLabel,widthLabel);
   const customLabel=document.createElement('label');customLabel.append(document.createTextNode('Personnalisation / Custom'));
-  const customSelect=document.createElement('select');customSelect.className='select';
+  const customSelect=document.createElement('select');customSelect.className='select';customSelect.id='preview-custom';
   customSelect.add(new Option('Auto','auto'));customSelect.add(new Option('Titre long + couleurs / Long title + colors','custom'));
   customLabel.append(customSelect);controls.append(customLabel);
   customSelect.addEventListener('change',()=>window.widgetPreview.customize(customSelect.value==='custom'
@@ -67,7 +67,7 @@
       label.setAttribute('translate', 'no');
       const board = document.createElement('div');
       board.className = 'preview-board';
-      const renderer = CS2WidgetRenderer({board, format: CS2DisplayFormat, presentation: CCSWidgetPresentation});
+      const renderer = CS2WidgetRenderer({board, format: CS2DisplayFormat, presentation: CCSWidgetPresentation, headingLevel: 4});
       const widget = {id: 'preview-' + kind + '-' + variant, kind, variant, span: 12,
         title: '', color: '', background: '', opacity: 100, style: 'solid'};
       board.append(renderer.createCard(widget, definition));

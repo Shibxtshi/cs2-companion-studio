@@ -269,15 +269,21 @@
       : !state.online ? state.gsi_connected ? 'GSI actif · match en attente'
         : stale ? 'Données périmées · hors ligne' : 'Hors ligne — données indisponibles'
         : unavailable ? 'Valeur indisponible' : '';
-    record.status.hidden = !status || (kind === 'connection' && modeDemo);
+    const hideStatus = !status || (kind === 'connection' && modeDemo);
+    if (record.status.hidden !== hideStatus) record.status.hidden = hideStatus;
     if (record.lastStatus !== status) { record.status.textContent = status; record.lastStatus = status; }
-    card.dataset.dataState = modeDemo ? 'demo' : !state.online ? stale ? 'stale' : state.gsi_connected ? 'waiting' : 'offline' : unavailable ? 'unavailable' : 'live';
-    if (kind === 'bomb') card.querySelector('.bomb-demo-options').hidden = !modeDemo;
+    const dataState = modeDemo ? 'demo' : !state.online ? stale ? 'stale' : state.gsi_connected ? 'waiting' : 'offline' : unavailable ? 'unavailable' : 'live';
+    if (card.dataset.dataState !== dataState) card.dataset.dataState = dataState;
+    if (kind === 'bomb') {
+      const options = card.querySelector('.bomb-demo-options');
+      if (options.hidden !== !modeDemo) options.hidden = !modeDemo;
+    }
     if (['health','armor'].includes(kind)) {
       const meter = card.querySelector('[role="progressbar"]');
-      if (unavailable) { meter.removeAttribute('aria-valuenow'); meter.setAttribute('aria-valuetext', 'Valeur indisponible'); }
+      if (unavailable) { meter.removeAttribute('aria-valuenow'); meter.setAttribute('aria-valuetext', window.CS2I18N?.translate('Valeur indisponible') || 'Valeur indisponible'); }
       else {
-        meter.setAttribute('aria-valuenow', String(Math.max(0, Math.min(100, player[kind]))));
+        const value = String(Math.max(0, Math.min(100, player[kind])));
+        if (meter.getAttribute('aria-valuenow') !== value) meter.setAttribute('aria-valuenow',value);
         meter.removeAttribute('aria-valuetext');
       }
     } else if (kind === 'inventory') {
@@ -285,9 +291,9 @@
       const active = weapons.find(weapon => weapon.state === 'active');
       const current = card.querySelector('[data-inventory-current]');
       setText(current,active ? CS2DisplayFormat.weaponName(active.name) : '—');
-      setText(card.querySelector('[data-inventory-count]'),Array.isArray(player.weapons) ? String(weapons.length) : '—');
+      setText(card.querySelector('[data-inventory-count]'),weapons.length ? String(weapons.length) : '—');
     } else if (kind === 'grenades') {
-      setText(card.querySelector('[data-grenade-count]'),Array.isArray(player.weapons)
+      setText(card.querySelector('[data-grenade-count]'),player.weapons?.length
         ? String(CS2DisplayFormat.inventory(player,'grenades').length) : '—');
     } else if (kind === 'events') {
       setText(card.querySelector('[data-latest-event]'),state.events?.[0]?.message || 'Aucun événement enregistré');
