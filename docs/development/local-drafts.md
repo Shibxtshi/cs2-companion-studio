@@ -1,5 +1,8 @@
 # Local draft foundations — P4
 
+> Runtime status after P9.5: the delivery status and "current" behavior below describe the original phase baseline. A validated target store now activates these contracts in the production application. Historical storage remains usable before explicit transition. See [Production activation](production-activation.md) for the active composition and operator procedure.
+
+
 Status: inactive frontend foundation, based on main after P3 / PR #19 (2026-10-28). The current editor, autosave, server profiles, imports/exports, theme preview and legacy WebSocket messages are unchanged. P5 extends these inactive foundations; see [explicit publication](profile-publication.md). index.html does not load these modules. There is no active new Studio or target-format store; the P5 publication controller also remains inactive.
 
 ## Responsibilities

@@ -1,6 +1,13 @@
 # Changelog — user-visible changes
 
-## Unreleased — P9.5
+## Unreleased — P10 stabilization
+
+- Preserve game-data freshness when CS2 sends only player identity/activity; do not present old match values as current.
+- Prevent reuse of an attempted activation generation after rollback and block unrelated recovery operations during interrupted restoration. Existing private activation preparations remain inspectable/restorable; activation requires a fresh preparation. Profile document versions are unchanged.
+- Keep Studio publication status readable on tablets, clear stale PIN field errors after successful authentication, and explain incompatible server versions correctly.
+- Add native production acceptance/fault/persistence suites, reproducible performance and bounded stability measurements, and a separate manual CS2/personal-installation acceptance guide. No personal activation is performed.
+
+## P9.5
 
 - Integrate the target Dashboard and Customization Studio into the real authenticated application, with per-tab profiles, persistent local drafts and explicit publication.
 - Add reviewed target profile import/export and verified offline activation/rollback tools. Existing historical files remain unchanged until explicit operator confirmation.

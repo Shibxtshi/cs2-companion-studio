@@ -2,6 +2,9 @@
 
 Checks are grouped by responsibility and execution model.
 
+> Phase-specific foundation sections retain their original delivery boundaries. P9.5 now integrates the target composition in the real application when target storage is active; see [production activation](../docs/development/production-activation.md). The isolated module suites remain regressions, not substitutes for production acceptance.
+
+
 | Directory | Scope | Execution |
 | --- | --- | --- |
 | unit/ | Recovery, disk failures and dashboard delivery | pytest |
@@ -140,3 +143,28 @@ Optional sequential Studio measurements: python tests/browser/benchmark_studio.p
 `python tests/browser/test_production_studio.py --browser chromium --output PRIVATE_OUTPUT_DIRECTORY` starts the real `companion.server:app` against temporary target profiles, not the synthetic publication server. Repeat with Firefox and WebKit when installed. Set `CCS_CHROMIUM_EXECUTABLE` for an installed Chrome executable. It checks shared authentication, independent tab selection, local drafts and history, explicit publication, reviewed import/export, restoration after reload, 60 widgets, 87 type/variant combinations, four themes and responsive display. Outputs contain synthetic data only. Never point tests at personal data.
 
 `tests/unit/test_profile_activation.py` covers offline preparation, cancellation, integrity/source changes, disk failure, interrupted restoration and the runtime lock. Run it through `python scripts/run_checks.py`; standalone suites remain separate processes. Hosted Actions are independent evidence and may remain unavailable because of account limits.
+
+## P10 native production acceptance
+
+These standalone suites start `companion.server:app` with temporary synthetic target storage and normal PIN authentication. They do not accept a personal data path. Run each process separately with matching Playwright/browser dependencies from the existing browser setup:
+
+```bash
+python tests/browser/test_production_acceptance.py --browser chromium --output /tmp/ccs-p10-acceptance
+python tests/browser/test_production_resilience.py --browser chromium
+python tests/browser/test_production_faults.py --browser chromium --output /tmp/ccs-p10-faults
+```
+
+Repeat with `firefox` and `webkit`. On Windows, substitute an absolute writable output directory. The acceptance suite covers profile creation/copy/deletion, published/local separation, geometry/history, seven viewports, all four exit actions, preview and hidden-navigation recovery. Resilience covers real browser close/reopen, confirmed logout, quota/abort and unavailable IndexedDB. Faults covers real login throttling, metadata-only/stale GSI, invalid imports, lost acknowledgements and actual server restart during publication. Existing 29-widget/87-presentation and cross-tab conflict suites remain required; these new suites do not replace them.
+
+Recovery regression tests use temporary directories, including subprocess CLI locking, consumed activation candidates, interrupted restore and generation changes. Run them through `scripts/run_checks.py`; never point recovery commands at real data during automated acceptance.
+
+### Descriptive performance and optional bounded stability
+
+```bash
+python tests/browser/benchmark_production.py --browser chromium --repeats 5 --output /tmp/ccs-p10-performance.json
+python tests/browser/benchmark_production.py --browser chromium --soak-only --soak-seconds 1800 --output /tmp/ccs-p10-stability.json
+```
+
+The optional soak is not run by default CI. It uses 60 widgets, synthetic GSI, periodic Studio visits, retained card identity and checks for unexpected profile/draft writes, WebSockets and JavaScript errors. Chromium records document-listener and post-GC heap samples; other browsers do not provide equivalent heap evidence. Each timing repetition starts a fresh identical fixture. Movement/resizing timings use the accessible keyboard controls and include confirmed local persistence; they are not pointer-drag timings. Pointer functionality remains covered by browser acceptance; unstable headless pointer timing samples must not be presented as performance results. Timings include automation/waits and are descriptive, not arbitrary pass thresholds. Compare only matching scenarios/environments; emulation is not a physical-device test. Retain the JSON, operating system, browser and exact source revision privately.
+
+Use the [manual acceptance guide](../docs/guides/final-acceptance.fr.md) for real CS2 and the separately authorized P10-B. Neither successful synthetic tests nor a PR merge authorize resetting personal profiles. Hosted CI that cannot start must remain reported as not executed.

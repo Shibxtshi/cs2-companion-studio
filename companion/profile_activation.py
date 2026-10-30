@@ -38,7 +38,7 @@ def _load(directory, backupId):
     meta = decode_document(_read(metaPath, 64000), 64000)
     fields = {'format', 'version', 'backupId', 'applicationRevision', 'targetSha256', 'storeId'}
     if (not isinstance(meta, dict) or set(meta) != fields or meta['format'] != 'ccs-profile-activation'
-            or type(meta['version']) is not int or meta['version'] != 1 or meta['backupId'] != backupId
+            or type(meta['version']) is not int or meta['version'] not in (1, 2) or meta['backupId'] != backupId
             or not isinstance(meta['applicationRevision'], str) or not APPLICATION_REVISION.fullmatch(meta['applicationRevision'])):
         raise RecoveryError('activation_manifest')
     candidate = _read(candidatePath)
@@ -53,6 +53,8 @@ def prepare_activation(directory, applicationRevision):
     if not isinstance(applicationRevision, str) or not APPLICATION_REVISION.fullmatch(applicationRevision):
         raise RecoveryError('application_revision')
     with recovery_lock(directory) as directory:
+        if any(directory.glob('.profiles-restore-*.pending')):
+            raise RecoveryError('restore_interrupted_keep_service_stopped')
         decode_stored_document(_read(directory / 'profiles.json'))
         if (directory / 'profiles.json.bak').exists():
             decode_stored_document(_read(directory / 'profiles.json.bak'))
@@ -62,7 +64,7 @@ def prepare_activation(directory, applicationRevision):
         metaPath, candidatePath = _paths(directory, backupId)
         _exclusive(candidatePath, candidate)
         target = decode_document(candidate)
-        meta = {'format': 'ccs-profile-activation', 'version': 1, 'backupId': backupId,
+        meta = {'format': 'ccs-profile-activation', 'version': 2, 'backupId': backupId,
                 'applicationRevision': applicationRevision, 'targetSha256': _digest(candidate), 'storeId': target['storeId']}
         _exclusive(metaPath, encode_document(meta))
         _sync_directory(directory)
@@ -99,12 +101,22 @@ def activation_state(directory, backupId):
 
 def activate_profiles(directory, backupId, confirm):
     with recovery_lock(directory) as directory:
-        bundle, manifest, _, candidate = _load(directory, backupId)
+        if any(directory.glob('.profiles-restore-*.pending')):
+            raise RecoveryError('restore_interrupted_keep_service_stopped')
+        bundle, manifest, meta, candidate = _load(directory, backupId)
+        if meta['version'] != 2:
+            raise RecoveryError('activation_prepare_again')
+        attempted = directory / ('.profiles-activation-' + backupId + '.attempted')
+        if attempted.exists():
+            raise RecoveryError('activation_already_attempted')
         _matches_source(directory, manifest)
         if not confirm('ACTIVATE ' + backupId):
             return False
         _load(directory, backupId)
         _matches_source(directory, manifest)
+        # Consume before installation: a failed/interrupted attempt requires a fresh generation too.
+        _exclusive(attempted, encode_document({'backupId': backupId, 'storeId': meta['storeId']}))
+        _sync_directory(directory)
         _install(directory / 'profiles.json', candidate, _read(bundle / 'profiles.json'),
                  lambda raw: validate_contract(decode_document(raw), 'server'))
         return True
@@ -112,6 +124,9 @@ def activate_profiles(directory, backupId, confirm):
 
 def restore_activation(directory, backupId, confirm):
     with recovery_lock(directory) as directory:
+        if any(path.name != '.profiles-restore-' + backupId + '.pending'
+               for path in directory.glob('.profiles-restore-*.pending')):
+            raise RecoveryError('another_restore_interrupted')
         bundle, manifest, meta, _ = _load(directory, backupId)
         current = directory / 'profiles.json'
         safetyId = _prepare(directory) if current.exists() else None
@@ -163,6 +178,8 @@ def initialize_target(directory, confirm):
 def restore_target_backup(directory, confirm):
     """Restore validated target backup data into a new generation, never replaying old intents."""
     with recovery_lock(directory) as directory:
+        if any(directory.glob('.profiles-restore-*.pending')):
+            raise RecoveryError('restore_interrupted_keep_service_stopped')
         target = validate_contract(decode_document(_read(directory / 'profiles.json.bak')), 'server')
         if not (directory / 'profiles.json').is_file():
             raise RecoveryError('missing_source_preserve_recovery_required')

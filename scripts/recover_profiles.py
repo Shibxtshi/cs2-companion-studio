@@ -52,6 +52,9 @@ def main():
             or args.restore_activation or args.initialize_target or args.restore_target) and not args.service_stopped:
         parser.error('stop the service and pass --service-stopped; no files have been changed')
     try:
+        if (args.reset or args.restore or args.restore_reset or args.activate or args.initialize_target or args.restore_target):
+            if any(args.data_dir.glob('.profiles-restore-*.pending')):
+                raise RecoveryError('restore_interrupted_keep_service_stopped')
         if (args.reset or args.restore_reset or args.restore) and inspect_current(args.data_dir).get('status') == 'recognized':
             raise RecoveryError('target_requires_activation_recovery')
         if args.restore_target:
@@ -111,6 +114,8 @@ def main():
             print('Profiles restored from a validated backup. The previous current file was preserved when present. Keep all recovery files private.')
     except (OSError, ValueError, UnicodeError) as error:
         code = error.code if isinstance(error, RecoveryError) else 'io_or_invalid_data'
+        if code in ('activation_already_attempted', 'activation_prepare_again'):
+            print('Keep every backup. Prepare a NEW activation ID before another attempt; an old storage generation must not be reused.')
         parser.exit(1, 'Recovery refused or failed (' + code + '). Keep all snapshots; inspect the reset state before retrying.\n')
     except KeyboardInterrupt:
         parser.exit(1, 'Interrupted. Keep all snapshots and inspect the reset state before retrying.\n')

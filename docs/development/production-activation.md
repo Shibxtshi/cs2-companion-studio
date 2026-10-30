@@ -48,6 +48,8 @@ Unreadable/corrupt historical data is not eligible for activation. Preserve it a
 
 ## Explicit activation after approval
 
+P10 uses version 2 of the **private activation preparation manifest**, not a new profile/export/draft contract. Version 1 preparations remain readable for inspection and rollback but must be prepared again before activation. Every confirmed installation attempt writes an exclusive, flushed `.profiles-activation-ID.attempted` marker before replacing the profile file. Never remove this marker or reuse that ID after failure, interruption or historical rollback: prepare a new unique ID and generation. Cancellation before the installation attempt does not consume the candidate. All historical snapshots remain available.
+
 ```text
 python scripts/recover_profiles.py --data-dir PATH_TO_DATA --activate BACKUP_ID --service-stopped
 ```
@@ -72,6 +74,8 @@ python scripts/recover_profiles.py --data-dir PATH_TO_DATA --restore-activation 
 The tool creates a distinct verified safety snapshot of current profile files, rechecks source integrity and requires explicit restoration confirmation. If target publication has occurred, the confirmation warns about that loss of visibility. It restores both original filenames and verifies exact original hashes. A pending marker blocks startup if restoration stops between the two files; retain every backup and rerun the same restoration with the service stopped. Do not remove the marker manually to start a partially restored state.
 
 Select the retained historical application/image matching the recorded commit before restarting. Neither restore nor activation edits credentials or installs application binaries. Verify the restored application, GSI and profiles. An unsuccessful activation before replacement leaves the original document intact. After an uncertain interruption, inspect state first; never blindly repeat publication operations across generations.
+
+Inspection classifies file contents; `prepared_or_restored` does not mean an attempted candidate can be reused. Prepare a fresh activation after rollback. An interrupted restoration must be resumed with its own ID before any other preparation, activation or target-backup recovery.
 
 ## Synthetic validation only
 

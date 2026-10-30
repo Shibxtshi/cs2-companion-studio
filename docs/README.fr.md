@@ -31,3 +31,7 @@ Le réseau local utilise HTTP/WebSocket **sans chiffrement**. Ne pas ouvrir le p
 Les issues GitHub serviront aux bugs et suggestions ; les vulnérabilités doivent être signalées en privé selon [SECURITY.md](../SECURITY.md). Une **licence communautaire interdisant la revente** est en préparation. Elle autoriserait l'utilisation professionnelle, les streams et coachings rémunérés, les modifications privées et la redistribution gratuite (avec crédits et accès au code source des forks distribués), mais pas la vente du logiciel ou d'une version dérivée. Le cadre des prestations d'installation, de support et d'hébergement payants reste à préciser. Le texte de `LICENSE` est un **brouillon sans effet**, à faire relire juridiquement et à approuver avant publication (copyright déjà attribué à Shibxtshi). Ce modèle n'est pas « open source » au sens de l'OSI.
 
 Le projet n'a pas fait l'objet d'un audit de sécurité indépendant ni d'une validation FACEIT. Lire le [README anglais](../README.md), le [guide de contribution](../CONTRIBUTING.md) et la [checklist de publication](releases/checklist.md).
+
+## Recette finale
+
+La [recette P10-A/P10-B](guides/final-acceptance.fr.md) distingue les essais isolés, les contrôles manuels CS2 et l’autorisation séparée nécessaire avant toute activation personnelle.

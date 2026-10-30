@@ -395,7 +395,8 @@ def update_from_gsi(incoming: dict[str, Any], now: float) -> None:
         bomb_started_at = None
         bomb_start_unknown = True
     last_seen = now
-    if incomingMap or incomingRound or incomingPlayer:
+    # Identity/activity-only signals keep GSI alive without refreshing match data.
+    if incomingMap or incomingRound or any(incomingPlayer.get(field) for field in ('state', 'weapons', 'match_stats')):
         last_game_seen = now
 
 

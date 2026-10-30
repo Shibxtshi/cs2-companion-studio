@@ -182,7 +182,7 @@
   }
   const client = CS2DashboardClient({version: '1.0.0', getPin: () => pin, isDemo: () => demo,
     onConnecting: () => status('connecting', say('Connecting…', 'Connexion…')),
-    onHealthError: () => { byId('loginerror').textContent = CCSExperienceCopy.text('unavailable'); },
+    onHealthError: (error, versionMismatch) => { byId('loginerror').textContent = CCSExperienceCopy.text(versionMismatch ? 'version' : 'unavailable'); },
     onNetworkError() { clearLive(); document.dispatchEvent(new Event('cs2:network-error')); },
     onClose({authorized, failed}) {
       profiles.disconnected(); transfer.cancel(); studio?.lifecycle.networkLost(); clearLive();
@@ -194,6 +194,7 @@
       try {
         if (message.type === 'auth_ok') {
           reconnect.connected(); byId('pin').value = '';
+          byId('pin').setAttribute('aria-invalid', 'false');
           byId('download-support').classList.remove('hidden');
           document.dispatchEvent(new Event('cs2:authenticated'));
         }
