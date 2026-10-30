@@ -123,6 +123,8 @@ Hosted Actions may be refused before startup by account billing restrictions. Re
 
 ## P9 secondary screens and feedback
 
+Logo navigation: `python tests/browser/test_logo_navigation.py --browser chromium` (also Firefox/WebKit). It verifies real PIN gates, mouse/Enter/touch, Settings and Help returns without document reload, per-tab target selection, a delayed historical save and all four existing target Studio exit choices. Only synthetic temporary stores are used. The target Studio and Dashboard remain separate documents; that existing authenticated transition is retained, while within-dashboard home actions use the shared section router.
+
 Run `node tests/js/test_experience.js` and `python tests/browser/test_experience.py --browser chromium` (also `firefox`/`webkit`). The runner uses disposable profiles, the existing PIN/WebSocket path and synthetic GSI. It covers optional onboarding/dismissal, native help/focus, four themes, EN/FR, seven widths, import/download faults without parser-content disclosure, diagnostics, real server interruption and demo isolation. `--output PATH` writes synthetic screenshots outside the source tree. Preparing a browser download does not prove it reached disk.
 
 Node checks verify persistent errors/pending states, explicit dismissal and that unrelated success cannot hide an error. Do not regenerate P1 widget fixtures. See [UI responsibilities](../docs/development/user-experience.md) and the separate [activation proposal](../docs/development/target-activation-plan.md).
