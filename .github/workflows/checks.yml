@@ -179,6 +179,7 @@ jobs:
         run: |
           python tests/browser/test_experience.py --browser ${{ matrix.browser }}
           python tests/browser/test_experience_edges.py --browser ${{ matrix.browser }}
+          python tests/browser/test_logo_navigation.py --browser ${{ matrix.browser }}
 
   dependency-audit:
     name: Vulnerability report / SBOM

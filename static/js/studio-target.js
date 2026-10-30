@@ -45,7 +45,11 @@
     byId('studio-board').replaceChildren(); byId('studio-app').hidden = true; byId('studio-login').hidden = false;
   }
   lifecycle = CCSStudioLifecycle({profiles, send: command => client.send(command), workspace,
-    exit: () => { location.href = '/__dashboard_test__'; }, disconnected});
+    exit: () => {
+      // Only remember a published selection after the existing leave guard succeeds.
+      if (profiles.profile(profiles.selectedProfileId)) CCSProfileSelection.remember(profiles.context, profiles.selectedProfileId);
+      location.href = '/__dashboard_test__';
+    }, disconnected});
   preview = CCSStudioPreview();
   function values(state, demo) {
     latestData = {state: structuredClone(state), demo};
@@ -81,7 +85,10 @@
   function login() { pin = byId('pin').value.trim(); if (pin.length < 6) return; reconnect.stop(); client.close(); reconnect.start(); }
   byId('connect').addEventListener('click', login);
   byId('pin').addEventListener('keydown', event => { if (event.key === 'Enter') login(); });
-  for (const link of document.querySelectorAll('a[href="/__dashboard_test__"]')) link.addEventListener('click', event => { event.preventDefault(); lifecycle.leave().catch(issue); });
+  for (const link of document.querySelectorAll('a[href="/__dashboard_test__"]')) link.addEventListener('click', event => {
+    event.preventDefault();
+    if (profiles.ready) lifecycle.leave().catch(issue);
+  });
   window.addEventListener('beforeunload', event => { if (lifecycle.dirty) { event.preventDefault(); event.returnValue = ''; } });
   const checkContext = () => lifecycle.checkContext().catch(issue);
   window.addEventListener('focus', checkContext);

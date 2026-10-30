@@ -16,6 +16,7 @@
       reveal: 'Show navigation', shortcut: 'Show navigation: Alt+M. Escape closes menus or exits immersive mode.',
       preferences: 'Display preferences', help: 'Connection and help', shared: 'Current profile selection is shared between connected screens.',
       target: 'Target profile · independent selection in this tab',
+      home: 'CCS · Return to Dashboard',
     },
     fr: {
       dashboard: 'Dashboard', studio: 'Customization Studio', settings: 'Paramètres',
@@ -28,6 +29,7 @@
       reveal: 'Afficher la navigation', shortcut: 'Afficher la navigation : Alt+M. Échap ferme les menus ou quitte le mode immersif.',
       preferences: 'Préférences d’affichage', help: 'Connexion et aide', shared: 'La sélection actuelle du profil est partagée entre les écrans connectés.',
       target: 'Profil cible · sélection indépendante dans cet onglet',
+      home: 'CCS · Revenir au Dashboard',
     },
   };
   const locale = () => window.CS2I18N?.locale() === 'FR' ? 'fr' : 'en';
@@ -43,7 +45,7 @@
   const nav = document.createElement('nav');
   nav.className = 'dashboard-navigation';
   nav.id = 'dashboard-navigation';
-  nav.innerHTML = '<a class="nav-brand" href="#main-content" aria-label="CCS"><span class="brandmark" aria-hidden="true"></span><strong translate="no">CCS</strong></a><div class="nav-items"></div><div class="nav-bottom"><span class="nav-edition" translate="no">PLAYER EDITION</span></div>';
+  nav.innerHTML = '<a class="nav-brand" href="#main-content" data-dashboard-home aria-label="CCS"><span class="brandmark" aria-hidden="true"></span><strong translate="no">CCS</strong></a><div class="nav-items"></div><div class="nav-bottom"><span class="nav-edition" translate="no">PLAYER EDITION</span></div>';
   document.body.prepend(nav);
   const icons = {dashboard: '▦', studio: '✎', settings: '⚙', streamer: '◫'};
   for (const name of ['dashboard', 'studio', 'streamer', 'settings']) {
@@ -96,6 +98,15 @@
   };
   edge.addEventListener('click', reveal);
   float.addEventListener('click', reveal);
+  // Reuse section navigation so pending legacy saves and the displayed profile stay alive.
+  const homeLinks = document.querySelectorAll('[data-dashboard-home]');
+  for (const link of homeLinks) link.addEventListener('click', event => {
+    event.preventDefault();
+    if (view.classList.contains('hidden')) return;
+    const help = byId('help-dialog');
+    if (help?.open) help.close();
+    open('dashboard');
+  });
   function open(next) {
     if (immersive) leaveFullscreen();
     if (next === 'studio' && target) return;
@@ -161,6 +172,11 @@
     root.dataset.immersive = String(immersive);
     root.dataset.fullscreenStatus = String(showConnection);
     nav.hidden = !active;
+    for (const link of homeLinks) {
+      link.setAttribute('aria-label', text('home'));
+      link.setAttribute('aria-disabled', String(!active));
+      link.tabIndex = active ? 0 : -1;
+    }
     edge.hidden = !active || (!immersive && navigation !== 'hidden');
     float.hidden = !active || !floating || immersive || navigation !== 'hidden';
     exit.hidden = !active || !immersive;
