@@ -13,6 +13,7 @@ from companion.security import LoginLimiter, same_origin, credential_matches, de
 from companion.dashboard_delivery import broadcast_text
 from companion.gsi_lifecycle import EconomyObserver, cash_projection
 from companion.profile_store import ProfileStore
+from companion.profile_runtime import create_runtime_store, is_target_store, runtime_lease
 from companion.support_diagnostics import Diagnostics
 from pathlib import Path
 from typing import Any
@@ -40,7 +41,7 @@ except ValueError as exc:
 if not 10 <= BOMB_DURATION <= 120:
     raise RuntimeError('BOMB_DURATION_SECONDS must be between 10 and 120')
 
-profile_store = ProfileStore(DATA_DIR / 'profiles.json')
+profile_store = create_runtime_store(DATA_DIR)
 diagnostics = Diagnostics(LOG_DIR, VERSION)
 diagnostics.write_summary(len(profile_store.data['profiles']))
 
@@ -214,13 +215,16 @@ async def lifespan(app: FastAPI):
         while True:
             await asyncio.sleep(2)
             await send_state()
-    task = asyncio.create_task(periodic())
-    yield
-    task.cancel()
-    try:
-        await task
-    except asyncio.CancelledError:
-        pass
+    with runtime_lease(profile_store):
+        task = asyncio.create_task(periodic())
+        try:
+            yield
+        finally:
+            task.cancel()
+            try:
+                await task
+            except asyncio.CancelledError:
+                pass
 
 
 app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
@@ -245,8 +249,17 @@ async def privacy_headers(request: Request, call_next):
 
 @app.get('/')
 async def index():
-    return FileResponse(ROOT / 'static' / 'index.html', media_type='text/html',
+    document = 'index.html' if is_target_store(profile_store) else 'legacy.html'
+    return FileResponse(ROOT / 'static' / document, media_type='text/html',
                         headers={'Cache-Control': 'no-store'})
+
+
+@app.get('/preview')
+async def profile_preview():
+    """Read-only same-origin preview; no catalog, transport or storage writer in this page."""
+    if not is_target_store(profile_store):
+        raise HTTPException(status_code=404)
+    return FileResponse(ROOT / 'static' / 'preview.html', media_type='text/html')
 
 
 @app.get('/health')
@@ -505,8 +518,7 @@ async def ws(websocket: WebSocket):
             if len(rawMsg) > 225_000:
                 await websocket.close(code=1009)
                 break
-            # The default legacy store has no target dispatcher. Tests substitute one
-            # isolated target store; no second runtime writer or public switch exists.
+            # The validated on-disk format selects exactly one active profile writer.
             targetDispatch = getattr(profile_store, 'dispatch', None)
             if targetDispatch is not None:
                 if await targetDispatch(rawMsg, websocket, connected):

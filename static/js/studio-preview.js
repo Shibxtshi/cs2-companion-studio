@@ -1,7 +1,7 @@
 /* Same-origin preview window. No framing exception, transport or persistence. */
 (() => {
   'use strict';
-  window.CCSStudioPreview = () => {
+  window.CCSStudioPreview = ({url = '/__studio_preview__'} = {}) => {
     let payload = null;
     let child = null;
     function receive(event) {
@@ -16,7 +16,7 @@
         payload = {type: 'studio_preview', content: CCSDraftContract.content(content),
           state: data ? structuredClone(data.state) : null, demo: data?.demo === true, locale: CS2I18N.locale()};
         child?.close();
-        child = window.open('/__studio_preview__', '_blank');
+        child = window.open(url, '_blank');
         if (!child) { payload = null; CCSDraftContract.fail('preview_blocked'); }
       },
       dispose() { payload = null; child?.close(); window.removeEventListener('message', receive); },

@@ -144,6 +144,11 @@
     board.addEventListener('lostpointercapture', cancel);
     document.addEventListener('keydown', keydown);
     return Object.freeze({update,
+      reset() {
+        cancel(); content = null; selectedId = null; layoutSignature = null;
+        board.replaceChildren(); grid.setLayout({columns: 24, widgets: []});
+        data.update({online: false, gsi_connected: false, player: {}, bomb_timer: {status: 'stale'}}, false);
+      },
       values: data.update,
       previewData: data.snapshot,
       setPreview(value) { preview = value; if (content) { update(content, selectedId, disabled); grid.requestRefresh(); } },

@@ -131,6 +131,39 @@ def test_target_needs_real_pin_not_public_ids(target):
     assert adapter.store.path.read_bytes() == before
 
 
+@pytest.mark.parametrize('kind', ['valid', 'legacy', 'unknown', 'oversized', 'duplicate', 'secret'])
+def test_import_validation_is_authenticated_strict_and_read_only(target, kind):
+    import json
+    server, adapter = target
+    before = adapter.store.path.read_bytes()
+    profile = adapter.data['profiles'][0]
+    exported = {'format': 'ccs-dashboard-export', 'version': 1,
+                'name': profile['name'], 'configuration': profile['configuration']}
+    if kind == 'legacy':
+        exported['format'] = 'cs2-companion-layout'
+    elif kind == 'unknown':
+        exported['version'] = 99
+    elif kind == 'secret':
+        exported['pin'] = 'synthetic-disallowed-value'
+    raw = json.dumps(exported)
+    if kind == 'duplicate':
+        raw = raw[:-1] + ',"name":"duplicate"}'
+    elif kind == 'oversized':
+        raw += ' ' * 70001
+    with TestClient(server.app) as client:
+        with client.websocket_connect('/ws', headers={'origin': 'http://testserver'}) as socket:
+            authenticate(socket, server)
+            socket.send_json({'type': 'profile_import_validate', 'requestId': 'a' * 32, 'document': raw})
+            answer = socket.receive_json()
+            assert answer['requestId'] == 'a' * 32
+            assert answer['type'] == ('profile_import_validated' if kind == 'valid' else 'profile_import_error')
+            if kind == 'valid':
+                assert answer['content'] == {key: profile[key] for key in ['name', 'configuration']}
+            if kind == 'legacy':
+                assert answer['code'] == 'legacy_export'
+    assert adapter.store.path.read_bytes() == before
+
+
 def test_disk_error_never_acknowledges_or_changes_published_state(target, monkeypatch):
     from companion import profile_publication
     server, adapter = target

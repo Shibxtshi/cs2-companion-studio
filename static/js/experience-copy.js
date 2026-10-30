@@ -70,8 +70,18 @@
     recoveryBody: ['Stop CCS before offline profile recovery. Keep the original file and a verified private backup. Never delete data/ or replace credentials to fix a profile error. Follow the profile recovery guide shipped with the source.', 'Arrête CCS avant une récupération hors ligne. Conserve le fichier original et une sauvegarde privée vérifiée. Ne supprime jamais data/ et ne remplace pas les identifiants pour corriger un profil. Consulte le guide de récupération fourni avec les sources.'],
     privacyBody: ['Diagnostic export is available only after authentication. Review it before sharing. Never share your PIN, GSI token, raw game packets or personal profiles. Keep CCS local or on an explicitly configured trusted LAN; never open its port to the Internet.', 'L’export de diagnostic est disponible uniquement après authentification. Vérifie-le avant de le partager. Ne partage jamais PIN, token GSI, paquets de jeu bruts ni profils personnels. Garde CCS en local ou sur un LAN de confiance explicitement configuré ; n’ouvre jamais son port sur Internet.'],
   };
+  const PRODUCTION_COPY = {
+    targetHelp: ['Published preferences belong to this profile. Change them in Customization Studio, then Save and apply.', 'Les préférences publiées appartiennent à ce profil. Modifie-les dans Customization Studio, puis utilise Enregistrer et appliquer.'],
+    densityHelp: ['Global spacing: Normal / Compact. Change it in Studio → Properties → Profile.', 'Espacement global : Normale / Compacte. Modifie-le dans Studio → Propriétés → Profil.'],
+    variantHelp: ['Standard / Compact / Minimal, independently per widget in Studio → Properties.', 'Standard / Compact / Minimal, pour chaque widget dans Studio → Propriétés.'],
+    geometryHelp: ['Position X/Y and width/height in grid cells in the Studio. Responsive display never rewrites the desktop layout.', 'Position X/Y et largeur/hauteur en cellules dans le Studio. L’affichage responsive ne réécrit jamais la disposition desktop.'],
+    localPolicy: ['Studio changes stay in local drafts. Save and apply publishes only after server confirmation.', 'Les modifications du Studio restent dans les brouillons locaux. Enregistrer et appliquer publie uniquement après confirmation du serveur.'],
+    themesBody: ['Choose one of four complete themes in Studio → Properties → Profile. Save and apply publishes it. Personal widget colors remain overrides.', 'Choisis l’un des quatre thèmes complets dans Studio → Propriétés → Profil. Enregistrer et appliquer le publie. Les couleurs personnalisées des widgets restent prioritaires.'],
+    studioBody: ['Customization Studio edits a local draft: widgets, variants, X/Y geometry and profile preferences. Keep draft and leave preserves local work; Save and apply publishes it. Each tab keeps its own profile selection.', 'Customization Studio modifie un brouillon local : widgets, variantes, géométrie X/Y et préférences du profil. Conserver le brouillon et quitter préserve le travail local ; Enregistrer et appliquer le publie. Chaque onglet conserve sa sélection de profil.'],
+  };
   function text(key) {
-    return COPY[key]?.[window.CS2I18N?.locale() === 'FR' ? 1 : 0] || key;
+    const source = document.documentElement?.dataset.production === 'target' && PRODUCTION_COPY[key] || COPY[key];
+    return source?.[window.CS2I18N?.locale() === 'FR' ? 1 : 0] || key;
   }
   window.CCSExperienceCopy = Object.freeze({text, keys: () => Object.keys(COPY)});
 })();

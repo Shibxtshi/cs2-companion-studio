@@ -1,0 +1,35 @@
+/* Unified target composition reuses the approved shell and Studio panels. */
+#studio-app[hidden] {display:none!important}
+html[data-section="studio"] #board,html[data-section="studio"] #empty-board,
+html[data-section="studio"] .workspace-head,html[data-section="studio"] .foot-actions,
+html[data-section="studio"] #notice,html[data-section="studio"] .infofoot {display:none!important}
+html[data-production="target"] #custom-tools,html[data-production="target"] #edit-hint,
+html[data-production="target"] #catalog,html[data-production="target"] .editor-transition,
+html[data-production="target"] .workspace-head {display:none!important}
+html[data-production="target"][data-section="studio"] .app {max-width:none;padding:16px}
+#studio-app .studio-header {position:static;padding:12px 0}
+#studio-app .studio-workspace {min-height:600px}
+.production-transfer {display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+.production-transfer input[type=file] {max-width:100%;font-size:14px}
+#dashboard-profile-menu {max-width:min(260px,100%)}
+html[data-section="studio"] #dashboard-profile-menu {display:none}
+html[data-production="target"] #settings-appearance .display-preferences,
+html[data-production="target"] #shell-theme-control {display:none}
+@media(max-width:800px) {
+  #studio-app .studio-header {flex-wrap:wrap;gap:12px}
+  #studio-app .studio-commandbar {position:static}
+  #studio-app .studio-workspace {min-height:480px}
+}
+html[data-production="target"][data-section="studio"] .dashboard-heading { display:none; }
+html[data-production="target"] #studio-app .studio-workspace { min-height:500px; align-items:stretch; }
+html[data-production="target"] #studio-app .studio-library { max-height:calc(100dvh - 250px); overflow:auto; }
+html[data-production="target"] #studio-app .studio-inspector { align-self:start; }
+@media (max-width:700px) {
+  html[data-production="target"] #studio-app .studio-library { max-height:none; }
+  html[data-production="target"] #studio-app .studio-canvas-toolbar { flex-wrap:wrap; }
+  html[data-production="target"] #studio-app .studio-canvas-toolbar label { flex:1 1 100%; min-width:0; max-width:100%; }
+  html[data-production="target"] #studio-app .studio-canvas-toolbar select { min-width:0; max-width:100%; flex:1; }
+  html[data-production="target"] #studio-app .studio-profile-actions { max-width:100%; }
+  html[data-production="target"] #studio-app .studio-profile-actions>div { right:0; left:auto; min-width:180px; max-width:calc(100vw - 90px); }
+  html[data-production="target"] #studio-app .studio-profile-actions button { white-space:normal; overflow-wrap:anywhere; }
+}

@@ -1,0 +1,295 @@
+/* One authenticated production composition. Published data, drafts and game values stay separate. */
+(() => {
+  'use strict';
+  const byId = id => document.getElementById(id);
+  const french = () => CS2I18N.locale() === 'FR';
+  const say = (en, fr) => french() ? fr : en;
+  document.documentElement.dataset.production = 'target';
+   byId('studio-app').classList.add('studio-page');
+   byId('studio-dialog').classList.add('studio-page');
+  let pin = '';
+  let demo = false;
+  let section = 'dashboard';
+  let studio = null;
+  let studioInitialized = false;
+  let studioHint = null;
+  let preferenceContext = null;
+  let displayed = null;
+  let game = {online: false, gsi_connected: false, player: {}, bomb_timer: {status: 'stale'}};
+  let anchor = null;
+  let navigating = false;
+  let disposed = false;
+   let preview = CCSStudioPreview({url: '/preview'});
+  const renderer = CS2WidgetRenderer({board: byId('board'), format: CS2DisplayFormat,
+    presentation: CCSWidgetPresentation, onGeometryChange: () => grid.requestRefresh()});
+  const grid = CCSDashboardGrid({board: byId('board'), onStatus: code => {
+    if (code === 'layout_overflow') notice(say('Layout too large; remaining widgets follow below.', 'Disposition trop grande ; les widgets restants sont affichés à la suite.'));
+  }});
+  function notice(message, kind = 'error') { CCSNotifications.show({message, kind}); }
+  function issue(error) {
+    const code = typeof error === 'string' ? error : error?.code || 'error';
+    if (studio && section === 'studio') studio.workspace.issue(code);
+    else notice(code === 'legacy_export'
+      ? say('This is an old layout export. It is not converted; keep the original file.', 'Cet export de disposition est ancien. Il n’est pas converti ; conserve le fichier original.')
+      : say('The action failed. Your published profile is unchanged; check the connection or open the Studio.', 'L’action a échoué. Le profil publié reste inchangé ; vérifie la connexion ou ouvre le Studio.'));
+  }
+  function status(code, message = '') {
+    const badge = byId('status'); badge.textContent = message || say('Disconnected', 'Déconnecté');
+    badge.className = 'badge ' + (demo ? 'ok' : '');
+    document.dispatchEvent(new CustomEvent('cs2:status', {detail: {code}}));
+  }
+  function values(next) {
+    game = structuredClone(next);
+    anchor = next.bomb_timer?.status === 'active' && Number.isFinite(next.bomb_timer.remaining)
+      ? {at: performance.now(), left: next.bomb_timer.remaining} : null;
+    if (section === 'dashboard') renderer.updateValues(game, {modeDemo: demo, anchor});
+    if (section === 'studio') studio?.workspace.canvas.values(game, demo);
+    document.dispatchEvent(new CustomEvent('cs2:state', {detail: {online: !!game.online,
+      gsi_connected: !!game.gsi_connected, demo, age_seconds: Number.isFinite(game.age_seconds) ? game.age_seconds : null}}));
+    byId('status').textContent = demo ? say('Demonstration', 'Démonstration') : game.online
+      ? say('Match data available', 'Données de partie disponibles') : game.gsi_connected ? say('GSI active · waiting', 'GSI actif · en attente') : say('CS2 offline', 'CS2 hors ligne');
+  }
+  function clearLive() { if (!demo) values({online: false, gsi_connected: false, player: {}, bomb_timer: {status: 'stale'}}); }
+  const menu = document.createElement('select'); menu.id = 'dashboard-profile-menu'; menu.className = 'select';
+  menu.setAttribute('translate', 'no'); byId('dashboard-fullscreen').before(menu);
+  const profiles = CCSPublishedProfiles({send: command => send(command), isDemo: () => demo,
+    onStatus(code) { if (['store_changed', 'profile_deleted'].includes(code)) issue(code); },
+    onChange({catalog, selectedProfileId, selectedProfileChanged}) {
+      if (!catalog) return;
+      const key = JSON.stringify(profiles.context);
+      if (preferenceContext !== key) {
+        preferenceContext = key;
+        const preferred = CCSProfileSelection.read(profiles.context);
+        if (preferred && preferred !== selectedProfileId && profiles.profile(preferred)) { profiles.select(preferred); return; }
+      }
+      CCSProfileSelection.remember(profiles.context, selectedProfileId);
+      menu.replaceChildren(...catalog.profiles.map(profile => new Option(profile.name, profile.id)));
+      menu.value = selectedProfileId;
+      if (selectedProfileChanged) {
+        if (section !== 'studio') studioHint = selectedProfileId;
+        renderPublished();
+      }
+      byId('login').classList.add('hidden'); byId('view').classList.remove('hidden');
+      if (studioInitialized) studio.lifecycle.catalogChanged().catch(issue);
+      preferences();
+    },
+  });
+  function send(command) {
+    if (!profiles.ready || demo || !client.isOpen) CCSDraftContract.fail('access_required');
+    client.send(command);
+  }
+  const transfer = CCSProfileTransfer({send});
+  function render(profile) {
+    const widgets = profile.configuration.layout.widgets;
+    byId('board').replaceChildren(...widgets.map(widget => renderer.createCard(widget, CS2WidgetCatalog[widget.kind])));
+    byId('board').dataset.view = 'target';
+    byId('board').dataset.studioDensity = profile.configuration.appearance.density;
+    byId('board').style.background = profile.configuration.appearance.background;
+    document.documentElement.style.setProperty('--profile-accent', profile.configuration.appearance.accent || 'var(--ccs-accent)');
+    grid.setLayout(profile.configuration.layout);
+    byId('empty-board').classList.toggle('hidden', widgets.length > 0);
+    renderer.updateValues(game, {modeDemo: demo, anchor});
+  }
+  function renderPublished() {
+    const profile = profiles.profile(profiles.selectedProfileId);
+    if (!profile) return;
+    if (!displayed || displayed.id !== profile.id || displayed.revision !== profile.revision) { render(profile); displayed = profile; }
+    if (section !== 'studio') CCSDashboardShell.setTargetProfile(profile);
+  }
+  function ensureStudio() {
+    if (studio) return studio;
+    let lifecycle;
+    const workspace = CCSStudioWorkspace({
+      edit: next => lifecycle.edit(next),
+      add(kind) { const result = CCSStudioModel.add(lifecycle.preview, kind); lifecycle.edit(result.content); workspace.select(result.id); },
+      duplicate(id) {
+        const widget = lifecycle.preview.configuration.layout.widgets.find(item => item.id === id);
+        const result = CCSStudioModel.add(lifecycle.preview, widget.kind, widget); lifecycle.edit(result.content); workspace.select(result.id);
+      },
+      async remove(id) {
+        if (await workspace.choose(say('Remove widget?', 'Supprimer le widget ?'), say('This stays local and can be undone.', 'Cette action reste locale et peut être annulée.'),
+          [['remove', say('Remove', 'Supprimer')], ['cancel', workspace.text('cancel')]]) === 'remove') lifecycle.edit(CCSStudioModel.remove(lifecycle.preview, id));
+      },
+      undo: () => lifecycle.undo(), redo: () => lifecycle.redo(),
+      selectProfile: id => lifecycle.selectProfile(id), publish: () => lifecycle.publish(),
+      leave: () => lifecycle.leave('keep'), logout: () => lifecycle.logout(),
+      resolveConflict: action => lifecycle.resolveConflict(action), profileAction: action => lifecycle.profileAction(action),
+      retry: () => lifecycle.retry(), discardDraft: () => lifecycle.discardDraft(), recoverCopy: () => lifecycle.recoverCopy(),
+      openPreview: () => preview.open(lifecycle.preview, workspace.canvas.previewData()),
+      gesture: {begin: () => lifecycle.gesture.begin(), cancel: () => lifecycle.gesture.cancel(),
+        commit: next => lifecycle.gesture.commit(next), edit: next => lifecycle.edit(next)},
+    });
+    lifecycle = CCSStudioLifecycle({profiles, send, workspace, sharedSelection: true,
+      exit: () => showDashboard(), disconnected: disconnect});
+    studio = {workspace, lifecycle};
+    return studio;
+  }
+  function showDashboard() {
+    studioHint = studio?.lifecycle.snapshot().selectedProfileId || studioHint;
+    section = 'dashboard'; byId('studio-app').hidden = true;
+    renderPublished(); renderer.updateValues(game, {modeDemo: demo, anchor});
+    CCSDashboardShell.navigate('dashboard');
+  }
+  CCSDashboardShell.setNavigationGuard(async next => {
+    if (navigating) return false;
+    if (byId('view').classList.contains('hidden')) return false;
+    if (next === 'studio' && (demo || (!profiles.ready && !studioInitialized))) return false;
+    navigating = true;
+    try {
+      if (section === 'studio' && next !== 'studio' && !await studio.lifecycle.requestLeave()) return false;
+      if (section === 'studio' && next !== 'studio') studioHint = studio.lifecycle.snapshot().selectedProfileId;
+      if (next === 'studio') {
+        const current = ensureStudio();
+        studioInitialized = true;
+        await current.lifecycle.enter(studioHint || profiles.selectedProfileId);
+        current.workspace.canvas.values(game, demo);
+      }
+      section = next; byId('studio-app').hidden = next !== 'studio';
+      if (next !== 'studio') { renderPublished(); renderer.updateValues(game, {modeDemo: demo, anchor}); }
+      return true;
+    } catch (error) { issue(error); return false; }
+    finally { navigating = false; }
+  });
+  function disconnect() {
+     reconnect.stop(); client.close(); transfer.cancel(); preview.dispose();
+     preview = CCSStudioPreview({url: '/preview'});
+    studio?.lifecycle.releaseContext(); studio?.workspace.reset(); studioInitialized = false;
+    profiles.clear(); displayed = null; studioHint = null; preferenceContext = null; pin = ''; demo = false;
+    byId('board').replaceChildren(); menu.replaceChildren(); byId('pin').value = '';
+    byId('view').classList.add('hidden'); byId('login').classList.remove('hidden');
+    byId('studio-app').hidden = true; section = 'dashboard';
+    byId('download-support').classList.add('hidden');
+    document.dispatchEvent(new Event('cs2:logout')); clearLive(); preferences();
+  }
+  async function logout() {
+    if (demo) { disconnect(); return; }
+    if (studioInitialized) { await studio.lifecycle.logout(); return; }
+    if (!profiles.ready) { disconnect(); return; }
+    if (!confirm(say('Log out and erase this context’s local drafts and pending intents?', 'Se déconnecter et effacer les brouillons et intentions de ce contexte ?'))) return;
+    const store = await CCSDraftStore.open({context: profiles.context});
+    try { await CCSDraftSession.logout({store, confirmed: true}); }
+    finally { store.close(); }
+    disconnect();
+  }
+  function downloadDiagnostics(report) {
+    let url;
+    try {
+      url = URL.createObjectURL(new Blob([JSON.stringify(report, null, 2)], {type: 'application/json'}));
+      const link = document.createElement('a'); link.href = url; link.download = 'CS2_Companion_support.json'; link.click();
+      CCSNotifications.show({key: 'exportPrepared', kind: 'info'});
+    } catch { CCSNotifications.show({key: 'exportFailed', kind: 'error'}); }
+    finally { if (url) setTimeout(() => URL.revokeObjectURL(url), 1000); }
+  }
+  const client = CS2DashboardClient({version: '1.0.0', getPin: () => pin, isDemo: () => demo,
+    onConnecting: () => status('connecting', say('Connecting…', 'Connexion…')),
+    onHealthError: () => { byId('loginerror').textContent = CCSExperienceCopy.text('unavailable'); },
+    onNetworkError() { clearLive(); document.dispatchEvent(new Event('cs2:network-error')); },
+    onClose({authorized, failed}) {
+      profiles.disconnected(); transfer.cancel(); studio?.lifecycle.networkLost(); clearLive();
+      document.dispatchEvent(new Event('cs2:connection-lost'));
+      if (!authorized && !failed) byId('loginerror').textContent = CCSExperienceCopy.text('refused');
+      if (!failed && !disposed && !demo) reconnect.failed();
+    },
+    onMessage(message) {
+      try {
+        if (message.type === 'auth_ok') {
+          reconnect.connected(); byId('pin').value = '';
+          byId('download-support').classList.remove('hidden');
+          document.dispatchEvent(new Event('cs2:authenticated'));
+        }
+        if (message.type === 'auth_error') {
+          reconnect.stop(); byId('loginerror').textContent = CCSExperienceCopy.text('invalidPin');
+          byId('pin').setAttribute('aria-invalid', 'true');
+        }
+        profiles.receive(message);
+        if (transfer.receive(message)) return;
+        studio?.lifecycle.receive(message).catch(issue);
+        if (message.type === 'state') values(message);
+        if (message.type === 'diagnostics_data') downloadDiagnostics(message.report);
+      } catch (error) { issue(error); }
+    },
+  });
+  const reconnect = CS2Reconnect({connect: isCurrent => client.connect(isCurrent)});
+  function login() {
+    demo = false; pin = byId('pin').value.trim(); byId('loginerror').textContent = '';
+    if (pin.length < 6) { byId('loginerror').textContent = CCSExperienceCopy.text('shortPin'); return; }
+    reconnect.stop(); client.close(); reconnect.start();
+  }
+  async function startDemo() {
+    if (section === 'studio' && !await studio.lifecycle.requestLeave()) return;
+    studio?.lifecycle.releaseContext(); studio?.workspace.reset(); studioInitialized = false;
+     preview.dispose(); preview = CCSStudioPreview({url: '/preview'});
+    reconnect.stop(); client.close(); transfer.cancel(); profiles.clear(); pin = ''; byId('pin').value = ''; displayed = null;
+    demo = true; section = 'dashboard'; byId('studio-app').hidden = true;
+    byId('download-support').classList.add('hidden');
+    byId('login').classList.add('hidden'); byId('view').classList.remove('hidden'); menu.replaceChildren();
+    const widgets = ['score','weapon','economy','stats','bomb'].map((kind, index) => ({
+      id: 'demo-' + index, kind, x: index % 3 * 8, y: Math.floor(index / 3) * 8, width: 8, height: 8,
+      variant: 'standard', title: '', color: '', background: '', opacity: 100, style: 'solid'}));
+    const configuration = {theme: 'tactical-blue', appearance: {accent: '', background: '', density: 'normal'},
+      navigation: {mode: 'compact', floatingButton: true}, fullscreen: {showConnectionStatus: true}, layout: {columns: 24, widgets}};
+    render({configuration}); CCSDashboardShell.setTargetProfile({name: say('Demonstration', 'Démonstration'), configuration});
+    values(CCSDemoState()); preferences(); CCSNotifications.dismiss(); CCSDashboardShell.navigate('dashboard');
+  }
+  async function importFile(file) {
+    const current = ensureStudio();
+    const content = await transfer.validateFile(file);
+    for (;;) {
+      const answer = await current.workspace.choose(say('Import target profile', 'Importer un profil cible'),
+        say('Preview only. Nothing is published until Save and apply.', 'Prévisualisation uniquement. Rien n’est publié avant Enregistrer et appliquer.'),
+        [['create', say('Create local draft', 'Créer un brouillon local')], ['replace', say('Replace current draft', 'Remplacer le brouillon actuel')],
+          ['preview', say('Open visual preview', 'Ouvrir l’aperçu visuel')], ['cancel', current.workspace.text('cancel')]],
+        {review: JSON.stringify(content, null, 2)});
+      if (answer === 'preview') { preview.open(content, current.workspace.canvas.previewData()); continue; }
+      if (answer === 'create' || answer === 'replace') await current.lifecycle.importProfile(content, answer === 'replace');
+      return;
+    }
+  }
+  function preferences() {
+     CCSDashboardShell.setStudioAvailable(!demo && (profiles.ready || studioInitialized));
+    const summary = byId('production-profile-preferences'); if (!summary) return;
+    const profile = profiles.profile(profiles.selectedProfileId);
+    const modes = {full: say('Full', 'Complète'), compact: say('Compact', 'Compacte'), hidden: say('Hidden', 'Masquée')};
+    summary.textContent = profile ? profile.name + ' · ' + profile.configuration.theme + ' · '
+      + say('Density: ', 'Densité : ') + (profile.configuration.appearance.density === 'compact' ? say('Compact', 'Compacte') : say('Normal', 'Normale'))
+      + ' · Navigation : ' + modes[profile.configuration.navigation.mode]
+      : say('No private profile selected', 'Aucun profil privé sélectionné');
+    byId('settings-edit-profile').textContent = say('Edit profile in Studio', 'Modifier le profil dans le Studio');
+    byId('settings-edit-profile').disabled = !profiles.ready || demo;
+    menu.setAttribute('aria-label', say('Displayed profile', 'Profil affiché'));
+    byId('production-import').textContent = say('Import profile…', 'Importer un profil…');
+    byId('production-export').textContent = say('Export published profile', 'Exporter le profil publié');
+  }
+  byId('connect').addEventListener('click', login);
+  byId('pin').addEventListener('keydown', event => { if (event.key === 'Enter') login(); });
+  for (const id of ['demo','demoagain']) byId(id).addEventListener('click', () => startDemo().catch(issue));
+  byId('logout').addEventListener('click', () => logout().catch(issue));
+  byId('download-support').addEventListener('click', () => { try { send({type: 'diagnostics_request'}); } catch { CCSNotifications.show({key: 'diagnosticsFailed', kind: 'error'}); } });
+  menu.addEventListener('change', () => { studioHint = menu.value; profiles.select(menu.value); });
+  document.addEventListener('cs2:locale-changed', () => { preferences(); values(game); });
+  document.addEventListener('DOMContentLoaded', () => {
+    const appearance = byId('settings-appearance');
+    const summary = document.createElement('p'); summary.id = 'production-profile-preferences'; summary.setAttribute('translate', 'no');
+    const edit = document.createElement('button'); edit.id = 'settings-edit-profile'; edit.className = 'btn';
+    edit.textContent = say('Edit profile in Studio', 'Modifier le profil dans le Studio');
+    edit.addEventListener('click', async () => { await CCSDashboardShell.navigate('studio'); if (section === 'studio') byId('studio-profile-tab').click(); });
+    appearance.append(summary, edit);
+    const controls = document.createElement('div'); controls.className = 'production-transfer';
+    controls.innerHTML = '<button class="btn" id="production-import" type="button"></button><button class="btn" id="production-export" type="button"></button><input id="production-import-file" type="file" accept="application/json,.json" hidden>';
+    byId('studio-app').querySelector('.studio-commandbar').after(controls);
+    byId('production-import').onclick = () => byId('production-import-file').click();
+    byId('production-import-file').onchange = event => { const file = event.target.files?.[0]; event.target.value = ''; if (file) importFile(file).catch(issue); };
+    byId('production-export').onclick = () => { try { transfer.exportProfile(profiles.profile(studio.lifecycle.snapshot().selectedProfileId)); } catch (error) { issue(error); } };
+    preferences();
+  });
+  window.addEventListener('beforeunload', event => { if (studio?.lifecycle.dirty) { event.preventDefault(); event.returnValue = ''; } });
+  const checkContext = () => studio?.lifecycle.checkContext().catch(issue);
+  window.addEventListener('focus', checkContext);
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) checkContext(); });
+  const timer = setInterval(() => { if (!document.hidden && section === 'dashboard' && game.bomb_timer?.status === 'active') renderer.paintBomb(game, anchor); }, 100);
+  window.addEventListener('pagehide', event => {
+    if (event.persisted) return;
+    disposed = true; clearInterval(timer); studio?.lifecycle.dispose(); studio?.workspace.dispose();
+    preview.dispose(); transfer.cancel(); reconnect.stop(); client.close(); renderer.dispose(); grid.dispose();
+  });
+})();

@@ -88,7 +88,7 @@ P4 supplies inactive, configuration-only IndexedDB persistence and bounded sessi
 
 ## Explicit publication foundations
 
-The production store constructor remains legacy-only. P5 supplies an independently serialized target adapter that isolated tests substitute into the existing authenticated /ws handler; it creates no second active store, public toggle or ASGI entry point. See [publication architecture and activation conditions](profile-publication.md).
+The production runtime validates the on-disk format and selects either the compatible historical composition or the integrated target composition. Exactly one store and writer are active. The target uses the existing authenticated `/ws` handler, P5 publication and P8 lifecycle; no synthetic launcher, public toggle or second ASGI entry point is needed. The lifespan recovery lock excludes offline activation. See [publication architecture](profile-publication.md) and [production activation](production-activation.md).
 
 ## P6 dashboard boundary
 

@@ -42,6 +42,8 @@
   let target = false;
   let targetName = '';
   let revealed = false;
+  let navigationGuard = null;
+  let studioAvailable = true;
   const nav = document.createElement('nav');
   nav.className = 'dashboard-navigation';
   nav.id = 'dashboard-navigation';
@@ -107,19 +109,21 @@
     if (help?.open) help.close();
     open('dashboard');
   });
-  function open(next) {
+  async function open(next) {
+    if (navigationGuard && !await navigationGuard(next)) return;
     if (immersive) leaveFullscreen();
-    if (next === 'studio' && target) return;
+    if (next === 'studio' && target && !navigationGuard) return;
     section = next;
     revealed = false;
-    if (next === 'studio') {
+    if (next === 'studio' && !target) {
       byId('tab-custom').click();
       if (byId('edit').getAttribute('aria-pressed') !== 'true') byId('edit').click();
-    } else if (byId('edit').getAttribute('aria-pressed') === 'true') byId('edit').click();
+    } else if (!target && byId('edit').getAttribute('aria-pressed') === 'true') byId('edit').click();
     // Finishing legacy editing emits its own section update; preserve the requested destination.
     section = next;
     paint();
     byId('dashboard-title').focus({preventScroll: true});
+    document.dispatchEvent(new CustomEvent('ccs:section', {detail: {section: next}}));
   }
   async function leaveFullscreen() {
     if (document.fullscreenElement) {
@@ -191,6 +195,11 @@
     byId('dashboard-title').textContent = section === 'dashboard' ? name : text(section);
     byId('dashboard-context').textContent = section === 'dashboard'
       ? target ? text('target') : custom ? text('shared') : text('dashboard') : section === 'studio' ? text('legacy') : text('temporary');
+    if (root.dataset.production === 'target' && section !== 'dashboard') {
+      byId('dashboard-context').textContent = locale() === 'fr'
+        ? 'Brouillons locaux · publication explicite dans le Studio'
+        : 'Local drafts · explicit publication in Studio';
+    }
     byId('dashboard-fullscreen').textContent = text('fullscreen');
     byId('dashboard-fullscreen').hidden = section !== 'dashboard';
     edge.setAttribute('aria-label', text('reveal'));
@@ -205,7 +214,7 @@
       button.title = text(key) + (key === 'streamer' ? ' · ' + text('coming') : '');
       button.setAttribute('aria-label', button.title);
       if (section === key) button.setAttribute('aria-current', 'page'); else button.removeAttribute('aria-current');
-      if (key === 'studio') button.disabled = target || byId('tab-custom').classList.contains('hidden');
+      if (key === 'studio') button.disabled = target ? !navigationGuard || !studioAvailable : byId('tab-custom').classList.contains('hidden');
     }
     for (const element of document.querySelectorAll('[data-shell-text]')) element.textContent = text(element.dataset.shellText);
   }
@@ -214,8 +223,11 @@
   document.addEventListener('cs2:status', paint);
   document.addEventListener('cs2:board-rendered', paint);
   document.addEventListener('cs2:logout', () => { section = 'dashboard'; leaveFullscreen(); });
-  // Inactive target host uses this same shell; it never changes the legacy profile document.
+  // The shell reads published preferences without writing profile documents.
   window.CCSDashboardShell = Object.freeze({
+    navigate: open,
+    setNavigationGuard(guard) { navigationGuard = guard; paint(); },
+    setStudioAvailable(value) { studioAvailable = !!value; paint(); },
     setTargetProfile(profile) {
       target = true; targetName = profile.name;
       const theme = byId('theme-preview');
