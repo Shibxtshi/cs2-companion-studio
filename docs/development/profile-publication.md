@@ -1,5 +1,8 @@
 # Explicit profile publication — P5
 
+> P9.5 update: these phase boundaries describe their original delivery. The integrated production composition and the explicit, separately authorized transition are documented in [Production activation](production-activation.md). Valid historical installations remain usable until offline confirmation.
+
+
 Status (2026-10-28): implemented and testable as an inactive target composition after P4 / PR #20. Production still creates only the legacy ProfileStore in companion.server:app. No environment switch, second active store, conversion, reset or new Studio is enabled. Read [P3 contracts](profile-contracts.md), [local drafts](local-drafts.md) and [offline recovery](../guides/profile-recovery.md).
 
 ## Components and activation boundary

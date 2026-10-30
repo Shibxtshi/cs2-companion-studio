@@ -107,16 +107,16 @@ CCS uses the Repère identity and local Inter / Barlow Condensed fonts. Tactical
 
 ### Dashboard navigation
 
-Use Dashboard for viewing, Customization Studio for the current automatically saved editor, and Settings for display previews, help and diagnostics. Full, compact and hidden navigation plus native/fallback fullscreen are available. Navigation previews are not saved in legacy profiles. The X/Y target renderer and per-tab profile selection remain isolated test foundations until the coordinated storage transition; see [P6 boundaries](docs/development/dashboard.md). Streamer Studio is explicitly marked coming soon.
+Use Dashboard for viewing and Customization Studio for editing. A validated target profile file activates the integrated X/Y Dashboard, per-tab profile selection and Studio. A historical file keeps the historical editor and autosave until an explicit offline activation; merging this code never resets profiles. Full, compact and hidden navigation and fullscreen remain available. Streamer Studio is marked coming soon. See [production activation and rollback](docs/development/production-activation.md).
 
 ### Widget presentations
 
-The main dashboard uses the modern Standard presentation for all 29 widgets. Compact and Minimal are supported by the existing target profile contract and isolated renderer tests; their final Studio selection/persistence awaits the coordinated transition. Surface styles remain independent, and estimates/source warnings stay visible. See [widget presentation boundaries](docs/development/widget-presentations.md).
+The target Dashboard and Studio support all 29 widget types with independent Standard, Compact and Minimal variants. Surface styles remain separate, custom colors remain overrides, and estimates/source warnings stay visible. Historical files retain their compatible Standard presentation until activation. See [widget presentations](docs/development/widget-presentations.md).
 
 ### Target Customization Studio foundations
 
-The isolated P8 Studio composes local IndexedDB drafts, undo/redo, per-widget variants, X/Y editing and explicit versioned publication. It is exercised only with authenticated synthetic target storage. The distributed application still uses its current editor and automatic server save; this PR does not migrate, convert or reset personal profiles. Activation requires a separately reviewed, backed-up and explicitly confirmed transition, including target import/export. See [Studio boundaries](docs/development/customization-studio.md).
+The production target Studio composes IndexedDB drafts, undo/redo, per-widget variants, X/Y editing and explicit versioned publication on the same authenticated connection as the Dashboard. Target import/export is versioned, validated and explicitly reviewed; selecting a file never publishes it. The [operator guide](docs/development/production-activation.md) describes the separate consent, verified backup and recovery required for an existing installation.
 
 ### Secondary screens and help
 
-P9 unifies sign-in, optional quick start, Settings and diagnostics in EN/FR. The current installation still uses historical profiles and automatic saving. The isolated target Studio remains a distinct, explicitly published workflow; activation is not part of this UI change. See [UI responsibilities](docs/development/user-experience.md) and the separate [activation proposal](docs/development/target-activation-plan.md).
+P9 unifies sign-in, optional quick start, Settings and diagnostics in EN/FR. P9.5 integrates the target composition while preserving valid historical storage before consent. See [UI responsibilities](docs/development/user-experience.md), the original [activation proposal](docs/development/target-activation-plan.md) and its [implemented operator procedure](docs/development/production-activation.md).

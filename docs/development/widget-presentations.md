@@ -1,5 +1,8 @@
 # Widget presentations — P7
 
+> P9.5 update: these phase boundaries describe their original delivery. The integrated production composition and the explicit, separately authorized transition are documented in [Production activation](production-activation.md). Valid historical installations remain usable until offline confirmation.
+
+
 The maintainer approved the representative score, health, weapon, inventory, economy, stats, round_history, bomb and connection direction before catalog-wide implementation. Identity, themes and fonts remain P2; no P8 Studio or target-store activation is introduced.
 
 ## Ownership and active boundary

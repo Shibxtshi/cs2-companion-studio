@@ -1,5 +1,8 @@
 # Proposed target activation — separate approval required
 
+> P9.5 update: these phase boundaries describe their original delivery. The integrated production composition and the explicit, separately authorized transition are documented in [Production activation](production-activation.md). Valid historical installations remain usable until offline confirmation.
+
+
 Status: P9 planning only. No production activation, migration or reset is implemented or authorized here. P10 must validate the final active composition, so schedule an explicit activation lot after P9 and before P10.
 
 ## Verified current boundary

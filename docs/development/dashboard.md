@@ -1,5 +1,8 @@
 # Dashboard and navigation — P6
 
+> P9.5 update: these phase boundaries describe their original delivery. The integrated production composition and the explicit, separately authorized transition are documented in [Production activation](production-activation.md). Valid historical installations remain usable until offline confirmation.
+
+
 The maintainer approved the first visual direction on 2026-10-29. Repère, Tactical Blue, the four P2 palettes and the existing widget markup remain the foundations. P7 variants and P8 editing interactions are not implemented.
 
 ## Modules and active boundary

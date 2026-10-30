@@ -51,7 +51,7 @@ def run(runtime, port):
         return Response((ROOT / 'tests/browser/publication-harness.js').read_text('utf-8'), media_type='application/javascript')
     @server.app.get('/__dashboard_test__')
     def dashboard():
-        html = (ROOT / 'static/index.html').read_text('utf-8')
+        html = (ROOT / 'static/legacy.html').read_text('utf-8')
         dependencies = ''.join('<script defer src="/static/js/' + module + '.js"></script>'
                                for module in ('draft-schema', 'draft-contract', 'profile-selection', 'published-profiles'))
         html = html.replace('<script defer src="/static/js/studio.js?v=1.0.0"></script>', '')
@@ -63,7 +63,7 @@ def run(runtime, port):
         return HTMLResponse((ROOT / 'tests/browser/studio-preview.html').read_text('utf-8'))
     @server.app.get('/__studio_preview__')
     def studio_preview():
-        html = (ROOT / 'static/index.html').read_text('utf-8')
+        html = (ROOT / 'static/legacy.html').read_text('utf-8')
         html = html.replace('<script defer src="/static/js/studio.js?v=1.0.0"></script>', '')
         dependencies = ''.join('<script defer src="/static/js/' + module + '.js"></script>'
                                for module in ('draft-schema', 'draft-contract', 'studio-data', 'studio-preview-host'))

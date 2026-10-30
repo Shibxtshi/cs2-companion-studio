@@ -4,7 +4,7 @@
   const contract = CCSDraftContract;
   const contentOf = value => contract.content({name: value.name, configuration: value.configuration});
   const fr = () => CS2I18N.locale() === 'FR';
-  window.CCSStudioLifecycle = ({profiles, send, workspace, exit, disconnected}) => {
+  window.CCSStudioLifecycle = ({profiles, send, workspace, exit, disconnected, sharedSelection = false}) => {
     let store = null;
     let contextKey = null;
     let session = null;
@@ -154,7 +154,7 @@
         blocked = false; remoteCode = null;
         contextKey = key;
         await refreshRecords();
-        const candidate = preferred() || CCSProfileSelection.read(profiles.context);
+        const candidate = sharedSelection ? CCSProfileSelection.read(profiles.context) : preferred() || CCSProfileSelection.read(profiles.context);
         const id = profiles.profile(candidate) || records.some(record => record.profileId === candidate)
           ? candidate : profiles.selectedProfileId;
         if (profiles.profile(id)) profiles.select(id);
@@ -222,7 +222,7 @@
       if (!session || session.state.closed) return true;
       const current = profiles.profile(editingId);
       if (!journal && !session.state.dirty && current
-          && contract.canonical(session.preview) === contract.canonical(contentOf(current))) { session.dispose(); return true; }
+          && contract.canonical(session.preview) === contract.canonical(contentOf(current))) { session.dispose(); session = null; return true; }
       const chosen = action || await workspace.choose(message('Leave the Studio?', 'Quitter le Studio ?'),
         message('Local drafts are independent of the published dashboard. An operation already sent cannot be cancelled by leaving.',
           'Le brouillon est indépendant du dashboard publié. Quitter n’annule pas une opération déjà envoyée.'),
@@ -256,12 +256,12 @@
       if (profiles.profile(id)) { profiles.select(id); CCSProfileSelection.remember(profiles.context, id); }
       await open(id);
     }
-    async function createFrom(value, {recovering = false} = {}) {
+    async function createFrom(value, {recovering = false, imported = false} = {}) {
       await refreshRecords();
       const creations = records.filter(record => record.status === 'valid' && record.draft.baseRevision === 0
         && !profiles.profile(record.profileId));
       if (profiles.catalog.profiles.length + creations.length >= 12) contract.fail('profile_limit');
-      const initial = value ? (value.name.slice(0, 24) + message(' copy', ' copie')) : '';
+      const initial = value ? imported ? value.name : (value.name.slice(0, 24) + message(' copy', ' copie')) : '';
       const name = await workspace.name(message('New local profile', 'Nouveau profil local'), initial);
       if (!name) return;
       const configuration = value ? structuredClone(value.configuration) : {
@@ -359,8 +359,27 @@
       if (!journal) remoteCode = null;
       paint();
     }
+    function releaseContext() {
+      ++opening;
+      publication?.dispose(); session?.dispose(); store?.close();
+      publication = null; session = null; store = null; contextKey = null;
+      editingId = null; view = null; records = []; localCode = 'published'; remoteCode = null;
+      journal = false; blocked = false; readOnly = false; recoverable = false;
+      waitingRevision = null; confirmedPublication = null; finalizedResult = null;
+    }
     return Object.freeze({initialize, catalogChanged, edit, publish, retry, selectProfile, profileAction, resolveConflict,
       discardDraft, logout, issue,
+      releaseContext,
+      requestLeave: confirmLeave,
+      async enter(id = profiles.selectedProfileId) {
+        await initialize();
+        if (!session || session.state.closed || editingId !== id) await open(id);
+        else paint();
+      },
+      importProfile(value, replace = false) {
+        const content = contract.content(value);
+        return replace ? edit(content) : createFrom(content, {imported: true});
+      },
       get preview() { return session?.preview || view; },
       get dirty() { return !!session?.state.dirty || !!session?.state.gestureActive; },
       snapshot: () => ({draft: session?.draft || null, state: session?.state || null,
@@ -381,7 +400,7 @@
         commit(next) { session.previewGesture(next); session.endGesture(); paint(); }, edit,
       }),
       async checkContext() { if (store && editingId) { try { await store.read(editingId); } catch (error) { issue(error); paint(); } } },
-      dispose() { ++opening; publication?.dispose(); session?.dispose(); store?.close(); },
+      dispose: releaseContext,
     });
   };
 })();

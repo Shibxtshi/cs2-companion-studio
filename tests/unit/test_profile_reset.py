@@ -306,6 +306,7 @@ def test_cli_refusal_and_read_only_inspection(private):
 
 def test_incompatible_startup_requires_explicit_offline_action(private):
     target = new_server_document()
+    target['version'] = 2
     (private / 'profiles.json').write_bytes(encode_document(target))
     original = (private / 'profiles.json').read_bytes()
     env = dict(os.environ, GSI_TOKEN='synthetic-gsi-token-for-startup-test', DASHBOARD_PIN='synthetic-startup-pin',
@@ -317,7 +318,7 @@ def test_incompatible_startup_requires_explicit_offline_action(private):
     backupId = recovery.prepare_reset(private)
     recovery.reset_profiles(private, backupId, lambda _: True)
     ready = subprocess.run([sys.executable, '-c',
-        "import companion.server,sys; assert 'companion.profile_contracts' not in sys.modules"],
+        "import companion.server; from companion.profile_store import ProfileStore; assert isinstance(companion.server.profile_store, ProfileStore)"],
         cwd=ROOT, env=env, capture_output=True, text=True, timeout=20)
     assert ready.returncode == 0, ready.stderr
     assert (private / recovery.BACKUP_DIRECTORY / backupId / 'profiles.json').read_bytes() == original

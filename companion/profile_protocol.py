@@ -6,6 +6,8 @@ from companion.dashboard_delivery import broadcast_text
 from companion.profile_contracts import ContractError, decode_document, encode_document, validate_contract
 
 MAX_TARGET_MESSAGE_BYTES = 81_000
+MAX_TRANSFER_MESSAGE_BYTES = 150_000
+MAX_EXPORT_BYTES = 70_000
 OPERATION_ID = re.compile(r'^[a-f0-9]{32}$')
 
 
@@ -36,10 +38,31 @@ class PublishedProfileProtocol:
     async def _dispatch(self, raw, socket, clients):
         """Called only after the existing PIN/Origin/capacity gate."""
         try:
-            command = decode_document(raw.encode('utf-8'), MAX_TARGET_MESSAGE_BYTES)
+            encoded = raw.encode('utf-8')
+            command = decode_document(encoded, MAX_TRANSFER_MESSAGE_BYTES)
             if not isinstance(command, dict):
                 raise ContractError('invalid_document')
         except (ContractError, UnicodeError):
+            await self._send(socket, {'type': 'profile_operation_error', 'operationId': None, 'code': 'invalid_document'})
+            return True
+        if command.get('type') == 'profile_import_validate':
+            requestId = command.get('requestId')
+            if not isinstance(requestId, str) or not OPERATION_ID.fullmatch(requestId):
+                requestId = None
+            try:
+                if requestId is None or set(command) != {'type', 'requestId', 'document'} or not isinstance(command['document'], str):
+                    raise ContractError('invalid_document')
+                imported = decode_document(command['document'].encode('utf-8'), MAX_EXPORT_BYTES)
+                if isinstance(imported, dict) and imported.get('format') == 'cs2-companion-layout':
+                    raise ContractError('legacy_export')
+                checked = validate_contract(imported, 'export')
+                await self._send(socket, {'type': 'profile_import_validated', 'requestId': requestId,
+                                          'content': {key: checked[key] for key in ('name', 'configuration')}})
+            except (ValueError, UnicodeError) as error:
+                await self._send(socket, {'type': 'profile_import_error', 'requestId': requestId,
+                                          'code': error.code if isinstance(error, ContractError) else 'invalid_document'})
+            return True
+        if len(encoded) > MAX_TARGET_MESSAGE_BYTES:
             await self._send(socket, {'type': 'profile_operation_error', 'operationId': None, 'code': 'invalid_document'})
             return True
         if command.get('type') == 'diagnostics_request' and set(command) == {'type'}:

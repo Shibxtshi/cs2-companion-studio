@@ -1,5 +1,12 @@
 # Changelog — user-visible changes
 
+## Unreleased — P9.5
+
+- Integrate the target Dashboard and Customization Studio into the real authenticated application, with per-tab profiles, persistent local drafts and explicit publication.
+- Add reviewed target profile import/export and verified offline activation/rollback tools. Existing historical files remain unchanged until explicit operator confirmation.
+- Add production-composition and synthetic activation regression tests.
+
+
 ## P9 — Secondary screens and feedback
 
 - Unify sign-in, optional quick start, topic-based help and grouped Settings using the approved CCS identity and four themes.

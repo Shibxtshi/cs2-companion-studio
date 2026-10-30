@@ -134,3 +134,9 @@ Also run `python tests/browser/test_experience_edges.py --browser chromium` (Fir
 Optional sequential measurements: `python tests/browser/benchmark_experience.py --repeats 5 --output PATH`. Compare the same browser/viewport/fixtures on baseline/candidate. Opening includes HTTP/fonts/automation; named UI samples use real clocks, microtasks and forced layout inside the browser. There is no timing gate or general speedup claim.
 
 Optional sequential Studio measurements: python tests/browser/benchmark_studio.py --repeats 5 --output PATH. This reports native UI timings separately from labelled automation/debounce, IndexedDB put-to-completion, post-GC Chromium heap, serialized history and DOM counts. It uses temporary data and explicitly publishes only to the synthetic target. P7 had no integrated target Studio, so do not present these as a like-for-like P7 Studio speedup.
+
+## Integrated production Studio (P9.5)
+
+`python tests/browser/test_production_studio.py --browser chromium --output PRIVATE_OUTPUT_DIRECTORY` starts the real `companion.server:app` against temporary target profiles, not the synthetic publication server. Repeat with Firefox and WebKit when installed. Set `CCS_CHROMIUM_EXECUTABLE` for an installed Chrome executable. It checks shared authentication, independent tab selection, local drafts and history, explicit publication, reviewed import/export, restoration after reload, 60 widgets, 87 type/variant combinations, four themes and responsive display. Outputs contain synthetic data only. Never point tests at personal data.
+
+`tests/unit/test_profile_activation.py` covers offline preparation, cancellation, integrity/source changes, disk failure, interrupted restoration and the runtime lock. Run it through `python scripts/run_checks.py`; standalone suites remain separate processes. Hosted Actions are independent evidence and may remain unavailable because of account limits.

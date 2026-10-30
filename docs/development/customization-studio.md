@@ -1,5 +1,8 @@
 # Customization Studio — P8
 
+> P9.5 update: these phase boundaries describe their original delivery. The integrated production composition and the explicit, separately authorized transition are documented in [Production activation](production-activation.md). Valid historical installations remain usable until offline confirmation.
+
+
 The maintainer approved the three-panel visual direction on 2026-10-29. This is a complete isolated target composition, not activation on personal profiles. Production index.html and companion.server:app still use the historical editor/store/autosave. No conversion, reset, second writer or public switch exists.
 
 ## Responsibilities

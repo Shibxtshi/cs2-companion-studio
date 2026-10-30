@@ -61,6 +61,9 @@ jobs:
           node tests/js/test_studio_model.js
           node tests/js/test_experience.js
           node --check static/js/experience-copy.js
+          node --check static/js/application.js
+          node --check static/js/profile-transfer.js
+          node --check static/js/demo-state.js
           node --check static/js/experience.js
           node --check static/js/notifications.js
           node --check static/js/profile-selection.js
@@ -180,6 +183,7 @@ jobs:
           python tests/browser/test_experience.py --browser ${{ matrix.browser }}
           python tests/browser/test_experience_edges.py --browser ${{ matrix.browser }}
           python tests/browser/test_logo_navigation.py --browser ${{ matrix.browser }}
+          python tests/browser/test_production_studio.py --browser ${{ matrix.browser }} --output /tmp/ccs-production-browser-results
 
   dependency-audit:
     name: Vulnerability report / SBOM

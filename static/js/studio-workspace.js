@@ -3,6 +3,10 @@
   'use strict';
   const COPY = {
     generic: ['Action could not be completed. Keep your work and review the draft or connection status.', 'Action impossible à terminer. Conserve ton travail et vérifie l’état du brouillon ou de la connexion.'],
+    legacy_export: ['Old layout export · no automatic conversion. Keep the original file.', 'Ancien export de disposition · aucune conversion automatique. Conserve le fichier original.'],
+    size_limit: ['Document exceeds the allowed size · nothing published', 'Document trop volumineux · aucune publication'],
+    access_required: ['Authenticate again before publishing or transferring a profile.', 'Reconnecte-toi avant de publier ou transférer un profil.'],
+    profile_missing: ['No published version exists for this profile yet.', 'Ce profil ne possède pas encore de version publiée.'],
     eyebrow: ['PERSONAL WORKSPACE', 'ESPACE PERSONNEL'], help: ['Help', 'Aide'],
     close: ['Close', 'Fermer'],
     none: ['No local draft', 'Aucun brouillon local'],
@@ -109,7 +113,12 @@
   };
   const byId = id => document.getElementById(id);
   const french = () => CS2I18N.locale() === 'FR';
-  const text = key => (COPY[key] || COPY.generic)[french() ? 1 : 0];
+  const text = key => {
+    if (key === 'synthetic' && document.documentElement?.dataset.production === 'target') {
+      return french() ? 'Données reçues en mémoire · jamais dans les brouillons' : 'Received data in memory · never stored in drafts';
+    }
+    return (COPY[key] || COPY.generic)[french() ? 1 : 0];
+  };
   function choose(title, message, choices, {name = null, review = null} = {}) {
     const dialog = byId('studio-dialog');
     if (dialog.open) CCSDraftContract.fail('dialog_busy');
@@ -324,6 +333,14 @@
     document.addEventListener('cs2:locale-changed', locale);
     locale();
     return Object.freeze({canvas, issue, status, choose, text,
+      reset() {
+        content = null; selectedId = null; paintedSelection = null; sessionState = null;
+        canvas.reset(); byId('studio-profile').replaceChildren();
+        for (const id of ['studio-title','studio-profile-name','studio-selection-label','studio-remote-review']) {
+          const node = byId(id); if (node.matches('input')) node.value = ''; else node.textContent = '';
+        }
+        byId('studio-widget-fields').hidden = true; byId('studio-conflict').hidden = true; byId('studio-alert').hidden = true;
+      },
       clearIssue(code = null) { if (code === null || byId('studio-alert').dataset.code === code) byId('studio-alert').hidden = true; },
       get selectedId() { return selectedId; },
       select(id) { selectedId = id; inspector('widget'); paintSelection(); },

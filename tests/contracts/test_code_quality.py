@@ -76,7 +76,7 @@ def test_widget_catalog_module_and_script_load_order():
                 self.sources.append(source)
 
     parser = Scripts()
-    parser.feed(read('static/index.html'))
+    parser.feed(read('static/legacy.html'))
     required = ['/static/js/i18n.js', '/static/js/widgets.js', '/static/js/profile-sync.js', '/static/js/reconnect.js', '/static/js/display-format.js', '/static/js/widget-renderer.js', '/static/js/dashboard-client.js', '/static/js/studio.js']
     assert [source for source in parser.sources if source in required] == required
 
@@ -94,6 +94,20 @@ def test_frontend_widget_kinds_match_server_validation():
     script = 'global.window={};require("./static/js/widgets.js");console.log(JSON.stringify(Object.keys(window.CS2WidgetCatalog)))'
     result = subprocess.run([node, '-e', script], cwd=ROOT, capture_output=True, text=True, check=True)
     assert set(json.loads(result.stdout)) == PROFILE_KINDS
+
+
+def test_production_composition_uses_one_target_writer():
+    page = read('static/index.html')
+    assert '/static/js/application.js' in page
+    assert '/static/js/studio.js' not in page
+    assert '/static/js/profile-sync.js' not in page
+    assert page.index('/static/js/studio-preview.js') < page.index('/static/js/application.js')
+    assert page.index('/static/js/profile-publication.js') < page.index('/static/js/application.js')
+    assert 'id="studio-app"' in page
+    application = read('static/js/application.js')
+    assert 'CCSStudioLifecycle' in application
+    assert 'profiles_save' not in application
+    assert 'CCSPublishedProfiles' in application
 
 
 def test_standalone_suites_are_isolated_and_grouped():
