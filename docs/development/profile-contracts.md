@@ -1,5 +1,8 @@
 # Profile contracts and staged transition (P3)
 
+> Runtime status after P9.5: the delivery status and "current" behavior below describe the original phase baseline. A validated target store now activates these contracts in the production application. Historical storage remains usable before explicit transition. See [Production activation](production-activation.md) for the active composition and operator procedure.
+
+
 Status: inactive foundations, verified against main after P2 / PR #18 on 2026-10-28. P3 does not activate a new store, change autosave, or reset any profiles at startup. See [architecture](architecture.md), [frontend boundaries](frontend-modules.md) and [offline recovery](../guides/profile-recovery.md).
 
 ## Current behavior verified in code

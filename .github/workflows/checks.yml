@@ -185,6 +185,14 @@ jobs:
           python tests/browser/test_logo_navigation.py --browser ${{ matrix.browser }}
           python tests/browser/test_production_studio.py --browser ${{ matrix.browser }} --output /tmp/ccs-production-browser-results
 
+      - name: Verify production acceptance, browser persistence and failure recovery
+        env:
+          HOME: /root
+        run: |
+          python tests/browser/test_production_acceptance.py --browser ${{ matrix.browser }} --output /tmp/ccs-production-acceptance
+          python tests/browser/test_production_resilience.py --browser ${{ matrix.browser }}
+          python tests/browser/test_production_faults.py --browser ${{ matrix.browser }} --output /tmp/ccs-production-faults
+
   dependency-audit:
     name: Vulnerability report / SBOM
     runs-on: ubuntu-latest
@@ -245,7 +253,7 @@ jobs:
         run: python tests/docker/settings.py
       - name: Verify packaged profile contracts and isolated recovery
         run: python tests/docker/profile_contracts.py
-      - name: Verify packaged inactive publication service and assets
+      - name: Verify packaged production publication service and assets
         run: python tests/docker/profile_publication.py
       - name: Verify unprivileged container
         run: test "$(docker compose exec -T cs2-companion-studio id -u)" = '10001'

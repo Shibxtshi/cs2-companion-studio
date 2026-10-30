@@ -296,8 +296,8 @@
     byId('studio-recover-copy').addEventListener('click', () => attempt(recoverCopy));
     byId('studio-open-preview').addEventListener('click', () => attempt(openPreview));
     byId('studio-help').addEventListener('click', () => attempt(() => choose(text('help'), french()
-      ? 'Les modifications restent dans un brouillon local. Enregistrer et appliquer attend la confirmation du serveur. Conserver et quitter attend uniquement l’enregistrement local. Propriétés → Widget : présentation et dimensions ; Propriétés → Profil : densité, thème et navigation. Une fermeture normale conserve les brouillons confirmés ; une déconnexion volontaire confirmée les efface. Le parcours cible reste isolé de ton installation actuelle.'
-      : 'Changes stay in a local draft. Save and apply waits for server confirmation. Keep and leave waits only for local persistence. Properties → Widget: presentation and dimensions; Properties → Profile: density, theme and navigation. Normal closure preserves confirmed drafts; confirmed voluntary logout erases them. This target remains isolated from your current installation.',
+      ? 'Les modifications restent dans un brouillon local. Enregistrer et appliquer attend la confirmation du serveur. Conserver et quitter attend uniquement l’enregistrement local. Propriétés → Widget : présentation et dimensions ; Propriétés → Profil : densité, thème et navigation. Une fermeture normale conserve les brouillons confirmés ; une déconnexion volontaire confirmée les efface.'
+      : 'Changes stay in a local draft. Save and apply waits for server confirmation. Keep and leave waits only for local persistence. Properties → Widget: presentation and dimensions; Properties → Profile: density, theme and navigation. Normal closure preserves confirmed drafts; confirmed voluntary logout erases them.',
       [['cancel', text('close')]])));
     byId('studio-publish').addEventListener('click', () => attempt(publish));
     byId('studio-leave').addEventListener('click', () => attempt(leave)); byId('studio-logout').addEventListener('click', () => attempt(logout));

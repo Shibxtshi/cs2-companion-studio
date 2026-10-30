@@ -103,7 +103,7 @@ The backend lives in `companion/`, web assets in `static/css/` and `static/js/`,
 
 ## Identity and theme preview
 
-CCS uses the Repère identity and local Inter / Barlow Condensed fonts. Tactical Blue is the default; the header offers Competitive Red, Performance Green and Creator Purple previews. The choice is not saved, affects only this tab and resets on reload. Existing profile/widget color choices remain intact; theme persistence will be connected to a later profile contract. See [design foundations](docs/development/design-system.md) and [font licenses/provenance](static/fonts/README.md).
+CCS uses the Repère identity and local Inter / Barlow Condensed fonts. Tactical Blue is the default, alongside Competitive Red, Performance Green and Creator Purple. In the target runtime, choose a profile theme in Customization Studio and publish with Save and apply. In the historical runtime, the header only previews a theme for this tab and resets on reload. Personal widget colors remain overrides. See [design foundations](docs/development/design-system.md) and [font licenses/provenance](static/fonts/README.md).
 
 ### Dashboard navigation
 
@@ -120,3 +120,7 @@ The production target Studio composes IndexedDB drafts, undo/redo, per-widget va
 ### Secondary screens and help
 
 P9 unifies sign-in, optional quick start, Settings and diagnostics in EN/FR. P9.5 integrates the target composition while preserving valid historical storage before consent. See [UI responsibilities](docs/development/user-experience.md), the original [activation proposal](docs/development/target-activation-plan.md) and its [implemented operator procedure](docs/development/production-activation.md).
+
+## Final acceptance and operator rehearsal
+
+See the [P10-A/P10-B acceptance guide (French)](docs/guides/final-acceptance.fr.md) and [production activation procedure](docs/development/production-activation.md). Synthetic validation does not authorize a personal reset, certify competitive compatibility, or replace a real CS2 trial.

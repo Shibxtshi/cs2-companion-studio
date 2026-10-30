@@ -5,6 +5,8 @@ Start with the [project README](../README.md) for installation and features, or 
 | Need | Document |
 | --- | --- |
 | Install, update or recover a Windows instance | [Windows guide](guides/windows-installation.md) |
+| Rehearse final acceptance and personal activation separately | [P10 acceptance guide (French)](guides/final-acceptance.fr.md) |
+| Operate the integrated historical/target runtime safely | [Production activation](development/production-activation.md) |
 | Recover incompatible/corrupt profile storage offline | [Profile recovery](guides/profile-recovery.md) |
 | Understand explicit publication and activation gates | [Profile publication](development/profile-publication.md) |
 | Understand local drafts and session history | [Local draft foundations](development/local-drafts.md) |
@@ -24,11 +26,11 @@ Start with the [project README](../README.md) for installation and features, or 
 
 The release checklist remains authoritative for publication gates. Historical notes are retained as records, not current instructions. Local assistant instructions and working context are not part of the distributed repository.
 
-- [Dashboard and navigation (P6)](development/dashboard.md) — active shell, inactive X/Y target and transition boundaries.
+- [Dashboard and navigation (P6)](development/dashboard.md) — display projection and navigation; target activation now follows the validated storage format.
 
 ## P7 widget presentations
 
-See [widget-presentations.md](development/widget-presentations.md) for the 29-kind, three-variant renderer, shared data nodes, measured minima, preserved legacy Standard path and inactive target persistence.
+See [widget-presentations.md](development/widget-presentations.md) for the 29-kind, three-variant renderer, shared data nodes, measured minima, preserved historical Standard path and target variants. P9.5 integrates target persistence in production when target storage is active.
 
 - [Target Customization Studio and activation boundary](development/customization-studio.md)
 

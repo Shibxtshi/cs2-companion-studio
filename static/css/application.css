@@ -10,6 +10,8 @@ html[data-production="target"][data-section="studio"] .app {max-width:none;paddi
 #studio-app .studio-header {position:static;padding:12px 0}
 #studio-app .studio-workspace {min-height:600px}
 .production-transfer {display:flex;gap:8px;flex-wrap:wrap;margin:16px 0}
+html[data-production="target"] #studio-app .studio-commandbar { flex-wrap:wrap; }
+html[data-production="target"] #studio-app .studio-save-status { min-width:160px; }
 .production-transfer input[type=file] {max-width:100%;font-size:14px}
 #dashboard-profile-menu {max-width:min(260px,100%)}
 html[data-section="studio"] #dashboard-profile-menu {display:none}
@@ -30,6 +32,8 @@ html[data-production="target"] #studio-app .studio-inspector { align-self:start;
   html[data-production="target"] #studio-app .studio-canvas-toolbar label { flex:1 1 100%; min-width:0; max-width:100%; }
   html[data-production="target"] #studio-app .studio-canvas-toolbar select { min-width:0; max-width:100%; flex:1; }
   html[data-production="target"] #studio-app .studio-profile-actions { max-width:100%; }
+  html[data-production="target"] #studio-app .studio-profile-label { flex-wrap:wrap; }
+  html[data-production="target"] #studio-app #studio-profile { flex:1 1 100%; width:0; min-width:0; max-width:100%; }
   html[data-production="target"] #studio-app .studio-profile-actions>div { right:0; left:auto; min-width:180px; max-width:calc(100vw - 90px); }
   html[data-production="target"] #studio-app .studio-profile-actions button { white-space:normal; overflow-wrap:anywhere; }
 }

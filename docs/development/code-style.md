@@ -29,6 +29,6 @@ These conventions guide scoped changes. Update callers, tests and documentation 
 
 Run `python scripts/run_checks.py`, GitHub Actions on Windows and Linux, browser tests (Chromium, Firefox, WebKit), Docker smoke tests and dependency auditing before merging substantive changes.
 
-Profile synchronization belongs in static/js/profile-sync.js. It emits stable state codes; UI text is resolved by the translation API. Exercise the controller behavior with node tests/js/test_profile_sync.js before changing save/conflict behavior.
+Historical autosave synchronization belongs in static/js/profile-sync.js. Target publication uses published-profiles.js, profile-publication.js and the Studio lifecycle; it must never send historical autosave messages. Controllers emit stable state codes; UI text is resolved by translation. Exercise the corresponding Node and production-browser suites before changing save/conflict behavior.
 
 Keep backend implementations inside companion/. Use companion.server:app as the single ASGI entry point. Keep Windows launchers, Compose, requirements and the documented scripts at their stable entry paths. See [architecture](architecture.md) for ownership and compatibility rules.

@@ -1,4 +1,4 @@
-"""Verify packaged inactive publication code/assets using only isolated container /tmp."""
+"""Verify production publication code/assets using only isolated container /tmp."""
 import hashlib
 import json
 from pathlib import Path
@@ -24,7 +24,12 @@ def main():
         for name, digest in expected.items():
             assert hashlib.sha256((Path('static/js') / (name + '.js')).read_bytes()).hexdigest() == digest
         html = Path('static/index.html').read_text()
-        assert all(name + '.js' not in html for name in expected)
+        isolatedHosts = {'dashboard-target', 'studio-target', 'studio-preview-host'}
+        assert all('/static/js/' + name + '.js' in html for name in expected if name not in isolatedHosts)
+        assert all(name + '.js' not in html for name in isolatedHosts)
+        assert '/static/js/application.js' in html
+        assert '/static/js/profile-transfer.js' in html
+        assert not Path('tests').exists()
         assert all('/static/js/' + name + '.js' in html for name in ('dashboard-layout', 'dashboard-grid', 'dashboard-shell'))
         assert Path('static/css/dashboard.css').is_file()
         assert Path('static/css/widget-presentation.css').is_file()
@@ -44,7 +49,7 @@ def main():
             assert store.publish(operation)['result']['revision'] == 2
             assert PublishedProfileStore(path).publish(operation)['replayed']
             assert PublishedProfileProtocol(store).snapshot()['type'] == 'profiles_catalog'
-        print('OK: packaged inactive publication, persisted receipt replay and exact frontend assets; no mounted data accessed')
+        print('OK: integrated production publication, persisted receipt replay and exact frontend assets; isolated hosts excluded and no mounted data accessed')
     ''').replace('EXPECTED_HASHES', repr(expected))
     subprocess.run(['docker', 'compose', 'exec', '-T', 'cs2-companion-studio', 'python', '-'],
                    input=code, text=True, check=True, timeout=60)
