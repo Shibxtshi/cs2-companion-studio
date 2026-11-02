@@ -1,14 +1,13 @@
 """Verify production publication code/assets using only isolated container /tmp."""
 import hashlib
-import json
 from pathlib import Path
 import subprocess
 import textwrap
 
 MODULES = ('draft-schema', 'draft-contract', 'edit-history', 'draft-publications', 'draft-store',
-           'draft-session', 'published-profiles', 'profile-publication', 'dashboard-target',
+           'draft-session', 'published-profiles', 'profile-publication',
            'studio-model', 'studio-data', 'studio-canvas', 'studio-workspace', 'studio-lifecycle',
-           'studio-preview', 'studio-preview-host', 'studio-target', 'profile-selection')
+           'studio-preview', 'studio-preview-host', 'profile-selection')
 
 
 def main():
@@ -24,7 +23,9 @@ def main():
         for name, digest in expected.items():
             assert hashlib.sha256((Path('static/js') / (name + '.js')).read_bytes()).hexdigest() == digest
         html = Path('static/index.html').read_text()
-        isolatedHosts = {'dashboard-target', 'studio-target', 'studio-preview-host'}
+        isolatedHosts = {'studio-preview-host'}
+        for name in ('dashboard-target', 'studio-target'):
+            assert not (Path('static/js') / (name + '.js')).exists()
         assert all('/static/js/' + name + '.js' in html for name in expected if name not in isolatedHosts)
         assert all(name + '.js' not in html for name in isolatedHosts)
         assert '/static/js/application.js' in html

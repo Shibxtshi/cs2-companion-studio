@@ -40,7 +40,6 @@ def test_tracked_secret_is_rejected(tmp_path):
 
 
 def test_private_env_rejected_in_public_archive(tmp_path):
-    from importlib.machinery import SourceFileLoader
     archive_spec = importlib.util.spec_from_file_location(
         'public_zip_checker', ROOT / 'scripts' / 'check_public_archive.py')
     archive = importlib.util.module_from_spec(archive_spec)

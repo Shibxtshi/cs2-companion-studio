@@ -68,7 +68,7 @@
       const board = document.createElement('div');
       board.className = 'preview-board';
       const renderer = CS2WidgetRenderer({board, format: CS2DisplayFormat, presentation: CCSWidgetPresentation, headingLevel: 4});
-      const widget = {id: 'preview-' + kind + '-' + variant, kind, variant, span: 12,
+      const widget = {id: 'preview-' + kind + '-' + variant, kind, variant,
         title: '', color: '', background: '', opacity: 100, style: 'solid'};
       board.append(renderer.createCard(widget, definition));
       widgets.push(structuredClone(widget));

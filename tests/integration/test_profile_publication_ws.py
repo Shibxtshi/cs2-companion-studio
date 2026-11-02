@@ -1,8 +1,5 @@
 """Exercise the target protocol through the existing PIN/Origin WebSocket gate."""
 import asyncio
-import copy
-import os
-import uuid
 
 import pytest
 from fastapi.testclient import TestClient

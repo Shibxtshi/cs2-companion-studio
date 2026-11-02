@@ -56,8 +56,14 @@ def run(runtime, port):
                                for module in ('profile-selection', 'published-profiles'))
         html = html.replace('<script defer src="/static/js/studio-preview-host.js"></script>', '')
         html = html.replace('</head>', '<link rel="stylesheet" href="/static/css/studio-density.css"></head>')
-        html = html.replace('</body>', dependencies + '<script defer src="/static/js/dashboard-target.js"></script></body>')
+        html = html.replace('</body>', dependencies + '<script defer src="/__dashboard_target__.js"></script></body>')
         return HTMLResponse(html)
+    @server.app.get('/__dashboard_target__.js')
+    def dashboard_script():
+        return Response((ROOT / 'tests/browser/dashboard-target.js').read_text('utf-8'), media_type='application/javascript')
+    @server.app.get('/__studio_target__.js')
+    def studio_script():
+        return Response((ROOT / 'tests/browser/studio-target.js').read_text('utf-8'), media_type='application/javascript')
     @server.app.get('/__studio_test__')
     def studio():
         return HTMLResponse((ROOT / 'tests/browser/studio-preview.html').read_text('utf-8'))

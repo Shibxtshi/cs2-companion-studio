@@ -16,7 +16,6 @@
       article.className = 'widget w-' + widget.kind;
       article.dataset.id = widget.id;
       article.dataset.kind = widget.kind;
-      article.style.setProperty('--span', widget.span);
       if (widget.color) article.style.setProperty('--widget-accent', widget.color);
       if (widget.background) article.style.setProperty('--widget-bg', widget.background);
       article.style.setProperty('--widget-opacity', (widget.opacity ?? 100) + '%');

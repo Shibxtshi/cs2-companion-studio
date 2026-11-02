@@ -178,48 +178,11 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   max-width:100%
 }
 
-
-
-
-
-
 .head-actions {
   display:flex;
   align-items:center;
   gap:var(--space-2);
   flex-wrap:wrap
-}
-
-.section-label {
-  font-size:12px;
-  font-weight:650;
-  letter-spacing:.8px;
-  text-transform:uppercase;
-  color:var(--muted);
-  margin:0 0 9px
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-.cat-divider {
-  grid-column:1/-1;
-  margin:10px 0 0;
-  font-weight:700;
-  font-size:12px;
-  letter-spacing:1px;
-  text-transform:uppercase;
-  color:var(--ccs-accent)
 }
 
 .board {
@@ -232,7 +195,6 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .widget {
   position:relative;
   min-width:0;
-  grid-column:span var(--span,6);
   background:var(--card);
   border:1px solid var(--line);
   border-radius:var(--radius-card);
@@ -256,13 +218,6 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   border-radius:0 5px 5px 0
 }
 
-.widget.drag-over {
-  border-color:var(--ccs-accent);
-  outline:2px dashed var(--ccs-accent);
-  outline-offset:-5px
-}
-
-
 .widget.w-bomb {
   min-height:240px
 }
@@ -275,11 +230,6 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   min-height:165px
 }
 
-
-.widget.empty-widget {
-  border-style:dashed;
-  color:var(--muted)
-}
 
 .widget-top {
   display:flex;
@@ -308,27 +258,6 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .widget-body {
   flex:1;
   min-width:0
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-.move {
-  cursor:grab;
-  touch-action:none
-}
-
-.move:active {
-  cursor:grabbing
 }
 
 .big {
@@ -376,10 +305,6 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   justify-content:space-between;
   align-items:center;
   gap:var(--space-3)
-}
-
-.flex-wrap {
-  flex-wrap:wrap
 }
 
 .rowgap {
@@ -690,15 +615,6 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   }
 }
 
-
-
-
-
-
-
-
-
-
 .xy-board .widget[data-style="solid"] {
   background:color-mix(in srgb,var(--widget-bg,var(--card)) var(--widget-opacity,100%),transparent)
 }
@@ -712,20 +628,6 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .xy-board .widget[data-style="outline"] {
   background:color-mix(in srgb,var(--widget-bg,var(--card)) calc(var(--widget-opacity,100%) * .15),transparent);
   border:1px solid var(--widget-accent,var(--accent))
-}
-
-
-
-
-
-
-
-
-@media(max-width:800px) {
-
-
-
-
 }
 
 /* Guidance, diagnostics and accessibility. */
@@ -921,18 +823,6 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   margin:var(--space-1) 0 0
 }
 
-.diag-success {
-  color:var(--success)
-}
-
-.diag-failure {
-  color:var(--error)
-}
-
-.diag-unknown {
-  color:var(--warning)
-}
-
 .diag-help {
   font-size:12px;
   color:var(--ccs-muted);
@@ -1052,10 +942,6 @@ button:focus-visible,input:focus-visible,select:focus-visible {
 .diagnostics-grid {
     grid-template-columns:1fr
   }
-
-
-
-
 
  .head-actions {
     width:100%

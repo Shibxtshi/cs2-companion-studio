@@ -9,7 +9,7 @@ import tempfile
 
 from playwright.sync_api import Error, expect, sync_playwright
 from test_customization_studio import document
-from test_profile_publication import ROOT, PIN, launch, stop, prepare, edit, wait_state
+from test_profile_publication import PIN, launch, stop
 from companion.profile_contracts import encode_document
 
 FAULTS = """(() => {

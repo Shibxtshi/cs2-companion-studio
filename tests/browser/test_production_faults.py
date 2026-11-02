@@ -2,13 +2,12 @@
 import argparse
 import copy
 import json
-import os
 import re
 from pathlib import Path
 
 from playwright.sync_api import expect, sync_playwright
 from test_production_studio import production, login, PIN
-from test_production_acceptance import field, saved, name_profile, publish
+from test_production_acceptance import saved, name_profile, publish
 from test_production_resilience import options, read_drafts
 from companion.profile_activation import target_document
 

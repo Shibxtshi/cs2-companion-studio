@@ -3,10 +3,9 @@ import argparse
 import json
 import os
 from pathlib import Path
-import tempfile
 
 from playwright.sync_api import expect, sync_playwright
-from test_production_studio import production, login, PIN
+from test_production_studio import production, login
 
 RESOLUTIONS = [(1920,1080), (1366,768), (1280,900), (1024,768), (768,1024), (390,844), (320,740)]
 

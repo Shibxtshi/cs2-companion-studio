@@ -15,7 +15,7 @@ The maintainer approved the three-panel visual direction on 2026-10-29. This is 
 | studio-workspace.js | Library/search/categories, inspector, panel navigation, EN/FR labels and native dialogs |
 | studio-lifecycle.js | Compose P4 sessions and P5 controllers; profiles, recovery, conflicts, exit and logout |
 | profile-selection.js | Shared per-tab published selection and last-used hint; no cross-tab forced switch |
-| studio-target.js | Existing PIN/Origin transport, reconnect, clear stale live data and authenticated catalog composition |
+| tests/browser/studio-target.js | Test-only PIN/Origin transport harness, reconnect and authenticated catalog composition; excluded from Docker |
 | studio-preview.js / studio-preview-host.js | Read-only same-origin preview window using the actual P6 shell/grid and P7 renderer |
 | customization-studio.css / studio-density.css | P2-token layout and global padding density, independent of presentation and geometry |
 
