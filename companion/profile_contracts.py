@@ -1,4 +1,4 @@
-"""Inactive target contracts for P4/P5; the current server does not load these."""
+"""Strict target contracts used by the production target runtime and offline tools."""
 from __future__ import annotations
 
 import json

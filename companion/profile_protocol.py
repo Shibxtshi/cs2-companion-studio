@@ -1,4 +1,4 @@
-"""Target WebSocket adapter, instantiated only by isolated tests until activation."""
+"""Authenticated target WebSocket adapter selected by the production profile runtime."""
 import asyncio
 import re
 

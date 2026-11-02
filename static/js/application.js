@@ -25,6 +25,10 @@
   const grid = CCSDashboardGrid({board: byId('board'), onStatus: code => {
     if (code === 'layout_overflow') notice(say('Layout too large; remaining widgets follow below.', 'Disposition trop grande ; les widgets restants sont affichés à la suite.'));
   }});
+  const dashboardData = CCSStudioData({board: byId('board'), onDemo: values, renderer: {
+    updateValues(state, options) { if (section === 'dashboard') renderer.updateValues(state, options); },
+    paintBomb(state, timerAnchor) { if (section === 'dashboard') renderer.paintBomb(state, timerAnchor); },
+  }});
   function notice(message, kind = 'error') { CCSNotifications.show({message, kind}); }
   function issue(error) {
     const code = typeof error === 'string' ? error : error?.code || 'error';
@@ -42,7 +46,7 @@
     game = structuredClone(next);
     anchor = next.bomb_timer?.status === 'active' && Number.isFinite(next.bomb_timer.remaining)
       ? {at: performance.now(), left: next.bomb_timer.remaining} : null;
-    if (section === 'dashboard') renderer.updateValues(game, {modeDemo: demo, anchor});
+    dashboardData.update(game, demo);
     if (section === 'studio') studio?.workspace.canvas.values(game, demo);
     document.dispatchEvent(new CustomEvent('cs2:state', {detail: {online: !!game.online,
       gsi_connected: !!game.gsi_connected, demo, age_seconds: Number.isFinite(game.age_seconds) ? game.age_seconds : null}}));
@@ -287,10 +291,9 @@
   const checkContext = () => studio?.lifecycle.checkContext().catch(issue);
   window.addEventListener('focus', checkContext);
   document.addEventListener('visibilitychange', () => { if (!document.hidden) checkContext(); });
-  const timer = setInterval(() => { if (!document.hidden && section === 'dashboard' && game.bomb_timer?.status === 'active') renderer.paintBomb(game, anchor); }, 100);
   window.addEventListener('pagehide', event => {
     if (event.persisted) return;
-    disposed = true; clearInterval(timer); studio?.lifecycle.dispose(); studio?.workspace.dispose();
+    disposed = true; dashboardData.dispose(); studio?.lifecycle.dispose(); studio?.workspace.dispose();
     preview.dispose(); transfer.cancel(); reconnect.stop(); client.close(); renderer.dispose(); grid.dispose();
   });
 })();

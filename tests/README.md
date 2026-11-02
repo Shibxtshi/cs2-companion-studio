@@ -168,3 +168,17 @@ python tests/browser/benchmark_production.py --browser chromium --soak-only --so
 The optional soak is not run by default CI. It uses 60 widgets, synthetic GSI, periodic Studio visits, retained card identity and checks for unexpected profile/draft writes, WebSockets and JavaScript errors. Chromium records document-listener and post-GC heap samples; other browsers do not provide equivalent heap evidence. Each timing repetition starts a fresh identical fixture. Movement/resizing timings use the accessible keyboard controls and include confirmed local persistence; they are not pointer-drag timings. Pointer functionality remains covered by browser acceptance; unstable headless pointer timing samples must not be presented as performance results. Timings include automation/waits and are descriptive, not arbitrary pass thresholds. Compare only matching scenarios/environments; emulation is not a physical-device test. Retain the JSON, operating system, browser and exact source revision privately.
 
 Use the [manual acceptance guide](../docs/guides/final-acceptance.fr.md) for real CS2 and the separately authorized P10-B. Neither successful synthetic tests nor a PR merge authorize resetting personal profiles. Hosted CI that cannot start must remain reported as not executed.
+
+## R1.1 rendering regressions
+
+Run `node tests/js/test_i18n.js`, `node tests/js/test_studio_data.js` and
+`python tests/browser/test_rendering_regressions.py --browser chromium --output PRIVATE_OUTPUT_DIRECTORY`.
+The browser runner also supports Firefox and WebKit with matching installed engines. It starts the real
+production ASGI composition with temporary target/historical files and synthetic credentials only.
+It checks computed RGBA surfaces across four themes, Dashboard/Studio/preview and historical hosts,
+explicit publication/reload, same-ID type replacement with undo/redo and retained unaffected cards,
+focus restoration, and transient demo bomb controls without profile or IndexedDB writes.
+The Node controller test checks timer/listener disposal and rejection of demo actions in real-data mode.
+
+The documentation contract checks run through pytest. Screenshots are optional private evidence, not
+new P1 reference fixtures; neither test success nor these commands authorize changes to personal data.

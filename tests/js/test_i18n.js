@@ -17,5 +17,14 @@ for (const locale of ['EN', 'FR']) {
   : 'Enregistrement impossible. Vérifie le stockage du serveur.');
  assert.equal(api.message('profile.saving'), locale === 'EN' ? 'Saving…' : 'Enregistrement…');
  assert.equal(api.message('unknown'), '');
+ for (const amount of [0, 1, 75, 100]) {
+  for (const [source, translated] of [['Dégâts', 'Damage'], ['Soins', 'Healing']]) {
+   assert.equal(api.translate(source + ' · ' + amount + ' HP'),
+    (locale === 'FR' ? source : translated) + ' · ' + amount + ' HP');
+  }
+ }
+ for (const personal of ['Player Health', 'Soins de Player', 'Dégâts · custom HP', 'My HP widget']) {
+  assert.equal(api.translate(personal), personal);
+ }
 }
 console.log('OK: profile save/error messages follow the EN/FR preference');

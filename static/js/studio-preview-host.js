@@ -1,4 +1,4 @@
-/* Test-composed preview of the real P6 shell; no WebSocket or persistence. */
+/* Read-only Studio preview using the shared shell; no WebSocket or persistence. */
 (() => {
   'use strict';
   const owner = window.opener;

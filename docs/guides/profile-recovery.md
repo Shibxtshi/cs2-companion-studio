@@ -1,6 +1,6 @@
 # Offline profile recovery
 
-This procedure is for the local maintainer. It works even when invalid profile storage prevents HTTP/WebSocket startup. It never runs automatically. P3 still uses the current unversioned profile format; the [future contracts](../development/profile-contracts.md) are inactive.
+This procedure is for the local maintainer. It works even when invalid profile storage prevents HTTP/WebSocket startup. It never runs automatically. The runtime selects either historical storage or the [target contracts](../development/profile-contracts.md) from the validated document format. The reset commands below concern historical storage only. For target activation, manifest v2, interrupted activation/restore markers and target recovery, follow the [production operator procedure](../development/production-activation.md); do not apply a historical reset to target data.
 
 ## Before any write
 
@@ -8,7 +8,7 @@ This procedure is for the local maintainer. It works even when invalid profile s
 2. Keep data/, .env and logs/ in place. Do not delete the data directory. Use the same data directory as the stopped instance (PROFILE_DATA_DIR or --data-dir).
 3. Run --inspect to classify the file without printing its content. A classification is not permission to erase it. Prefer restoring a valid rotating backup when appropriate; otherwise prepare a distinct reset snapshot.
 
-The --service-stopped flag is an explicit operator acknowledgement, not a running-service detector. The OS lock serializes recovery tools only. It does not lock out the current server. Never run reset/restore against a live service, even when the flag is supplied.
+The --service-stopped flag is an explicit operator acknowledgement, not a running-service detector. The cooperative OS lock serializes recovery tools and is also held for the production server lifespan. It excludes cooperating offline writers while the runtime is active, but cannot identify every external writer or replace a clean service shutdown. Never run reset/restore against a live service, even when the flag is supplied.
 
 ## Native Windows / Python
 
@@ -26,7 +26,7 @@ $backupId = '<ID printed by prepare-reset>'
 python scripts/recover_profiles.py --reset $backupId --service-stopped
 ~~~
 
-Read the warning and type exactly RESET followed by a space and that ID at the prompt. Enter, an unmatched response or EOF cancels without changing profiles. The snapshot remains. On success, profiles.json contains the current valid default profile (five widgets, revision 1). This command does not activate the target format.
+Read the warning and type exactly RESET followed by a space and that ID at the prompt. Enter, an unmatched response or EOF cancels without changing profiles. The snapshot remains. On success, profiles.json contains the historical default profile (five widgets, revision 1). This command does not activate the target format.
 
 Verify the state before restarting the service:
 
@@ -53,7 +53,7 @@ docker compose run --rm --no-deps --entrypoint python cs2-companion-studio scrip
 The reset command is interactive; type RESET and the ID only after reviewing the operation. These commands require an image containing this recovery implementation. They do not build an image or modify secrets. After a successful current-format validation, restart normally:
 
 ~~~powershell
-docker compose up -d --wait
+docker compose up -d --no-build --pull never --wait
 ~~~
 
 ## What is preserved
@@ -91,4 +91,4 @@ The existing validated rotating-backup workflow remains available:
 python scripts/recover_profiles.py --restore
 ~~~
 
-Stop the service first. This validates profiles.json.bak against the current format and preserves any current file as profiles.json.corrupt-<unique ID> before replacing it. There is no automatic fallback to a future/unknown schema. Do not delete recovery files until you have independently confirmed the desired data is retained.
+Stop the service first. This historical command validates profiles.json.bak against the historical format and preserves any current file as profiles.json.corrupt-<unique ID> before replacing it. There is no automatic fallback to a future/unknown schema. Do not delete recovery files until you have independently confirmed the desired data is retained.

@@ -918,17 +918,17 @@ button:focus-visible,input:focus-visible,select:focus-visible {
   font-size:22px
 }
 
-.board[data-view="custom"] .widget[data-style="solid"] {
+:is(.board[data-view="custom"], .xy-board) .widget[data-style="solid"] {
   background:color-mix(in srgb,var(--widget-bg,var(--card)) var(--widget-opacity,100%),transparent)
 }
 
-.board[data-view="custom"] .widget[data-style="glass"] {
+:is(.board[data-view="custom"], .xy-board) .widget[data-style="glass"] {
   background:color-mix(in srgb,var(--widget-bg,var(--card)) calc(var(--widget-opacity,100%) * .67),transparent);
   backdrop-filter:blur(10px);
   border-color:var(--ccs-control-border)
 }
 
-.board[data-view="custom"] .widget[data-style="outline"] {
+:is(.board[data-view="custom"], .xy-board) .widget[data-style="outline"] {
   background:color-mix(in srgb,var(--widget-bg,var(--card)) calc(var(--widget-opacity,100%) * .15),transparent);
   border:1px solid var(--widget-accent,var(--accent))
 }

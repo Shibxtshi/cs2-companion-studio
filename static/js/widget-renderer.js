@@ -1,4 +1,4 @@
-/* Widget DOM and live values only. Editing and profile persistence stay in studio.js. */
+/* Widget DOM and live values only; editing and persistence belong to the host controllers. */
 (() => {
   'use strict';
 

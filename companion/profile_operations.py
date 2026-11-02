@@ -1,4 +1,4 @@
-"""Pure future publication transitions. No runtime store, route or disk writes."""
+"""Pure per-profile publication transitions; no runtime store, route or disk writes."""
 from __future__ import annotations
 
 import copy
