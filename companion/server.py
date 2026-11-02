@@ -12,8 +12,7 @@ from contextlib import asynccontextmanager
 from companion.security import LoginLimiter, same_origin, credential_matches, decode_message
 from companion.dashboard_delivery import broadcast_text
 from companion.gsi_lifecycle import EconomyObserver, cash_projection
-from companion.profile_store import ProfileStore
-from companion.profile_runtime import create_runtime_store, is_target_store, runtime_lease
+from companion.profile_runtime import create_runtime_store, runtime_lease
 from companion.support_diagnostics import Diagnostics
 from pathlib import Path
 from typing import Any
@@ -249,16 +248,13 @@ async def privacy_headers(request: Request, call_next):
 
 @app.get('/')
 async def index():
-    document = 'index.html' if is_target_store(profile_store) else 'legacy.html'
-    return FileResponse(ROOT / 'static' / document, media_type='text/html',
+    return FileResponse(ROOT / 'static' / 'index.html', media_type='text/html',
                         headers={'Cache-Control': 'no-store'})
 
 
 @app.get('/preview')
 async def profile_preview():
     """Read-only same-origin preview; no catalog, transport or storage writer in this page."""
-    if not is_target_store(profile_store):
-        raise HTTPException(status_code=404)
     return FileResponse(ROOT / 'static' / 'preview.html', media_type='text/html')
 
 
@@ -519,39 +515,15 @@ async def ws(websocket: WebSocket):
             if len(rawMsg) > 225_000:
                 await websocket.close(code=1009)
                 break
-            # The validated on-disk format selects exactly one active profile writer.
-            targetDispatch = getattr(profile_store, 'dispatch', None)
-            if targetDispatch is not None:
-                if await targetDispatch(rawMsg, websocket, connected):
-                    continue
+            if await profile_store.dispatch(rawMsg, websocket, connected):
+                continue
             try:
                 command = decode_message(rawMsg)
             except (ValueError, UnicodeDecodeError):
                 continue
             if not isinstance(command, dict):
                 continue
-            if command.get('type') == 'profiles_save':
-                async with lock:
-                    try:
-                        saved = profile_store.put(command.get('document'), command.get('revision'))
-                    except ValueError:
-                        diagnostics.record('profiles_rejected')
-                        await websocket.send_json({'type': 'profiles_error', 'code': 'invalid'})
-                        continue
-                    except OSError:
-                        diagnostics.record('profiles_storage_error')
-                        await websocket.send_json({'type': 'profiles_error', 'code': 'disk'})
-                        continue
-                    if not saved:
-                        diagnostics.record('profiles_conflict')
-                        await websocket.send_json({'type': 'profiles_error', 'code': 'conflict'})
-                        await websocket.send_json(profile_store.snapshot())
-                        continue
-                    diagnostics.record('profiles_saved')
-                    diagnostics.write_summary(len(profile_store.data['profiles']))
-                    snapshot = profile_store.snapshot(source=sessionId)
-                    await broadcast_text(connected, json.dumps(snapshot, ensure_ascii=False))
-            elif command.get('type') == 'diagnostics_request':
+            if command.get('type') == 'diagnostics_request':
                 await websocket.send_json({'type': 'diagnostics_data',
                                           'report': diagnostics.snapshot(len(profile_store.data['profiles']))})
     except (WebSocketDisconnect, RuntimeError, asyncio.TimeoutError):

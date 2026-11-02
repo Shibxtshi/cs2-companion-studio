@@ -8,7 +8,7 @@ def text(path):
 
 def test_version_identifiers_are_consistent():
     assert "VERSION = '1.0.0'" in text("companion/server.py")
-    assert "const VERSION='1.0.0'" in text("static/js/studio.js")
+    assert "version: '1.0.0'" in text("static/js/application.js")
     assert "Match Center · Player Edition · v1.0.0" in text("static/index.html")
     assert "styles.css?v=1.0.0" in text("static/index.html")
     assert "version='1.0.0'" in text("installer/install.ps1")

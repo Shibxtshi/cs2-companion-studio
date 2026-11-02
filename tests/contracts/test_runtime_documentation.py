@@ -5,11 +5,11 @@ import re
 ROOT = Path(__file__).resolve().parents[2]
 
 
-def test_runtime_map_names_both_compositions_and_the_exclusive_writer():
+def test_runtime_map_names_the_target_composition_and_exclusive_writer():
     architecture = (ROOT / 'docs/development/architecture.md').read_text('utf-8')
-    for name in ['profile_runtime.py', 'profile_activation.py', 'application.js', 'studio.js',
-                 'profile-sync.js', 'IndexedDB', 'Exactly one store and writer']:
+    for name in ['profile_runtime.py', 'profile_activation.py', 'application.js', 'IndexedDB', 'Exactly one store and writer']:
         assert name in architecture
+    assert 'Historical data is refused without replacement' in architecture
     for description in ['Inactive target', 'without activating them', 'publication remain inactive']:
         assert description not in architecture
 

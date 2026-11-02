@@ -1,4 +1,4 @@
-/* Shared navigation shell. Legacy storage and editing remain owned by studio.js. */
+/* Target Dashboard and Studio navigation; profile writes belong to publication. */
 (() => {
   'use strict';
   const byId = id => document.getElementById(id);
@@ -10,11 +10,10 @@
       streamer: 'Streamer Studio', coming: 'Coming soon', navigation: 'Navigation',
       full: 'Full', compact: 'Compact', hidden: 'Hidden', floating: 'Floating button',
       temporary: 'Preview for this tab · not saved in profiles',
-      legacy: 'Current editor · automatic saving remains active',
       profile: 'Displayed profile', default: 'Default dashboard', demo: 'Demonstration',
       fullscreen: 'Fullscreen', exit: 'Exit fullscreen', status: 'Show connection in fullscreen',
       reveal: 'Show navigation', shortcut: 'Show navigation: Alt+M. Escape closes menus or exits immersive mode.',
-      preferences: 'Display preferences', help: 'Connection and help', shared: 'Current profile selection is shared between connected screens.',
+      preferences: 'Display preferences', help: 'Connection and help',
       target: 'Target profile · independent selection in this tab',
       home: 'CCS · Return to Dashboard',
     },
@@ -23,11 +22,10 @@
       streamer: 'Streamer Studio', coming: 'À venir', navigation: 'Navigation',
       full: 'Complète', compact: 'Compacte', hidden: 'Masquée', floating: 'Bouton flottant',
       temporary: 'Aperçu pour cet onglet · non enregistré dans les profils',
-      legacy: 'Éditeur actuel · sauvegarde automatique active',
       profile: 'Profil affiché', default: 'Dashboard par défaut', demo: 'Démonstration',
       fullscreen: 'Plein écran', exit: 'Quitter le plein écran', status: 'Afficher la connexion en plein écran',
       reveal: 'Afficher la navigation', shortcut: 'Afficher la navigation : Alt+M. Échap ferme les menus ou quitte le mode immersif.',
-      preferences: 'Préférences d’affichage', help: 'Connexion et aide', shared: 'La sélection actuelle du profil est partagée entre les écrans connectés.',
+      preferences: 'Préférences d’affichage', help: 'Connexion et aide',
       target: 'Profil cible · sélection indépendante dans cet onglet',
       home: 'CCS · Revenir au Dashboard',
     },
@@ -39,7 +37,6 @@
   let floating = true;
   let immersive = false;
   let showConnection = true;
-  let target = false;
   let targetName = '';
   let revealed = false;
   let navigationGuard = null;
@@ -74,10 +71,6 @@
   byId('settings-help').addEventListener('click', () => byId('open-help').click());
   const support = settings.querySelector('#shell-support');
   support.append(byId('session-banner'), document.querySelector('.diagnostics-footer'));
-  const editorNotice = document.createElement('p');
-  editorNotice.className = 'editor-transition';
-  editorNotice.dataset.shellText = 'legacy';
-  byId('custom-tools').before(editorNotice);
   const edge = document.createElement('button');
   edge.type = 'button';
   edge.className = 'navigation-edge';
@@ -100,7 +93,7 @@
   };
   edge.addEventListener('click', reveal);
   float.addEventListener('click', reveal);
-  // Reuse section navigation so pending legacy saves and the displayed profile stay alive.
+  // Use the shared guard to preserve drafts and the selected profile.
   const homeLinks = document.querySelectorAll('[data-dashboard-home]');
   for (const link of homeLinks) link.addEventListener('click', event => {
     event.preventDefault();
@@ -112,15 +105,9 @@
   async function open(next) {
     if (navigationGuard && !await navigationGuard(next)) return;
     if (immersive) leaveFullscreen();
-    if (next === 'studio' && target && !navigationGuard) return;
+    if (next === 'studio' && !navigationGuard) return;
     section = next;
     revealed = false;
-    if (next === 'studio' && !target) {
-      byId('tab-custom').click();
-      if (byId('edit').getAttribute('aria-pressed') !== 'true') byId('edit').click();
-    } else if (!target && byId('edit').getAttribute('aria-pressed') === 'true') byId('edit').click();
-    // Finishing legacy editing emits its own section update; preserve the requested destination.
-    section = next;
     paint();
     byId('dashboard-title').focus({preventScroll: true});
     document.dispatchEvent(new CustomEvent('ccs:section', {detail: {section: next}}));
@@ -159,10 +146,6 @@
   byId('navigation-floating').addEventListener('change', event => { floating = event.target.checked; paint(); });
   byId('fullscreen-status').addEventListener('change', event => { showConnection = event.target.checked; paint(); });
   document.addEventListener('cs2:locale-changed', paint);
-  byId('edit').addEventListener('click', () => {
-    section = byId('edit').getAttribute('aria-pressed') === 'true' ? 'studio' : 'dashboard';
-    paint();
-  });
   byId('dashboard-title').tabIndex = -1;
   function paint() {
     const active = !view.classList.contains('hidden');
@@ -188,13 +171,10 @@
     byId('navigation-mode').value = navigation;
     byId('navigation-floating').checked = floating;
     byId('fullscreen-status').checked = showConnection;
-    const custom = byId('tab-custom').getAttribute('aria-selected') === 'true';
-    const demo = byId('status').textContent.match(/demo|démo/i);
-    const name = target ? targetName : demo ? text('demo') : custom
-      ? byId('profile-select').selectedOptions[0]?.textContent || text('default') : text('default');
+    const name = targetName || text('default');
     byId('dashboard-title').textContent = section === 'dashboard' ? name : text(section);
     byId('dashboard-context').textContent = section === 'dashboard'
-      ? target ? text('target') : custom ? text('shared') : text('dashboard') : section === 'studio' ? text('legacy') : text('temporary');
+      ? text('target') : text('temporary');
     if (root.dataset.production === 'target' && section !== 'dashboard') {
       byId('dashboard-context').textContent = locale() === 'fr'
         ? 'Brouillons locaux · publication explicite dans le Studio'
@@ -214,12 +194,11 @@
       button.title = text(key) + (key === 'streamer' ? ' · ' + text('coming') : '');
       button.setAttribute('aria-label', button.title);
       if (section === key) button.setAttribute('aria-current', 'page'); else button.removeAttribute('aria-current');
-      if (key === 'studio') button.disabled = target ? !navigationGuard || !studioAvailable : byId('tab-custom').classList.contains('hidden');
+      if (key === 'studio') button.disabled = !navigationGuard || !studioAvailable;
     }
     for (const element of document.querySelectorAll('[data-shell-text]')) element.textContent = text(element.dataset.shellText);
   }
   new MutationObserver(paint).observe(view, {attributes: true, attributeFilter: ['class']});
-  new MutationObserver(paint).observe(byId('profile-select'), {childList: true, subtree: true});
   document.addEventListener('cs2:status', paint);
   document.addEventListener('cs2:board-rendered', paint);
   document.addEventListener('cs2:logout', () => { section = 'dashboard'; leaveFullscreen(); });
@@ -229,7 +208,7 @@
     setNavigationGuard(guard) { navigationGuard = guard; paint(); },
     setStudioAvailable(value) { studioAvailable = !!value; paint(); },
     setTargetProfile(profile) {
-      target = true; targetName = profile.name;
+      targetName = profile.name;
       const theme = byId('theme-preview');
       theme.value = profile.configuration.theme;
       theme.dispatchEvent(new Event('change'));

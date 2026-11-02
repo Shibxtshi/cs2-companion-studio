@@ -24,12 +24,12 @@ def runtime_server(monkeypatch, tmp_path):
     monkeypatch.setenv('PROFILE_DATA_DIR', str(tmp_path / 'data'))
     monkeypatch.setenv('DIAGNOSTICS_DIR', str(tmp_path / 'logs'))
     from companion import server
-    from companion.profile_store import ProfileStore
+    from companion.profile_runtime import create_runtime_store
     from companion.support_diagnostics import Diagnostics
     from companion.security import LoginLimiter
     monkeypatch.setattr(server, 'GSI_TOKEN', 'synthetic-edge-token')
     monkeypatch.setattr(server, 'DASHBOARD_PIN', 'synthetic-edge-pin')
-    monkeypatch.setattr(server, 'profile_store', ProfileStore(tmp_path / 'data' / 'profiles.json'))
+    monkeypatch.setattr(server, 'profile_store', create_runtime_store(tmp_path / 'data'))
     monkeypatch.setattr(server, 'diagnostics', Diagnostics(tmp_path / 'logs', '1.0.0'))
     monkeypatch.setattr(server, 'limiter', LoginLimiter())
     return server
@@ -154,10 +154,9 @@ def test_boundary_inputs_return_controlled_errors(runtime_server):
             assert ws.receive_json()['type']=='auth_ok'
             snapshot=ws.receive_json()
             ws.receive_json()
-            document={key:copy.deepcopy(snapshot[key]) for key in ('profiles','activeProfile')}
-            document['profiles'][0]['widgets'][0]['kind']=[]
-            ws.send_json({'type':'profiles_save','revision':snapshot['revision'],'document':document})
-            assert ws.receive_json()=={'type':'profiles_error','code':'invalid'}
+            document={'profiles':[], 'activeProfile':'obsolete'}
+            ws.send_json({'type':'profiles_save','revision':snapshot['catalog']['catalogRevision'],'document':document})
+            assert ws.receive_json()=={'type':'profile_operation_error','operationId':None,'code':'invalid_document','catalog':snapshot['catalog']}
             ws.send_json({'type':'diagnostics_request'})
             assert ws.receive_json()['type']=='diagnostics_data'
 
@@ -185,19 +184,19 @@ def test_binary_websocket_frames_close_cleanly(runtime_server, authenticated):
 def test_target_markers_cannot_be_silently_saved_by_current_websocket(runtime_server, marker):
     from fastapi.testclient import TestClient
     server = runtime_server
-    original = server.profile_store.path.read_bytes()
-    revision = server.profile_store.revision
+    original = server.profile_store.store.path.read_bytes()
+    revision = server.profile_store.data['catalogRevision']
     with TestClient(server.app) as client:
         with client.websocket_connect('/ws', headers={'origin': 'http://testserver'}) as socket:
             socket.send_json({'type': 'auth', 'pin': server.DASHBOARD_PIN})
             assert socket.receive_json()['type'] == 'auth_ok'
             snapshot = socket.receive_json()
             socket.receive_json()
-            document = {key: copy.deepcopy(snapshot[key]) for key in ('profiles', 'activeProfile')}
+            document = {'profiles': [], 'activeProfile': 'obsolete'}
             document[marker] = 'ccs-dashboard-store' if marker == 'format' else 1
             socket.send_json({'type': 'profiles_save', 'revision': revision, 'document': document})
-            assert socket.receive_json() == {'type': 'profiles_error', 'code': 'invalid'}
+            assert socket.receive_json() == {'type': 'profile_operation_error', 'operationId': None, 'code': 'invalid_document', 'catalog': snapshot['catalog']}
             socket.send_json({'type': 'diagnostics_request'})
             assert socket.receive_json()['type'] == 'diagnostics_data'
-    assert server.profile_store.path.read_bytes() == original
-    assert server.profile_store.revision == revision
+    assert server.profile_store.store.path.read_bytes() == original
+    assert server.profile_store.data['catalogRevision'] == revision

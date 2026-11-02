@@ -42,10 +42,10 @@ def test_refactored_python_locals_use_camel_case():
 
 def test_snapshot_and_countdown_skip_idle_rendering():
     backend = read("companion/server.py")
-    frontend = read("static/js/studio.js")
+    frontend = read("static/js/studio-data.js")
     assert "async def send_state() -> None:\n    # Do not serialize" in backend
     assert "if not connected:\n        return" in backend
-    assert "if(!document.hidden&&last?.bomb_timer?.status==='active')paintBomb();" in frontend
+    assert "if (anchor) timer = setInterval" in frontend
 
 
 def test_historical_docs_are_grouped_without_dropping_content():
@@ -76,8 +76,8 @@ def test_widget_catalog_module_and_script_load_order():
                 self.sources.append(source)
 
     parser = Scripts()
-    parser.feed(read('static/legacy.html'))
-    required = ['/static/js/i18n.js', '/static/js/widgets.js', '/static/js/profile-sync.js', '/static/js/reconnect.js', '/static/js/display-format.js', '/static/js/widget-renderer.js', '/static/js/dashboard-client.js', '/static/js/studio.js']
+    parser.feed(read('static/index.html'))
+    required = ['/static/js/i18n.js', '/static/js/widgets.js', '/static/js/reconnect.js', '/static/js/display-format.js', '/static/js/widget-renderer.js', '/static/js/dashboard-client.js', '/static/js/application.js']
     assert [source for source in parser.sources if source in required] == required
 
 
@@ -126,14 +126,14 @@ def test_standalone_suites_are_isolated_and_grouped():
         assert suite in workflow
     assert "python -m" in workflow
     assert "tests/standalone tests/browser tests/docker tests/windows" in config
-    assert (ROOT / "tests" / "browser" / "legacy" / "test_e1_browser.py").exists()
+    assert not (ROOT / "static" / "legacy.html").exists()
 
 
 def test_connection_states_do_not_depend_on_localized_messages():
-    studio = read("static/js/studio.js")
+    studio = read("static/js/application.js")
     experience = read("static/js/experience.js")
-    assert "detail:{message:msg,kind,code}" in studio
-    assert "setStatus('Connexion…','','connecting')" in studio
+    assert "detail: {code}" in studio
+    assert "status('connecting'" in studio
     assert "['connecting','error','lost'].includes(event.detail?.code)" in experience
     assert "socketState = event.detail.code" in experience
     assert "if(/Connexion…/.test(msg))" not in experience

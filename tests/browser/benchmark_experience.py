@@ -6,7 +6,7 @@ from pathlib import Path
 import time
 
 from playwright.sync_api import sync_playwright
-from test_live_browser import start_server
+from test_live_browser import start_server, stop_server
 
 
 def run(repeats, output):
@@ -47,7 +47,7 @@ def run(repeats, output):
             'samples':samples},indent=2),encoding='utf-8')
         print('PASS: secondary-screen samples recorded',output)
     finally:
-        process.terminate();process.wait(timeout=10);runtime.cleanup()
+        stop_server(runtime, process)
 
 
 if __name__ == '__main__':

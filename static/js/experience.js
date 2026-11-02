@@ -245,14 +245,5 @@
   document.addEventListener('DOMContentLoaded', () => {
     if (!byId('login') || !byId('dashboard-settings')) return;
     createLogin(); createHelp(); createSettings(); mounted = true; render(); checkHealth();
-    const tabs = [byId('tab-default'), byId('tab-custom')];
-    tabs.forEach((tab, index) => tab.addEventListener('keydown', event => {
-      let next = null;
-      if (['ArrowRight','ArrowDown'].includes(event.key)) next = tabs[(index + 1) % tabs.length];
-      if (['ArrowLeft','ArrowUp'].includes(event.key)) next = tabs[(index + tabs.length - 1) % tabs.length];
-      if (event.key === 'Home') next = tabs[0];
-      if (event.key === 'End') next = tabs.at(-1);
-      if (next) { event.preventDefault(); next.click(); next.focus(); }
-    }));
   });
 })();

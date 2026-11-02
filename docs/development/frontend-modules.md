@@ -1,25 +1,29 @@
-# Frontend boundaries — P1
+# Frontend module boundaries
 
-P9 secondary screens and feedback are described in [user-experience.md](user-experience.md). Authentication and profile writers remain with their existing owners; the new UI modules do not activate target storage.
-
-P1 prepares the existing frontend for later work without changing the current UI, profiles or protocol. There is no new framework, build step, runtime dependency or backend refactor.
+The production document composes one target Dashboard and Customization Studio through application.js.
+There is no historical editor or autosave module in the distributed frontend. See [target runtime](target-runtime.md).
 
 | Module | Responsibility |
 | --- | --- |
-| static/js/widgets.js | Existing catalog: identifiers, metadata and shipped markup |
-| static/js/display-format.js | Pure projection of received state into display strings and percentages |
-| static/js/widget-renderer.js | Card shells, values, lists, bars and the estimated bomb display |
-| static/js/dashboard-client.js | Health/version check, WebSocket authentication gating, messages and socket lifecycle |
-| static/js/profile-sync.js | Existing autosave, revisions, in-memory pending edits and conflict choices |
-| static/js/reconnect.js | Existing retry timing and cancellation generation |
-| static/js/studio.js | Application state, editor controls, profiles, demo, UI events and service wiring |
-| static/js/i18n.js / experience.js | Existing localization, onboarding and diagnostic UI |
+| widgets.js / widget-presentation.js | Catalog, immutable type identifiers, Standard/Compact/Minimal structures |
+| display-format.js / widget-renderer.js | Received state projections and incremental card values |
+| dashboard-client.js / reconnect.js | Shared PIN-authenticated transport and retry generation |
+| published-profiles.js / profile-selection.js | Published catalog and selection local to each tab |
+| profile-publication.js / draft-publications.js | Explicit operations, stable intentions and acknowledgements |
+| draft-store.js / draft-session.js / edit-history.js | Local configuration-only persistence, CAS and bounded undo/redo |
+| studio-model.js / studio-canvas.js / studio-workspace.js / studio-lifecycle.js | Editing model, keyed DOM, inspector and draft lifecycle |
+| dashboard-layout.js / dashboard-grid.js / dashboard-shell.js | Responsive projection, grid application and navigation |
+| application.js | One production composition, published/draft/game separation and import/export wiring |
+| i18n.js / experience-copy.js / experience.js / notifications.js | Localization, help, diagnostics and feedback |
 
-index.html loads the dependencies before studio.js using the existing deferred-script model. Rendering receives the normalized state and timer anchor explicitly; it does not save profiles. The transport receives callbacks and does not own DOM elements, translated text, retries or profile persistence. PIN values are read from the caller's memory only when authenticating; no new browser storage is introduced.
+Deferred dependencies load before application.js. Rendering never publishes profiles. The transport owns no widget DOM
+or translated text. PIN remains in the caller's session memory; configuration persistence excludes credentials and GSI.
+Dashboard values use only published configuration; Studio edits local drafts and Save and apply uses the sole server writer.
+Synthetic module hosts remain tests, not product alternatives. Source fixtures retain historical evidence without serving its editor.
 
-## Preserved behavior
+The historical P1-P9 delivery boundaries below are superseded by this production map; consult them only for provenance.
 
-The 29 widget IDs/templates, CSS, profile schema, shared active profile, autosave, import/export version, existing editor operations, FR/EN, demo, diagnostics, authentication, HTTP/WS messages and default-disabled estimated bomb timer remain unchanged. Unsupported/missing data is displayed as before; this refactor does not correct labels, estimates or pre-existing UI behavior.
+## Earlier delivery notes
 
 ## Approved future specification — not implemented by P1
 

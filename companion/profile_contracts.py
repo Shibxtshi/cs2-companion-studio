@@ -361,7 +361,7 @@ def default_configuration():
 
 
 def new_server_document():
-    """Return an inactive target example, never write or activate it."""
+    """Return fresh validated defaults with an empty Dashboard; never write files."""
     return validate_contract({'format': 'ccs-dashboard-store', 'version': 1,
         'storeId': uuid.uuid4().hex, 'catalogRevision': 1,
         'profiles': [{'id': 'p-default', 'name': 'My dashboard', 'revision': 1,

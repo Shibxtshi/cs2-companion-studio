@@ -1,11 +1,8 @@
 /* Unified target composition reuses the approved shell and Studio panels. */
 #studio-app[hidden] {display:none!important}
 html[data-section="studio"] #board,html[data-section="studio"] #empty-board,
-html[data-section="studio"] .workspace-head,html[data-section="studio"] .foot-actions,
+html[data-section="studio"] .foot-actions,
 html[data-section="studio"] #notice,html[data-section="studio"] .infofoot {display:none!important}
-html[data-production="target"] #custom-tools,html[data-production="target"] #edit-hint,
-html[data-production="target"] #catalog,html[data-production="target"] .editor-transition,
-html[data-production="target"] .workspace-head {display:none!important}
 html[data-production="target"][data-section="studio"] .app {max-width:none;padding:16px}
 #studio-app .studio-header {position:static;padding:12px 0}
 #studio-app .studio-workspace {min-height:600px}

@@ -6,7 +6,8 @@ from unittest.mock import patch
 
 import pytest
 
-from companion.profile_store import ProfileStore, read_document
+from companion.profile_store import read_document
+from tests.historical_profiles import HistoricalProfileFixture
 
 ROOT = Path(__file__).resolve().parents[2]
 spec = importlib.util.spec_from_file_location('recover_profiles', ROOT / 'scripts/recover_profiles.py')
@@ -15,7 +16,7 @@ spec.loader.exec_module(recovery)
 
 
 def test_backup_and_explicit_recovery_preserve_invalid_file(tmp_path):
-    store = ProfileStore(tmp_path / 'profiles.json')
+    store = HistoricalProfileFixture(tmp_path / 'profiles.json')
     original = store.snapshot()
     document = {key: copy.deepcopy(original[key]) for key in ('profiles', 'activeProfile')}
     document['profiles'][0]['name'] = 'Changed'
@@ -23,16 +24,16 @@ def test_backup_and_explicit_recovery_preserve_invalid_file(tmp_path):
     assert read_document(tmp_path / 'profiles.json.bak')[0]['profiles'][0]['name'] == 'My dashboard'
     store.path.write_bytes(b'broken json')
     with pytest.raises(RuntimeError, match='recover_profiles'):
-        ProfileStore(store.path)
+        HistoricalProfileFixture(store.path)
     recovery.restore(tmp_path)
-    assert ProfileStore(store.path).data['profiles'][0]['name'] == 'My dashboard'
+    assert HistoricalProfileFixture(store.path).data['profiles'][0]['name'] == 'My dashboard'
     preserved = list(tmp_path.glob('profiles.json.corrupt-*'))
     assert len(preserved) == 1
     assert preserved[0].read_bytes() == b'broken json'
 
 
 def test_invalid_backup_does_not_touch_current(tmp_path):
-    store = ProfileStore(tmp_path / 'profiles.json')
+    store = HistoricalProfileFixture(tmp_path / 'profiles.json')
     before = store.path.read_bytes()
     (tmp_path / 'profiles.json.bak').write_bytes(b'invalid')
     with pytest.raises(ValueError):
@@ -42,7 +43,7 @@ def test_invalid_backup_does_not_touch_current(tmp_path):
 
 
 def test_failed_replace_keeps_current_revision_and_file(tmp_path):
-    store = ProfileStore(tmp_path / 'profiles.json')
+    store = HistoricalProfileFixture(tmp_path / 'profiles.json')
     before = store.path.read_bytes()
     revision = store.revision
     document = {key: copy.deepcopy(store.data[key]) for key in ('profiles', 'activeProfile')}
@@ -71,16 +72,16 @@ def test_failed_replace_keeps_current_revision_and_file(tmp_path):
 def test_corrupt_storage_has_controlled_recovery_error(tmp_path, raw):
     path = tmp_path / 'profiles.json'
     import json
-    store = ProfileStore(path)
+    store = HistoricalProfileFixture(path)
     raw = json.dumps(store.snapshot())[:-1] + ', "extra":' + raw + '}'
     path.write_text(raw, encoding='utf-8')
     with pytest.raises(RuntimeError, match='recover_profiles'):
-        ProfileStore(path)
+        HistoricalProfileFixture(path)
     assert path.read_text(encoding='utf-8') == raw
 
 
 def test_deep_backup_is_rejected_without_touching_current(tmp_path):
-    store = ProfileStore(tmp_path / 'profiles.json')
+    store = HistoricalProfileFixture(tmp_path / 'profiles.json')
     before = store.path.read_bytes()
     (tmp_path / 'profiles.json.bak').write_text('[' * 10000 + '0' + ']' * 10000)
     with pytest.raises(ValueError):

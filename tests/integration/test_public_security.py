@@ -17,7 +17,10 @@ os.environ['DIAGNOSTICS_DIR'] = str(Path(_tmp.name) / 'logs')
 os.environ['BOMB_TIMER_ENABLED'] = 'false'
 
 from companion import server as app  # noqa: E402
-from companion.profile_store import ProfileStore, MAX_STORE_BYTES  # noqa: E402
+from companion.profile_runtime import create_runtime_store
+from companion.profile_publication import PublishedProfileStore
+from companion.profile_contracts import ContractError, MAX_STORE_BYTES
+from tests.unit.test_profile_publication import operation  # noqa: E402
 from companion.security import same_origin  # noqa: E402
 
 
@@ -82,20 +85,18 @@ def test_auth_and_streaming_body_cap():
 
 
 def test_profiles_validation_persistence_and_safe_diagnostics(tmp_path):
-    store = ProfileStore(tmp_path / 'data' / 'profiles.json')
-    snapshot = store.snapshot()
-    assert snapshot['profiles']
-    original = json.loads(json.dumps(snapshot))
-    document = {'profiles': original['profiles'], 'activeProfile': original['activeProfile']}
-    document['profiles'][0]['name'] = '<img src=x onerror=alert(1)>'
-    assert store.put(document, store.revision)
-    assert '<img' in ProfileStore(store.path).snapshot()['profiles'][0]['name']
+    store = create_runtime_store(tmp_path / 'data').store
+    command = operation(store.data)
+    command['profile']['name'] = '<img src=x onerror=alert(1)>'
+    store.publish(command)
+    assert '<img' in PublishedProfileStore(store.path).data['profiles'][0]['name']
     # Names may contain markup-looking text, but they are DATA, not executed HTML.
-    bad = json.loads(json.dumps(document))
-    bad['profiles'][0]['widgets'][0]['kind'] = '<script>alert(1)</script>'
+    bad = operation(store.data)
+    bad['profile']['configuration']['layout']['widgets'] = [{'kind':'<script>alert(1)</script>'}]
     with pytest.raises(ValueError):
-        store.put(bad, store.revision)
-    assert not store.put(document, store.revision - 1)
+        store.publish(bad)
+    with pytest.raises(ContractError):
+        store.publish({**command, 'operationId':'f' * 32})
     assert store.path.stat().st_size < MAX_STORE_BYTES
     diagnostics_dir = Path(os.environ['DIAGNOSTICS_DIR'])
     app.diagnostics.write_summary(len(store.data['profiles']))

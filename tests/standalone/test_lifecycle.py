@@ -137,7 +137,7 @@ def run():
         with client.websocket_connect('/ws',headers={'origin': 'http://testserver'}) as ws:
             ws.send_json({'type': 'auth', 'pin': '654321'})
             assert ws.receive_json()['type'] == 'auth_ok'
-            assert ws.receive_json()['type'] == 'profiles_state'
+            assert ws.receive_json()['type'] == 'profiles_catalog'
             ws.receive_json()
             first = pkt(rnd=4)
             first['auth'] = {'token': os.environ['GSI_TOKEN']}

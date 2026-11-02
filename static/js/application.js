@@ -8,6 +8,7 @@
    byId('studio-app').classList.add('studio-page');
    byId('studio-dialog').classList.add('studio-page');
   let pin = '';
+  let loginErrorKey = null;
   let demo = false;
   let section = 'dashboard';
   let studio = null;
@@ -29,6 +30,10 @@
     updateValues(state, options) { if (section === 'dashboard') renderer.updateValues(state, options); },
     paintBomb(state, timerAnchor) { if (section === 'dashboard') renderer.paintBomb(state, timerAnchor); },
   }});
+  function showLoginError(key = null) {
+    loginErrorKey = key;
+    byId('loginerror').textContent = key ? CCSExperienceCopy.text(key) : '';
+  }
   function notice(message, kind = 'error') { CCSNotifications.show({message, kind}); }
   function issue(error) {
     const code = typeof error === 'string' ? error : error?.code || 'error';
@@ -159,7 +164,7 @@
      preview = CCSStudioPreview({url: '/preview'});
     studio?.lifecycle.releaseContext(); studio?.workspace.reset(); studioInitialized = false;
     profiles.clear(); displayed = null; studioHint = null; preferenceContext = null; pin = ''; demo = false;
-    byId('board').replaceChildren(); menu.replaceChildren(); byId('pin').value = '';
+    byId('board').replaceChildren(); menu.replaceChildren(); byId('pin').value = ''; showLoginError();
     byId('view').classList.add('hidden'); byId('login').classList.remove('hidden');
     byId('studio-app').hidden = true; section = 'dashboard';
     byId('download-support').classList.add('hidden');
@@ -186,24 +191,24 @@
   }
   const client = CS2DashboardClient({version: '1.0.0', getPin: () => pin, isDemo: () => demo,
     onConnecting: () => status('connecting', say('Connecting…', 'Connexion…')),
-    onHealthError: (error, versionMismatch) => { byId('loginerror').textContent = CCSExperienceCopy.text(versionMismatch ? 'version' : 'unavailable'); },
+    onHealthError: (error, versionMismatch) => { showLoginError(versionMismatch ? 'version' : 'unavailable'); },
     onNetworkError() { clearLive(); document.dispatchEvent(new Event('cs2:network-error')); },
     onClose({authorized, failed}) {
       profiles.disconnected(); transfer.cancel(); studio?.lifecycle.networkLost(); clearLive();
       document.dispatchEvent(new Event('cs2:connection-lost'));
-      if (!authorized && !failed) byId('loginerror').textContent = CCSExperienceCopy.text('refused');
+      if (!authorized && !failed) showLoginError('refused');
       if (!failed && !disposed && !demo) reconnect.failed();
     },
     onMessage(message) {
       try {
         if (message.type === 'auth_ok') {
-          reconnect.connected(); byId('pin').value = '';
+          reconnect.connected(); byId('pin').value = ''; showLoginError();
           byId('pin').setAttribute('aria-invalid', 'false');
           byId('download-support').classList.remove('hidden');
           document.dispatchEvent(new Event('cs2:authenticated'));
         }
         if (message.type === 'auth_error') {
-          reconnect.stop(); byId('loginerror').textContent = CCSExperienceCopy.text('invalidPin');
+          reconnect.stop(); showLoginError('invalidPin');
           byId('pin').setAttribute('aria-invalid', 'true');
         }
         profiles.receive(message);
@@ -216,8 +221,8 @@
   });
   const reconnect = CS2Reconnect({connect: isCurrent => client.connect(isCurrent)});
   function login() {
-    demo = false; pin = byId('pin').value.trim(); byId('loginerror').textContent = '';
-    if (pin.length < 6) { byId('loginerror').textContent = CCSExperienceCopy.text('shortPin'); return; }
+    demo = false; pin = byId('pin').value.trim(); showLoginError();
+    if (pin.length < 6) { showLoginError('shortPin'); return; }
     reconnect.stop(); client.close(); reconnect.start();
   }
   async function startDemo() {
@@ -271,7 +276,7 @@
   byId('logout').addEventListener('click', () => logout().catch(issue));
   byId('download-support').addEventListener('click', () => { try { send({type: 'diagnostics_request'}); } catch { CCSNotifications.show({key: 'diagnosticsFailed', kind: 'error'}); } });
   menu.addEventListener('change', () => { studioHint = menu.value; profiles.select(menu.value); });
-  document.addEventListener('cs2:locale-changed', () => { preferences(); values(game); });
+  document.addEventListener('cs2:locale-changed', () => { showLoginError(loginErrorKey); preferences(); values(game); });
   document.addEventListener('DOMContentLoaded', () => {
     const appearance = byId('settings-appearance');
     const summary = document.createElement('p'); summary.id = 'production-profile-preferences'; summary.setAttribute('translate', 'no');

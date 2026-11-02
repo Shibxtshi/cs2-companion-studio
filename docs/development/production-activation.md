@@ -1,18 +1,22 @@
 # Production profile activation (P9.5)
 
+> V1-01: normal startup is target-only. A genuinely empty data directory initializes an empty target Dashboard automatically. Historical files are refused and preserved; these offline tools remain available only for deliberate recovery/activation. Restoring historical bytes requires the archived compatible application, not this runtime. See [target startup rules](./target-runtime.md).
+
+
 This guide describes the implemented offline mechanism. Merging code does not authorize an operator to reset personal profiles. Obtain separate maintainer approval before running any mutating command on an existing installation.
 
 ## Runtime composition
 
-`companion.server:app` remains the only ASGI entry point. `companion/profile_runtime.py` validates `data/profiles.json` before selecting one composition:
+`companion.server:app` remains the only ASGI entry point. `companion/profile_runtime.py` validates `data/profiles.json` before loading the only supported composition:
 
 | Validated document | Page | Active writer |
 | --- | --- | --- |
-| Historical profiles | `static/legacy.html` | `ProfileStore`, historical autosave |
+| Historical profiles | Startup refused; preserve and inspect offline | None |
+| Genuinely empty private directory | Initialize target defaults and serve `static/index.html` | `PublishedProfileProtocol` / `PublishedProfileStore` |
 | `ccs-dashboard-store` v1 | `static/index.html` | `PublishedProfileProtocol` / `PublishedProfileStore` |
 | Invalid, unknown or interrupted restoration | Startup refused | None |
 
-This temporary compatibility boundary preserves an existing installation until an explicit offline transition. There is no public mode switch, automatic conversion, second active store or dual write. A fresh empty directory retains historical cold-start behavior; explicit target initialization is available separately. Do not delete an existing directory to initialize it.
+Existing target data is preserved. Historical data cannot start this runtime without a separately confirmed offline transition. There is no public mode switch, automatic conversion, second active store or dual write. New installations initialize the target format automatically; explicit offline initialization remains available for operators. Do not delete an existing directory to initialize it.
 
 The target page loads `application.js`, the P6 renderer, P8 workspace/lifecycle and P4/P5 controllers. It does not load `studio.js` or `profile-sync.js`. Dashboard and Studio share the authenticated WebSocket and catalogue. Profile selection remains local to each tab. Configuration editing writes IndexedDB; only a confirmed publication writes the server. `/preview` is a same-origin read-only popup and does not authenticate or publish independently. Synthetic test routes are not registered in the application.
 
@@ -20,7 +24,7 @@ The runtime holds the existing recovery lock for its lifespan. Offline tooling r
 
 ## Inventory of readers and writers
 
-- Historical: `profile_store.py`, `profile-sync.js`, `studio.js`, historical import/export; available only with the historical runtime.
+- Historical: validation/read primitives in `profile_store.py` remain for offline recovery. The historical writer, browser editor and autosave controller are removed from distribution; historical rollback needs the archived compatible application.
 - Target: `profile_contracts.py`, `profile_publication.py`, `profile_protocol.py`, `published-profiles.js`, `profile-publication.js`, P4 draft modules and `studio-lifecycle.js`.
 - Target Dashboard: `application.js`, `dashboard-grid.js`, widget renderer/presentation; reads published configurations, never drafts.
 - Target Studio: workspace, canvas and lifecycle; edits isolated local configurations, publishes through P5.

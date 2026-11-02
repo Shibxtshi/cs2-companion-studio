@@ -34,7 +34,7 @@ def run():
         with client.websocket_connect('/ws', headers={'origin':'http://testserver'}) as ws:
             ws.send_json({'type': 'auth', 'pin': '123456'})
             assert ws.receive_json()['type'] == 'auth_ok'
-            assert ws.receive_json()['type'] == 'profiles_state'
+            assert ws.receive_json()['type'] == 'profiles_catalog'
             ws.receive_json()  # initial state
             packet = {
                 'auth': {'token':'local-test-token-1234'},

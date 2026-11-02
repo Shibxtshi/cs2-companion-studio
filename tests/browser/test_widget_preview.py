@@ -18,7 +18,8 @@ from urllib.request import urlopen
 
 from playwright.sync_api import expect, sync_playwright
 from test_live_browser import ROOT
-from test_widget_characterization import LIVE, EMPTY, KINDS, settle
+from test_profile_publication import stop
+from widget_fixtures import LIVE, EMPTY, KINDS, settle
 
 VARIANTS = ['standard','compact','minimal']
 
@@ -227,8 +228,7 @@ def run(browserName,output):
                          'combinations':87,'widths':[1920,1366,1280,1024,768,390,320],'states':['normal','partial','missing','zero','stale','waiting','long','demo'],'themes':4,'errors':faults},indent=2),encoding='utf8')
                 browser.close()
         finally:
-            process.terminate()
-            process.wait(timeout=10)
+            stop(process)
 
 
 if __name__=='__main__':

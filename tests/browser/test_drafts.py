@@ -9,7 +9,7 @@ import statistics
 import tempfile
 
 from playwright.sync_api import sync_playwright
-from test_live_browser import PIN, TOKEN, ROOT, login, start_server
+from test_live_browser import PIN, TOKEN, ROOT, login, start_server, stop_server
 
 MODULES = ('draft-schema', 'draft-contract', 'edit-history', 'draft-publications', 'draft-store', 'draft-session')
 CORPUS = json.loads((ROOT / 'tests/browser/fixtures/draft-contracts.json').read_text('utf-8'))
@@ -128,13 +128,7 @@ def run(browserName, output):
         print('OK: native IndexedDB reload/browser reopen, transactions/quota, tabs/CAS, logout, isolation, no secrets or server saves')
         print(json.dumps(summary, sort_keys=True))
     finally:
-        process.terminate()
-        try:
-            process.wait(timeout=5)
-        except Exception:
-            process.kill()
-            process.wait(timeout=5)
-        runtime.cleanup()
+        stop_server(runtime, process)
 
 
 if __name__ == '__main__':

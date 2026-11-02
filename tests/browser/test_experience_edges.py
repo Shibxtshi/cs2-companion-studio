@@ -2,7 +2,7 @@
 import argparse
 import os
 from playwright.sync_api import sync_playwright, expect
-from test_live_browser import start_server
+from test_live_browser import start_server, stop_server
 
 
 def run(browserName):
@@ -54,7 +54,7 @@ def run(browserName):
             browser.close()
         print('PASS: unavailable server, demo exit, ended session, 200% CSS zoom, native keyboard focus and real login throttling')
     finally:
-        process.terminate();process.wait(timeout=10);runtime.cleanup()
+        stop_server(runtime, process)
 
 
 if __name__=='__main__':

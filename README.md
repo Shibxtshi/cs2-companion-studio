@@ -30,6 +30,8 @@
 3. Double-click **`INSTALLER_WINDOWS.cmd`**. Choose English or French, confirm the detected CS2 directory, choose whether to enable the estimated bomb countdown (No by default), and follow the prompts.
 4. The installer creates a **unique private PIN and GSI token**, writes the game GSI configuration (with backup when replacing an existing one), and starts Docker.
 5. Restart CS2 if a GSI config was newly installed; start a training match. Open **`http://localhost:8080`** and enter your PIN.
+   The first Dashboard is empty. Open **Customization Studio**, add widgets, then choose **Save and apply** to publish them. Local draft saving does not change the published Dashboard.
+
 6. To use your phone, opt into trusted-LAN mode during setup. Connect the phone to the same private Wi-Fi and open `http://YOUR-PC-LAN-IP:8080`.
 
 The installer does not silently install Docker, alter the Windows firewall, or guarantee anti-cheat compatibility. Administrative elevation should only be requested if needed for filesystem access. Detailed instructions: [Windows installation](docs/guides/windows-installation.md).
@@ -103,15 +105,15 @@ The backend lives in `companion/`, web assets in `static/css/` and `static/js/`,
 
 ## Identity and theme preview
 
-CCS uses the Repère identity and local Inter / Barlow Condensed fonts. Tactical Blue is the default, alongside Competitive Red, Performance Green and Creator Purple. In the target runtime, choose a profile theme in Customization Studio and publish with Save and apply. In the historical runtime, the header only previews a theme for this tab and resets on reload. Personal widget colors remain overrides. See [design foundations](docs/development/design-system.md) and [font licenses/provenance](static/fonts/README.md).
+CCS uses the Repère identity and local Inter / Barlow Condensed fonts. Tactical Blue is the default, alongside Competitive Red, Performance Green and Creator Purple. In the target runtime, choose a profile theme in Customization Studio and publish with Save and apply. Historical profile documents are refused without replacement; they require an explicit offline decision. Personal widget colors remain overrides. See [design foundations](docs/development/design-system.md) and [font licenses/provenance](static/fonts/README.md).
 
 ### Dashboard navigation
 
-Use Dashboard for viewing and Customization Studio for editing. A validated target profile file activates the integrated X/Y Dashboard, per-tab profile selection and Studio. A historical file keeps the historical editor and autosave until an explicit offline activation; merging this code never resets profiles. Full, compact and hidden navigation and fullscreen remain available. Streamer Studio is marked coming soon. See [production activation and rollback](docs/development/production-activation.md).
+Use Dashboard for viewing and Customization Studio for editing. New installations initialize an empty X/Y Dashboard and open the integrated Studio directly. Existing target profiles remain valid. Historical, invalid or unknown documents stop startup without reset or conversion. Full, compact and hidden navigation and fullscreen remain available. Streamer Studio is marked coming soon. See [production activation and rollback](docs/development/production-activation.md).
 
 ### Widget presentations
 
-The target Dashboard and Studio support all 29 widget types with independent Standard, Compact and Minimal variants. Surface styles remain separate, custom colors remain overrides, and estimates/source warnings stay visible. Historical files retain their compatible Standard presentation until activation. See [widget presentations](docs/development/widget-presentations.md).
+The target Dashboard and Studio support all 29 widget types with independent Standard, Compact and Minimal variants. Surface styles remain separate, custom colors remain overrides, and estimates/source warnings stay visible. Historical files require separately confirmed offline activation or recovery; there is no historical editor in this distribution. See [widget presentations](docs/development/widget-presentations.md).
 
 ### Target Customization Studio foundations
 
@@ -119,7 +121,7 @@ The production target Studio composes IndexedDB drafts, undo/redo, per-widget va
 
 ### Secondary screens and help
 
-P9 unifies sign-in, optional quick start, Settings and diagnostics in EN/FR. P9.5 integrates the target composition while preserving valid historical storage before consent. See [UI responsibilities](docs/development/user-experience.md), the original [activation proposal](docs/development/target-activation-plan.md) and its [implemented operator procedure](docs/development/production-activation.md).
+P9 unifies sign-in, optional quick start, Settings and diagnostics in EN/FR. V1-01 provides only the target composition and refuses historical storage without replacing it. See [UI responsibilities](docs/development/user-experience.md), the original [activation proposal](docs/development/target-activation-plan.md) and its [implemented operator procedure](docs/development/production-activation.md).
 
 ## Final acceptance and operator rehearsal
 

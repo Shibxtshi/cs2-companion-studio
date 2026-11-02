@@ -8,7 +8,6 @@ import socket
 import tempfile
 
 from playwright.sync_api import expect, sync_playwright
-from test_live_browser import start_server, PIN as LEGACY_PIN
 from test_profile_publication import launch, stop, PIN as TARGET_PIN
 from test_customization_studio import document
 from companion.profile_contracts import encode_document
@@ -18,74 +17,6 @@ from companion.profile_publication import access_id
 def authenticate(page, pin):
     page.locator('#pin').fill(pin)
     page.locator('#connect').click()
-
-
-def legacy(browser):
-    runtime, process, url = start_server()
-    try:
-        context = browser.new_context(viewport={'width':1366,'height':900}, has_touch=True)
-        page = context.new_page()
-        errors=[]
-        page.on('pageerror',lambda error:errors.append(str(error)))
-        proxy={'hold':False,'queued':[],'server':None,'connections':0}
-        def route_socket(socket):
-            server=socket.connect_to_server();proxy['server']=server;proxy['connections']+=1
-            server.on_message(socket.send)
-            def forward(raw):
-                if proxy['hold'] and json.loads(raw).get('type')=='profiles_save':proxy['queued'].append(raw)
-                else:server.send(raw)
-            socket.on_message(forward)
-        page.route_web_socket('**/ws',route_socket)
-        page.goto(url)
-        page.locator('.topbar [data-dashboard-home]').dispatch_event('click')
-        expect(page.locator('#view')).to_be_hidden()
-        assert proxy['connections']==0
-        authenticate(page,LEGACY_PIN)
-        expect(page.locator('#tab-custom')).to_be_visible()
-        page.locator('[data-section="studio"]').click()
-        page.once('dialog',lambda dialog:dialog.accept('Logo second profile'))
-        page.locator('#new-profile').click()
-        page.wait_for_function('() => document.getElementById("profile-save-panel").hidden')
-        selected=page.locator('#profile-select').input_value()
-        page.evaluate("window.logoNavigationSentinel='alive'")
-        proxy['hold']=True
-        page.once('dialog',lambda dialog:dialog.accept('Pending logo save'))
-        page.locator('#rename-profile').click()
-        expect(page.locator('#profile-save-panel')).to_be_visible()
-        page.locator('.topbar [data-dashboard-home]').click()
-        expect(page.locator('html')).to_have_attribute('data-section','dashboard')
-        assert page.evaluate('window.logoNavigationSentinel')=='alive'
-        assert page.locator('#profile-select').input_value()==selected
-        assert proxy['connections']==1
-        assert page.evaluate('!document.getElementById("profile-save-panel").hidden')
-        proxy['hold']=False
-        for raw in proxy['queued']:proxy['server'].send(raw)
-        page.wait_for_function('() => document.getElementById("profile-save-panel").hidden')
-        saved=json.loads((Path(runtime.name)/'data/profiles.json').read_text('utf-8'))
-        assert any(profile['id']==selected and profile['name']=='Pending logo save' for profile in saved['profiles'])
-        for locale in ['FR','EN']:
-            page.select_option('#locale-select',locale)
-            page.locator('[data-section="settings"]').click()
-            page.locator('.nav-brand').focus();page.keyboard.press('Enter')
-            expect(page.locator('html')).to_have_attribute('data-section','dashboard')
-            page.locator('[data-section="settings"]').click()
-            page.locator('#settings-help').click()
-            page.locator('#help-dialog [data-dashboard-home]').click()
-            expect(page.locator('#help-dialog')).to_be_hidden()
-            expect(page.locator('html')).to_have_attribute('data-section','dashboard')
-            assert page.locator('#profile-select').input_value()==selected
-        page.set_viewport_size({'width':390,'height':844})
-        page.locator('[data-section="settings"]').tap()
-        page.locator('.topbar [data-dashboard-home]').tap()
-        expect(page.locator('html')).to_have_attribute('data-section','dashboard')
-        assert page.evaluate('window.logoNavigationSentinel')=='alive'
-        page.locator('#logout').click()
-        page.locator('.topbar [data-dashboard-home]').dispatch_event('click')
-        expect(page.locator('#view')).to_be_hidden()
-        assert not errors,errors
-        context.close()
-    finally:
-        process.terminate();process.wait(timeout=10);runtime.cleanup()
 
 
 def target(browser):
@@ -171,9 +102,9 @@ def run(browserName):
         options={'headless':True}
         if browserName=='chromium' and os.environ.get('CS2_CHROMIUM_BIN'):options['executable_path']=os.environ['CS2_CHROMIUM_BIN']
         browser=getattr(playwright,browserName).launch(**options)
-        try:legacy(browser);target(browser)
+        try:target(browser)
         finally:browser.close()
-    print('PASS: logo mouse/keyboard/touch, auth gates, no section reload, profile preservation, pending legacy save and all four target exit choices')
+    print('PASS: logo mouse/keyboard/touch, auth gates, no section reload, profile preservation, all four Studio exit choices')
 
 
 if __name__=='__main__':

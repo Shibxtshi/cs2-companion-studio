@@ -1,16 +1,14 @@
-"""Select one validated storage generation; never convert existing files at startup."""
+"""One target runtime; create defaults only in a genuinely empty private directory."""
 from contextlib import contextmanager
+import os
 from pathlib import Path
+import uuid
 
-from companion.profile_contracts import decode_document, validate_contract
+from companion.profile_contracts import decode_document, encode_document, new_server_document, validate_contract
 from companion.profile_publication import PublishedProfileStore
 from companion.profile_protocol import PublishedProfileProtocol
-from companion.profile_recovery import RecoveryError, _is_link, _read, recovery_lock
-from companion.profile_store import ProfileStore, decode_stored_document
-
-
-def is_target_store(store):
-    return isinstance(store, PublishedProfileProtocol)
+from companion.profile_recovery import RecoveryError, _is_link, _read, _sync_directory, recovery_lock
+from companion.profile_store import atomic_write
 
 
 def _create_runtime_store(directory):
@@ -22,40 +20,51 @@ def _create_runtime_store(directory):
         if any(directory.glob('.profiles-restore-*.pending')):
             raise RecoveryError('restore_interrupted_keep_service_stopped')
         path = directory / 'profiles.json'
-        if path.exists():
-            loaded = decode_document(_read(path))
-            if isinstance(loaded, dict) and loaded.get('format') == 'ccs-dashboard-store':
-                validate_contract(loaded, 'server')
-                return PublishedProfileProtocol(PublishedProfileStore(path))
-            # The historical validator rejects explicit unsupported version markers.
-            return ProfileStore(path)
-        if any(item.name not in ['.gitkeep', '.profiles-recovery.lock'] for item in directory.iterdir()):
-            raise RecoveryError('missing_profiles_recovery_required')
-        # Retain the existing cold-start behavior; target initialization is an explicit offline action.
-        return ProfileStore(path)
+        if not path.exists():
+            allowed = {'.gitkeep', '.profiles-recovery.lock'}
+            marker = directory / '.gitkeep'
+            if marker.exists() or _is_link(marker):
+                if _is_link(marker) or not marker.is_file() or marker.stat().st_size:
+                    raise RecoveryError('invalid_empty_directory_marker')
+            if any(item.name not in allowed for item in directory.iterdir()):
+                raise RecoveryError('missing_profiles_recovery_required')
+            # Publish fully written bytes without replacing a concurrently created file.
+            staging = directory / ('.profiles-initialize-' + uuid.uuid4().hex)
+            atomic_write(staging, encode_document(new_server_document()))
+            try:
+                if any(item.name not in allowed | {staging.name} for item in directory.iterdir()):
+                    raise RecoveryError('source_changed_before_initialization')
+                try:
+                    os.link(staging, path)
+                except FileExistsError:
+                    raise RecoveryError('source_changed_before_initialization') from None
+                except OSError:
+                    raise RecoveryError('atomic_initialization_unavailable') from None
+                _sync_directory(directory)
+            finally:
+                staging.unlink()
+        loaded = decode_document(_read(path))
+        if isinstance(loaded, dict) and 'format' not in loaded:
+            raise RecoveryError('historical_profiles_require_offline_activation')
+        validate_contract(loaded, 'server')
+        return PublishedProfileProtocol(PublishedProfileStore(path))
 
 
 def create_runtime_store(directory):
     try:
         return _create_runtime_store(directory)
-    except (ValueError, OSError, UnicodeError):
-        raise RuntimeError('Invalid, incompatible or busy profile storage. Preserve all files; stop the service and use scripts/recover_profiles.py --inspect. No reset was performed.') from None
+    except (ValueError, OSError, UnicodeError) as error:
+        reason = error.code if isinstance(error, RecoveryError) else 'invalid_or_unreadable_document'
+        raise RuntimeError(f'Profile storage refused ({reason}). ' + 'Invalid, historical, incompatible or busy profile storage. Preserve all files; stop the service and use scripts/recover_profiles.py --inspect. Historical profiles require explicitly confirmed offline activation or their compatible archived application. No existing document was reset or converted.') from None
 
 
 @contextmanager
 def runtime_lease(store):
     """An active ASGI service excludes offline recovery in the same filesystem environment."""
-    target = is_target_store(store)
-    path = store.store.path if target else store.path
+    path = store.store.path
     with recovery_lock(path.parent):
         if any(path.parent.glob('.profiles-restore-*.pending')):
             raise RecoveryError('restore_interrupted_keep_service_stopped')
-        raw = _read(path)
-        if target:
-            if validate_contract(decode_document(raw), 'server') != store.data:
-                raise RecoveryError('source_changed_before_start')
-        else:
-            data, revision = decode_stored_document(raw)
-            if data != store.data or revision != store.revision:
-                raise RecoveryError('source_changed_before_start')
+        if validate_contract(decode_document(_read(path)), 'server') != store.data:
+            raise RecoveryError('source_changed_before_start')
         yield

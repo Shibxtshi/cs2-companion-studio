@@ -5,7 +5,8 @@ import json
 import pytest
 
 from companion import profile_contracts as contracts
-from companion.profile_store import default_document, ProfileStore
+from companion.profile_store import default_document
+from tests.historical_profiles import HistoricalProfileFixture
 
 
 def widget(**changes):
@@ -184,7 +185,7 @@ def test_format_classification_and_current_store_refusal(tmp_path):
     path.write_bytes(contracts.encode_document(target()))
     before = path.read_bytes()
     with pytest.raises(RuntimeError, match='recover_profiles'):
-        ProfileStore(path)
+        HistoricalProfileFixture(path)
     assert path.read_bytes() == before
     assert not path.with_suffix('.json.bak').exists()
 
