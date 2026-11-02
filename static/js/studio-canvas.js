@@ -31,7 +31,8 @@
       content = structuredClone(next); selectedId = selection; disabled = locked;
       const widgets = next.configuration.layout.widgets;
       const current = new Map([...board.querySelectorAll(':scope > .widget')].map(card => [card.dataset.id, card]));
-      for (const [id, card] of current) if (!widgets.some(widget => widget.id === id)) card.remove();
+      const widgetIds = new Set(widgets.map(widget => widget.id));
+      for (const [id, card] of current) if (!widgetIds.has(id)) card.remove();
       let replacementFocus = null;
       for (const widget of widgets) {
         let card = current.get(widget.id);

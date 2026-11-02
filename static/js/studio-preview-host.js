@@ -9,7 +9,7 @@
   const renderer = CS2WidgetRenderer({board, format: CS2DisplayFormat,
     presentation: CCSWidgetPresentation, onGeometryChange: () => grid.requestRefresh()});
   const data = CCSStudioData({renderer, board});
-  for (const id of ['login', 'profile-save-panel']) byId(id)?.classList.add('hidden');
+  byId('login').classList.add('hidden');
   byId('view').classList.remove('hidden');
   for (const node of document.querySelectorAll('#logout,#open-help')) node.hidden = true;
   const label = document.createElement('p');

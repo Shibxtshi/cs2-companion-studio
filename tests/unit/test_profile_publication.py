@@ -2,7 +2,6 @@
 import copy
 from concurrent.futures import ThreadPoolExecutor
 import json
-from pathlib import Path
 import uuid
 
 import pytest

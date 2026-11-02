@@ -1,4 +1,4 @@
-/* P7 representative cards opt in explicitly; legacy cards keep their current presentation. */
+/* Shared presentation variants for all 29 widget types. */
 .presented-widget {
   container-type:inline-size;
   min-height:var(--widget-min-height)!important;

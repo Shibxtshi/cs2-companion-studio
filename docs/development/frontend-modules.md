@@ -56,7 +56,7 @@ Target publication uses profile-publication.js, published-profiles.js and the In
 
 ## P6 navigation and display
 
-The shared dashboard shell is active, while studio.js retains legacy profiles/autosave. dashboard-layout.js and dashboard-grid.js project X/Y data without writes. dashboard-target.js is an inactive P5-catalog consumer loaded only by the isolated target browser harness. See [dashboard.md](dashboard.md). The authenticated-to-demo board is now rebuilt deliberately to prevent private cards remaining visible; all other golden widget cases are preserved.
+The shared dashboard shell and application.js compose the production Dashboard and Studio. dashboard-layout.js and dashboard-grid.js project X/Y data without writes. tests/browser/dashboard-target.js and tests/browser/studio-target.js are isolated test hosts, served only by publication_server.py and excluded from Docker. See [dashboard.md](dashboard.md). The authenticated-to-demo board is now rebuilt deliberately to prevent private cards remaining visible; all other golden widget cases are preserved.
 
 ## P7 widget presentations
 

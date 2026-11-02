@@ -1,4 +1,4 @@
-/* Authenticated Studio transport. Target composition remains isolated from production. */
+/* Synthetic Studio transport harness; never shipped as a production asset. */
 (() => {
   'use strict';
   const byId = id => document.getElementById(id);

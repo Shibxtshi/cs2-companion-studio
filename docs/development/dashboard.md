@@ -15,7 +15,7 @@ The maintainer approved the first visual direction on 2026-10-29. Repère, Tacti
 | dashboard-shell.js | Shared navigation, current editor entry, Settings controls and native/fallback fullscreen |
 | dashboard-layout.js | Pure bounded geometry projection, without storage or DOM access |
 | dashboard-grid.js | ResizeObserver-based target layout adapter; live values do not recreate cards |
-| dashboard-target.js | Inactive read-only target host using the authenticated P5 catalog and P1 transport |
+| tests/browser/dashboard-target.js | Test-only read-only host using the authenticated catalog and transport; excluded from Docker |
 | dashboard.css | Shell and target geometry rules using the P2 tokens |
 | studio.js | Active legacy profiles, editor, autosave and existing import/export |
 

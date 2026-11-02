@@ -116,7 +116,9 @@ from pathlib import Path
 import os
 with TestClient(app) as client:
     assert '/static/js/application.js' in client.get('/').text
-    for path in ['/static/legacy.html', '/static/js/studio.js', '/static/js/profile-sync.js']:
+    for path in ['/static/legacy.html', '/static/js/studio.js', '/static/js/profile-sync.js',
+                 '/static/js/dashboard-target.js', '/static/js/studio-target.js',
+                 '/__dashboard_target__.js', '/__studio_target__.js']:
         assert client.get(path).status_code == 404
     original = (Path(os.environ['PROFILE_DATA_DIR']) / 'profiles.json').read_bytes()
     with client.websocket_connect('/ws', headers={'origin':'http://testserver'}) as socket:
