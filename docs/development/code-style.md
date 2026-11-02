@@ -22,13 +22,13 @@ These conventions guide scoped changes. Update callers, tests and documentation 
 - Avoid timers or DOM refreshes without work to perform; preserve timer accuracy and the default-disabled setting.
 - Update all launchers, callers, tests and documentation when an interface changes. The software is not deployed: do not retain aliases or add migrations solely for backward compatibility.
 - Place historical development documentation in `docs/history/`; use the current guide, development, security and release sections indexed by `docs/README.md`.
-- Keep pytest tests in `tests/unit/`, `tests/integration/` and `tests/contracts/`; browser journeys in `tests/browser/`; JavaScript tests in `tests/js/`; isolated CLI regressions in `tests/standalone/`; historical browser checks in `tests/browser/legacy/`, disposable Docker runners in `tests/docker/`, and PowerShell verification in `tests/windows/`. See `tests/README.md` for the different invocation methods.
-- Keep widget template definitions in `static/js/widgets.js` and ensure it loads before `static/js/studio.js`.
+- Keep pytest tests in `tests/unit/`, `tests/integration/` and `tests/contracts/`; browser journeys in `tests/browser/`; JavaScript tests in `tests/js/`; isolated CLI regressions in `tests/standalone/`; disposable Docker runners in `tests/docker/`, and PowerShell verification in `tests/windows/`. See `tests/README.md` for the different invocation methods.
+- Keep widget template definitions in `static/js/widgets.js` and ensure it loads before `static/js/application.js` and the shared renderer.
 
 ## Quality gates
 
 Run `python scripts/run_checks.py`, GitHub Actions on Windows and Linux, browser tests (Chromium, Firefox, WebKit), Docker smoke tests and dependency auditing before merging substantive changes.
 
-Historical autosave synchronization belongs in static/js/profile-sync.js. Target publication uses published-profiles.js, profile-publication.js and the Studio lifecycle; it must never send historical autosave messages. Controllers emit stable state codes; UI text is resolved by translation. Exercise the corresponding Node and production-browser suites before changing save/conflict behavior.
+Production publication uses published-profiles.js, profile-publication.js and the Studio lifecycle; historical autosave messages are rejected. Controllers emit stable state codes; UI text is resolved by translation. Exercise the corresponding Node and production-browser suites before changing save/conflict behavior.
 
 Keep backend implementations inside companion/. Use companion.server:app as the single ASGI entry point. Keep Windows launchers, Compose, requirements and the documented scripts at their stable entry paths. See [architecture](architecture.md) for ownership and compatibility rules.

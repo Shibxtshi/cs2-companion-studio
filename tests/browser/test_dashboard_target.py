@@ -13,7 +13,7 @@ from urllib.request import Request, urlopen
 
 from playwright.sync_api import expect, sync_playwright
 from test_profile_publication import ROOT, PIN, launch, stop, prepare, edit, wait_state
-from test_widget_characterization import KINDS, settle
+from widget_fixtures import KINDS, settle
 sys.path.insert(0, str(ROOT))
 from companion.profile_contracts import encode_document, validate_contract
 

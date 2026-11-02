@@ -6,15 +6,15 @@ import pytest
 from companion import profile_activation as activation
 from companion.profile_contracts import decode_document, validate_contract
 from companion.profile_recovery import RecoveryError, verify_backup, BACKUP_DIRECTORY
-from companion.profile_runtime import create_runtime_store, is_target_store, runtime_lease
-from companion.profile_store import ProfileStore
+from companion.profile_runtime import create_runtime_store, runtime_lease
+from tests.historical_profiles import HistoricalProfileFixture
 
 REVISION = '2bde18cffbfa0956cf8400c4c867675df29ac4b2'
 
 
 @pytest.fixture
 def historical(tmp_path):
-    store = ProfileStore(tmp_path / 'profiles.json')
+    store = HistoricalProfileFixture(tmp_path / 'profiles.json')
     original = store.path.read_bytes()
     (tmp_path / 'profiles.json.bak').write_bytes(original)
     (tmp_path / 'other-private.json').write_bytes(b'untouched synthetic private setting')
@@ -36,13 +36,14 @@ def test_activation_is_explicit_verified_and_reversible(historical):
     assert target['profiles'][0]['configuration']['layout']['columns'] == 24
     assert activation.activation_state(directory, first) == 'activated'
     assert (directory / 'profiles.json.bak').read_bytes() == original
-    assert is_target_store(create_runtime_store(directory))
+    assert create_runtime_store(directory).data['format'] == 'ccs-dashboard-store'
     restored, safetyId, revision = activation.restore_activation(directory, first, lambda _: True)
     assert restored and safetyId and revision == REVISION
     assert (directory / 'profiles.json').read_bytes() == original
     assert (directory / 'profiles.json.bak').read_bytes() == original
     assert (directory / 'other-private.json').read_bytes() == b'untouched synthetic private setting'
-    assert not is_target_store(create_runtime_store(directory))
+    with pytest.raises(RuntimeError, match='Historical profiles'):
+        create_runtime_store(directory)
 
 
 def test_source_changed_while_confirming_is_preserved(historical):
@@ -100,6 +101,8 @@ def test_interrupted_restore_blocks_startup_then_can_resume(historical, monkeypa
 
 def test_running_runtime_excludes_offline_tools(historical):
     directory, _ = historical
+    backupId = activation.prepare_activation(directory, REVISION)
+    activation.activate_profiles(directory, backupId, lambda _: True)
     store = create_runtime_store(directory)
     with runtime_lease(store):
         with pytest.raises(RecoveryError):

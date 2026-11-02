@@ -1,5 +1,8 @@
 # Local draft foundations — P4
 
+> Current V1-01 runtime: target-only, with native defaults on a genuinely empty installation. Historical editors/autosave are removed; earlier delivery boundaries below are historical context. See [current startup and recovery rules](target-runtime.md).
+
+
 > Runtime status after P9.5: the delivery status and "current" behavior below describe the original phase baseline. A validated target store now activates these contracts in the production application. Historical storage remains usable before explicit transition. See [Production activation](production-activation.md) for the active composition and operator procedure.
 
 

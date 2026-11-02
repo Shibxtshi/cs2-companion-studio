@@ -48,6 +48,10 @@ def test_cli_requires_exact_confirmation_and_retains_verified_original(historica
 
 def test_cli_cannot_bypass_running_runtime_lock_with_acknowledgement(historical):
     directory,original=historical
+    backupId=prepare(directory)
+    activated=cli(directory,'--activate',backupId,inputText='ACTIVATE '+backupId+'\n')
+    assert activated.returncode==0,activated.stderr
+    original=(directory/'profiles.json').read_bytes()
     store=create_runtime_store(directory)
     with runtime_lease(store):
         result=cli(directory,'--prepare-activation','--application-revision',REVISION)

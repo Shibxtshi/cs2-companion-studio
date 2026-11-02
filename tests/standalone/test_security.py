@@ -28,7 +28,7 @@ def run():
         assert r.headers['x-frame-options'] == 'DENY'
         assert "script-src 'self'" in r.headers['content-security-policy']
         assert 'gsi_online' not in r.text
-        assert client.get('/static/js/studio.js').status_code == 200
+        assert client.get('/static/js/studio.js').status_code == 404
         assert client.get('/static/css/styles.css').status_code == 200
         try:
             with client.websocket_connect('/ws', headers={'origin': 'http://evil.test'}):
@@ -38,7 +38,7 @@ def run():
         with client.websocket_connect('/ws', headers={'origin': 'http://testserver'}) as ws:
             ws.send_json({'type': 'auth', 'pin': '1234567890'})
             assert ws.receive_json()['type'] == 'auth_ok'
-            assert ws.receive_json()['type'] == 'profiles_state'
+            assert ws.receive_json()['type'] == 'profiles_catalog'
             assert ws.receive_json()['type'] == 'state'
             payload = {'auth': {'token': 'v1p-test-token-example-not-real'}, 'round': {'phase': 'live'},
                        'player': {'state': {'health': 87}}}

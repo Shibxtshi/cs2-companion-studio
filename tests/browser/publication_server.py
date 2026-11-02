@@ -51,10 +51,10 @@ def run(runtime, port):
         return Response((ROOT / 'tests/browser/publication-harness.js').read_text('utf-8'), media_type='application/javascript')
     @server.app.get('/__dashboard_test__')
     def dashboard():
-        html = (ROOT / 'static/legacy.html').read_text('utf-8')
+        html = (ROOT / 'static/preview.html').read_text('utf-8')
         dependencies = ''.join('<script defer src="/static/js/' + module + '.js"></script>'
-                               for module in ('draft-schema', 'draft-contract', 'profile-selection', 'published-profiles'))
-        html = html.replace('<script defer src="/static/js/studio.js?v=1.0.0"></script>', '')
+                               for module in ('profile-selection', 'published-profiles'))
+        html = html.replace('<script defer src="/static/js/studio-preview-host.js"></script>', '')
         html = html.replace('</head>', '<link rel="stylesheet" href="/static/css/studio-density.css"></head>')
         html = html.replace('</body>', dependencies + '<script defer src="/static/js/dashboard-target.js"></script></body>')
         return HTMLResponse(html)
@@ -63,11 +63,7 @@ def run(runtime, port):
         return HTMLResponse((ROOT / 'tests/browser/studio-preview.html').read_text('utf-8'))
     @server.app.get('/__studio_preview__')
     def studio_preview():
-        html = (ROOT / 'static/legacy.html').read_text('utf-8')
-        html = html.replace('<script defer src="/static/js/studio.js?v=1.0.0"></script>', '')
-        dependencies = ''.join('<script defer src="/static/js/' + module + '.js"></script>'
-                               for module in ('draft-schema', 'draft-contract', 'studio-data', 'studio-preview-host'))
-        return HTMLResponse(html.replace('</body>', dependencies + '</body>'))
+        return HTMLResponse((ROOT / 'static/preview.html').read_text('utf-8'))
     uvicorn.run(server.app, host='127.0.0.1', port=port, log_level='error', access_log=False,
                 ws_max_size=262144, ws_max_queue=8)
 

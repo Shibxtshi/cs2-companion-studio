@@ -3,6 +3,8 @@
 from pathlib import Path
 import subprocess
 import sys
+import os
+import tempfile
 
 ROOT = Path(__file__).resolve().parents[1]
 TEST_MODULES = [
@@ -18,7 +20,10 @@ TEST_MODULES = [
 def run():
     for testModule in TEST_MODULES:
         print('Running:', testModule, flush=True)
-        subprocess.run([sys.executable, '-m', testModule], cwd=ROOT, check=True)
+        with tempfile.TemporaryDirectory(prefix='ccs-standalone-') as directory:
+            env = dict(os.environ, PROFILE_DATA_DIR=str(Path(directory) / 'data'),
+                       DIAGNOSTICS_DIR=str(Path(directory) / 'logs'))
+            subprocess.run([sys.executable, '-m', testModule], cwd=ROOT, env=env, check=True)
     print('Running: public security and persistence regressions', flush=True)
     subprocess.run([sys.executable, '-m', 'pytest', '-q', 'tests/unit', 'tests/integration', 'tests/contracts'], cwd=ROOT, check=True)
     subprocess.run([sys.executable, 'scripts/check_secrets.py'], cwd=ROOT, check=True)

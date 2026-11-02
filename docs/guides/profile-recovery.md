@@ -1,5 +1,8 @@
 # Offline profile recovery
 
+> V1-01: normal startup is target-only. A genuinely empty data directory initializes an empty target Dashboard automatically. Historical files are refused and preserved; these offline tools remain available only for deliberate recovery/activation. Restoring historical bytes requires the archived compatible application, not this runtime. See [target startup rules](../development/target-runtime.md).
+
+
 This procedure is for the local maintainer. It works even when invalid profile storage prevents HTTP/WebSocket startup. It never runs automatically. The runtime selects either historical storage or the [target contracts](../development/profile-contracts.md) from the validated document format. The reset commands below concern historical storage only. For target activation, manifest v2, interrupted activation/restore markers and target recovery, follow the [production operator procedure](../development/production-activation.md); do not apply a historical reset to target data.
 
 ## Before any write

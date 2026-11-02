@@ -1,4 +1,4 @@
-/* Inactive read-only target host. Production index.html continues to load studio.js. */
+/* Isolated read-only target host for synthetic browser tests. */
 (() => {
   'use strict';
   const byId = id => document.getElementById(id);
@@ -126,9 +126,6 @@
   });
   // Demo uses the existing public application, never this authenticated target catalog.
   for (const id of ['demo','demoagain']) byId(id).addEventListener('click', () => { location.href = '/'; });
-  document.querySelector('.workspace-head').classList.add('hidden');
-  byId('tab-custom').classList.add('hidden');
-  byId('profile-save-panel')?.remove();
   byId('empty-board').textContent = CS2I18N.locale() === 'FR' ? 'Ce profil ne contient aucun widget.' : 'This profile has no widgets.';
   const timer = setInterval(() => { if (!document.hidden && last?.bomb_timer?.status === 'active') renderer.paintBomb(last, anchor); }, 100);
   function dispose() { disposed = true; clearInterval(timer); reconnect.stop(); client.close(); grid.dispose(); renderer.dispose(); }

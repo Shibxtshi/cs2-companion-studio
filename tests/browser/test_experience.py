@@ -8,7 +8,7 @@ from pathlib import Path
 from urllib.request import Request, urlopen
 
 from playwright.sync_api import expect, sync_playwright
-from test_live_browser import PIN, TOKEN, start_server
+from test_live_browser import PIN, TOKEN, start_server, stop_server
 
 RESOLUTIONS = [(1920,1080),(1366,768),(1280,900),(1024,768),(768,1024),(390,844),(320,740)]
 
@@ -69,20 +69,25 @@ def run(browserName, output):
             page.select_option('#locale-select', 'EN')
             expect(page.locator('#loginerror')).to_contain_text('Incorrect PIN')
             capture('05-connexion-en')
+            page.select_option('#locale-select', 'FR')
+            expect(page.locator('#loginerror')).to_contain_text('PIN incorrect')
+            page.select_option('#locale-select', 'EN')
+            expect(page.locator('#loginerror')).to_contain_text('Incorrect PIN')
             page.locator('#pin').fill(PIN)
             page.locator('#connect').click()
             expect(page.locator('#view')).to_be_visible()
             expect(page.locator('#pin')).to_have_value('')
             page.select_option('#locale-select','FR')
             page.locator('[data-section="studio"]').click()
-            page.locator('#import-file').set_input_files({'name':'invalid.json','mimeType':'application/json','buffer':b'{synthetic-private-marker-not-for-display'})
-            expect(page.locator('#toast')).to_contain_text('Import impossible')
-            assert 'synthetic-private-marker' not in page.locator('#toast').inner_text()
+            expect(page.locator('#studio-app')).to_be_visible()
+            page.locator('#production-import-file').set_input_files({'name':'invalid.json','mimeType':'application/json','buffer':b'{synthetic-private-marker-not-for-display'})
+            expect(page.locator('#studio-alert')).to_be_visible()
+            assert 'synthetic-private-marker' not in page.locator('#studio-alert').inner_text()
             page.evaluate("CCSNotifications.show({message:'unrelated success',kind:'success'})")
-            expect(page.locator('#toast')).to_contain_text('Import impossible')
+            expect(page.locator('#studio-alert')).to_be_visible()
             page.locator('#toast button').click()
             page.evaluate('() => {window.savedCreateObjectURL=URL.createObjectURL;URL.createObjectURL=()=>{throw Error("synthetic")};}')
-            page.locator('#export').click()
+            page.locator('#production-export').click()
             expect(page.locator('#toast')).to_contain_text('Téléchargement impossible')
             page.evaluate('URL.createObjectURL=window.savedCreateObjectURL;delete window.savedCreateObjectURL')
             page.locator('#toast button').click()
@@ -90,14 +95,19 @@ def run(browserName, output):
             page.locator('[data-section="settings"]').click()
             capture('06-settings-tactical-blue-en')
             page.select_option('#locale-select', 'FR')
-            page.select_option('#theme-preview', 'competitive-red')
+            page.locator('[data-section="studio"]').click()
+            page.locator('#studio-profile-tab').click()
+            page.select_option('#studio-theme', 'competitive-red')
+            page.locator('#studio-publish').click()
+            expect(page.locator('#studio-save-state')).to_contain_text('Version publiée à jour')
+            page.locator('#studio-leave').click()
+            page.locator('[data-section="settings"]').click()
             capture('07-parametres-competitive-red-fr')
             page.locator('#settings-help').click()
             page.locator('[data-help-topic="studio"]').click()
-            expect(page.locator('#help-topic-content')).to_contain_text('uniquement dans le Studio cible isolé')
+            expect(page.locator('#help-topic-content')).to_contain_text('brouillon local')
             capture('08-centre-aide')
             page.keyboard.press('Escape')
-            page.select_option('#theme-preview','tactical-blue')
             page.locator('#diagnostics-toggle').click()
             expect(page.locator('#diag-ws')).to_have_text('Authentifiée et connectée')
             expect(page.locator('#diag-match')).to_have_text('Indisponibles ou périmées')
@@ -114,8 +124,7 @@ def run(browserName, output):
             report = Path(download.value.path()).read_text('utf-8')
             assert PIN not in report and TOKEN not in report
             # Browser offline emulation does not reliably close an existing WebSocket.
-            process.terminate()
-            process.wait(timeout=10)
+            stop_server(runtime, process)
             expect(page.locator('#diag-ws')).to_have_text('Déconnectée')
             expect(page.locator('#diag-match')).to_have_text('Indisponibles ou périmées')
             page.locator('#diagnostics-refresh').click()
@@ -130,7 +139,7 @@ def run(browserName, output):
             for locale in ['FR','EN']:
                 page.select_option('#locale-select',locale)
                 for theme in ['tactical-blue','competitive-red','performance-green','creator-purple']:
-                    page.select_option('#theme-preview',theme)
+                    page.evaluate('theme => {document.documentElement.dataset.theme = theme}', theme)
                     if locale == 'FR' and theme in ['performance-green','creator-purple']:
                         page.set_viewport_size({'width':1366,'height':768})
                         capture('parametres-' + theme)
@@ -150,9 +159,7 @@ def run(browserName, output):
             browser.close()
             print('PASS: P9 login/errors, native help/focus, real PIN/GSI, offline/demo diagnostics, FR/EN, four themes and seven resolutions')
     finally:
-        process.terminate()
-        process.wait(timeout=10)
-        runtime.cleanup()
+        stop_server(runtime, process)
 
 
 if __name__ == '__main__':

@@ -1,5 +1,4 @@
-"""Validated, authenticated, persisted profile state. Never served as static files."""
-import json
+"""Shared catalog/atomic IO and historical offline validation; no runtime writer."""
 import os
 import re
 import tempfile
@@ -102,7 +101,7 @@ def atomic_write(path: Path, content: bytes):
 
 
 def default_document():
-    """Return fresh current-format defaults without touching disk."""
+    """Return historical defaults for offline tools and fixtures, never runtime startup."""
     return {'activeProfile': 'p-default', 'profiles': [{'id': 'p-default',
         'name': 'My dashboard', 'accent': DEFAULT_COLOR, 'density': 'normal',
         'widgets': [{'id': 'w-default-' + str(index), 'kind': kind, 'span': span,
@@ -112,7 +111,7 @@ def default_document():
 
 
 def decode_stored_document(raw):
-    """Validate bounded current-format bytes, retaining no untrusted fields."""
+    """Validate bounded historical bytes for offline recovery, retaining no untrusted fields."""
     if len(raw) > MAX_STORE_BYTES:
         raise ValueError('Profile storage exceeds size limit')
     loaded = decode_message(raw)
@@ -128,40 +127,3 @@ def read_document(path: Path):
     with Path(path).open('rb') as file:
         raw = file.read(MAX_STORE_BYTES + 1)
     return decode_stored_document(raw)
-
-
-class ProfileStore:
-    def __init__(self, path: Path):
-        self.path = Path(path)
-        self.data = {'profiles': [], 'activeProfile': ''}
-        self.revision = 0
-        if self.path.exists():
-            try:
-                self.data, self.revision = read_document(self.path)
-            except (ValueError, UnicodeError):
-                raise RuntimeError('Invalid or incompatible profile storage. Preserve the file; stop the service and use scripts/recover_profiles.py --inspect or --restore with a validated backup.') from None
-        else:
-            self.put(default_document(), 0)
-
-    def snapshot(self, source=None):
-        # Deep copy to avoid shared mutable reference leaks.
-        return {'type': 'profiles_state', 'revision': self.revision,
-                'source': source, **json.loads(json.dumps(self.data, ensure_ascii=False))}
-
-    def put(self, document, revision):
-        if type(revision) is not int or revision != self.revision:
-            return False
-        cleaned = validate_document(document)
-        nextRev = self.revision + 1
-        packed = json.dumps({**cleaned, 'revision': nextRev}, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
-        if len(packed) > MAX_STORE_BYTES:
-            raise ValueError('too_large')
-        # Keep the last accepted document before replacing the current file.
-        # Failed writes leave the in-memory revision and existing main file intact.
-        previous = {**self.data, 'revision': self.revision} if self.data['profiles'] else {**cleaned, 'revision': nextRev}
-        backup = json.dumps(previous, ensure_ascii=False, separators=(',', ':')).encode('utf-8')
-        atomic_write(self.path.with_suffix(self.path.suffix + '.bak'), backup)
-        atomic_write(self.path, packed)
-        self.data = cleaned
-        self.revision = nextRev
-        return True

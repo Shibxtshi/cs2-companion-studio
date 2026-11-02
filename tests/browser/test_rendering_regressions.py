@@ -175,29 +175,6 @@ def imported_kind(browser, output):
         page.close()
 
 
-def legacy_surfaces(browser, output):
-    document = fixture()
-    widgets = document['profiles'][0]['configuration']['layout']['widgets']
-    historical = {'activeProfile':'legacy', 'profiles':[{'id':'legacy', 'name':'Synthetic legacy',
-        'widgets':[{key:widget[key] for key in ['id', 'kind', 'title', 'color', 'background', 'opacity', 'style']}
-                   | {'span':4} for widget in widgets]}]}
-    with production(historical) as (url, data, _initial, _restart):
-        from test_production_studio import PIN
-        page = browser.new_page()
-        page.goto(url)
-        page.locator('#pin').fill(PIN)
-        page.locator('#connect').click()
-        page.locator('#tab-custom').click()
-        original = (data / 'profiles.json').read_bytes()
-        assert_surfaces(page, '#board>.widget')
-        page.locator('[data-section="settings"]').click()
-        for theme in THEMES:
-            page.select_option('#theme-preview', theme)
-            assert_surfaces(page, '#board>.widget')
-        assert (data / 'profiles.json').read_bytes() == original
-        page.close()
-
-
 def canvas_focus(browser, output):
     with production(fixture()) as (url, _data, initial, _restart):
         page = browser.new_page()
@@ -274,7 +251,7 @@ def demonstration(browser, output):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--browser', choices=['chromium', 'firefox', 'webkit'], default='chromium')
-    parser.add_argument('--case', choices=['all', 'surfaces', 'import', 'demo', 'legacy', 'focus'], default='all')
+    parser.add_argument('--case', choices=['all', 'surfaces', 'import', 'demo', 'focus'], default='all')
     parser.add_argument('--output', type=Path)
     args = parser.parse_args()
     if args.output:
@@ -286,7 +263,7 @@ if __name__ == '__main__':
         browser = getattr(playwright, args.browser).launch(headless=True, **options)
         try:
             for name, check in [('surfaces', surfaces), ('import', imported_kind), ('demo', demonstration),
-                                ('legacy', legacy_surfaces), ('focus', canvas_focus)]:
+                                ('focus', canvas_focus)]:
                 if args.case in ['all', name]:
                     check(browser, args.output)
                     print('PASS: R1 rendering regression ' + name, flush=True)

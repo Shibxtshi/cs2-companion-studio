@@ -42,7 +42,11 @@ def launch(runtime, port):
 
 
 def stop(process):
-    process.terminate()
+    if os.name == 'nt' and process.poll() is None:
+        subprocess.run(['taskkill', '/PID', str(process.pid), '/T', '/F'],
+                       stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
+    elif process.poll() is None:
+        process.terminate()
     try:
         process.wait(timeout=5)
     except subprocess.TimeoutExpired:

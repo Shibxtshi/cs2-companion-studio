@@ -46,214 +46,79 @@ def start_server():
     raise TimeoutError('HTTP server did not become ready')
 
 
+
+def stop_server(runtime, process):
+    if process.poll() is None:
+        if os.name == 'nt':
+            subprocess.run(['taskkill', '/PID', str(process.pid), '/T', '/F'],
+                           stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=False)
+        else:
+            process.terminate()
+        process.wait(timeout=10)
+    runtime.cleanup()
+
+
 def login(page, url):
     page.goto(url, wait_until='domcontentloaded')
     page.locator('#pin').fill(PIN)
     page.locator('#connect').click()
-    page.locator('#tab-custom').wait_for(state='visible', timeout=10000)
-    assert page.locator('#profile-select option').count() == 1
+    expect(page.locator('#dashboard-profile-menu')).to_be_visible()
 
 
-def run(browser_name):
-    runtime, proc, url = start_server()
+def run(browserName):
+    runtime, process, url = start_server()
     try:
         with sync_playwright() as playwright:
-            options = {'headless': True}
-            if browser_name == 'chromium' and os.environ.get('CS2_CHROMIUM_BIN'):
-                options['executable_path'] = os.environ['CS2_CHROMIUM_BIN']
-                options['args'] = ['--no-sandbox']
-            browser = getattr(playwright, browser_name).launch(**options)
-            desktop = browser.new_context(viewport={'width': 1280, 'height': 900})
-            phone = browser.new_context(viewport={'width': 390, 'height': 844}, is_mobile=(browser_name != 'firefox'))
-            guest = browser.new_context()
+            options = {'headless':True}
+            executable = os.environ.get('CCS_CHROMIUM_EXECUTABLE') or os.environ.get('CS2_CHROMIUM_BIN')
+            if browserName == 'chromium' and executable:
+                options['executable_path'] = executable
+            browser = getattr(playwright, browserName).launch(**options)
+            context = browser.new_context(viewport={'width':1366,'height':900})
+            page = context.new_page()
             errors = []
-            # Guest: public demo must never contain private server profile name.
-            public = guest.new_page()
-            public.on('pageerror', lambda error: errors.append(str(error)))
-            public.goto(url)
-            public.locator('#demo').click()
-            assert not public.locator('#tab-custom').is_visible()
-            assert public.locator('#download-support').is_hidden()
-
-            # A late failed health response cannot overwrite a deliberate demo switch.
-            late = guest.new_page()
-            pending_health = []
-            late.route('**/health', lambda route: pending_health.append(route))
-            late.goto(url)
-            late.locator('#pin').fill(PIN)
-            with late.expect_request('**/health'):
-                late.locator('#connect').click()
-            late.locator('#demo').click()
-            for pending in pending_health:
-                pending.fulfill(status=503, body='synthetic late failure')
-            expect(late.locator('#status')).to_have_text('Demo mode')
-            late.close()
-
-            a = desktop.new_page()
-            a.on('pageerror', lambda error: errors.append(str(error)))
-            faults = {'next': None}
-            healthFailures = {'remaining': 0}
-
-            def route_health(route):
-                if healthFailures['remaining']:
-                    healthFailures['remaining'] -= 1
-                    route.fulfill(status=503, body='synthetic outage')
-                else:
-                    route.continue_()
-            a.route('**/health', route_health)
-
-            def route_socket(socket):
-                server = socket.connect_to_server()
-                server.on_message(socket.send)
-
-                def forward(message):
-                    command = json.loads(message)
-                    if command.get('type') == 'profiles_save' and faults['next']:
-                        fault = faults['next']
-                        faults['next'] = None
-                        if fault == 'disconnect':
-                            socket.close(code=1012, reason='Synthetic reconnect test')
-                            server.close()
-                            return
-                        if fault == 'conflict':
-                            command['revision'] = -1
-                        else:
-                            command['document'] = {}
-                        server.send(json.dumps(command))
-                    else:
-                        server.send(message)
-                socket.on_message(forward)
-
-            a.route_web_socket('**/ws', route_socket)
-            login(a, url)
-            a.locator('#tab-custom').click()
-            initial_dialog = lambda dialog: dialog.accept('Shared v1.0.0 setup')
-            a.on('dialog', initial_dialog)
-            a.locator('[data-section="studio"]').click()
-            a.locator('#rename-profile').click()
-            expect(a.locator('#profile-select')).to_contain_text('Shared v1.0.0 setup', timeout=8000)
-
-            b = phone.new_page()
-            b.on('pageerror', lambda error: errors.append(str(error)))
-            login(b, url)
-            b.locator('#tab-custom').click()
-            expect(b.locator('#profile-select')).to_contain_text('Shared v1.0.0 setup', timeout=8000)
-
-            # Observe the live status in the DOM instead of evaluating JS:
-            # Firefox correctly enforces the app's restrictive CSP.
-            # Real simulated GSI POST must propagate over WS to both authenticated devices.
-            body = json.dumps({'auth': {'token': TOKEN},
-                'map': {'name': 'de_mirage', 'phase': 'live', 'round': 3,
-                        'team_ct': {'score': 2}, 'team_t': {'score': 1}},
-                'round': {'phase': 'live'},
-                'player': {'name': 'Carte', 'team': 'CT',
-                           'state': {'health': 77, 'money': 2600}}}).encode()
-            with urlopen(Request(url+'/gsi', body, {'Content-Type': 'application/json'}, method='POST'), timeout=5) as r:
-                assert r.status == 200
-            expect(a.locator('#session-banner')).to_have_attribute('data-state', 'live', timeout=8000)
-            expect(b.locator('#session-banner')).to_have_attribute('data-state', 'live', timeout=8000)
-
-            # Search must work in either language, and no JS runtime errors.
-            expect(a.locator('#edit')).to_have_attribute('aria-pressed', 'true')
-            a.locator('#add').click()
-            a.locator('#search-widgets').fill('player')
-            a.locator('#catalog-items [data-kind="player"]').click()
-            expect(a.locator('.w-player [data-v="name"]')).to_have_text('Carte')
-            a.locator('#search-widgets').fill('match phase')
-            a.locator('#catalog-items .catalog-item').first.click()
-            expect(a.locator('.w-match_phase [data-v="map_phase"]')).to_have_text('Live')
-            a.locator('#search-widgets').fill('map')
-            assert a.locator('#catalog-items .catalog-item').count() >= 1
-            a.locator('#locale-select').select_option('FR')
-            a.locator('#search-widgets').fill('carte')
-            assert a.locator('#catalog-items .catalog-item').count() >= 1
+            page.on('pageerror', lambda error: errors.append(str(error)))
+            page.goto(url)
+            page.locator('.brand').dispatch_event('click')
+            expect(page.locator('#view')).to_be_hidden()
+            page.locator('#pin').fill('wrong-pin')
+            page.locator('#connect').click()
+            expect(page.locator('#loginerror')).to_contain_text('Incorrect PIN')
+            login(page, url)
+            expect(page.locator('#board>.widget')).to_have_count(0)
+            document = json.loads((Path(runtime.name) / 'data/profiles.json').read_bytes())
+            assert document['format'] == 'ccs-dashboard-store'
+            for path in ['/static/legacy.html','/static/js/studio.js','/static/js/profile-sync.js']:
+                assert page.request.get(url + path).status == 404
+            page.locator('[data-section="studio"]').click()
+            page.locator('.studio-library-item[data-kind="health"] button').click()
+            expect(page.locator('#studio-save-state')).to_contain_text('Draft kept locally')
+            original = (Path(runtime.name) / 'data/profiles.json').read_bytes()
+            page.locator('#studio-publish').click()
+            expect(page.locator('#studio-save-state')).to_contain_text('Published version up to date')
+            page.locator('#studio-leave').click()
+            expect(page.locator('#board>.widget')).to_have_count(1)
+            payload = {'auth':{'token':TOKEN}, 'map':{'name':'de_mirage','phase':'live','round':3},
+                       'player':{'state':{'health':75}}}
+            request = Request(url + '/gsi', data=json.dumps(payload).encode(),
+                              headers={'Content-Type':'application/json'}, method='POST')
+            assert urlopen(request).status == 200
+            expect(page.locator('#board [data-v="health"]')).to_have_text('75')
+            assert (Path(runtime.name) / 'data/profiles.json').read_bytes() != original
+            published = (Path(runtime.name) / 'data/profiles.json').read_bytes()
+            assert json.loads(published)['profiles'][0]['revision'] == 2
+            for width, height in [(1366,900),(390,844),(320,740)]:
+                page.set_viewport_size({'width':width,'height':height})
+                assert page.evaluate('document.documentElement.scrollWidth <= innerWidth + 1')
             assert not errors, errors
-            # Complete an actual widget edit and a JSON export/import round trip.
-            before = a.locator('#board .widget').count()
-            a.locator('#catalog-items .catalog-item').first.click()
-            expect(a.locator('#board .widget')).to_have_count(before + 1)
-            expect(a.locator('#profile-save-panel')).to_be_hidden()
-            a.locator('#board .widget').last.locator('.resize-grip').press('ArrowRight')
-            expect(a.locator('#board .widget').last.locator('.resize-grip')).to_have_attribute('aria-valuetext', '6 / 12')
-            expect(a.locator('#profile-save-panel')).to_be_hidden()
-            with a.expect_download() as download_info:
-                a.locator('#export').click()
-            exported = Path(download_info.value.path()).read_bytes()
-            imported_document = json.loads(exported)
-            imported_document['profile']['widgets'].append({'kind': '__proto__', 'span': 12})
-            exported = json.dumps(imported_document).encode()
-            a.locator('#import-file').set_input_files({'name': 'synthetic-layout.json', 'mimeType': 'application/json', 'buffer': exported})
-            expect(a.locator('#profile-select option')).to_have_count(2)
-            expect(a.locator('#profile-save-panel')).to_be_hidden()
-
-            a.locator('#board .widget').last.locator('.remove').click()
-            expect(a.locator('#board .widget')).to_have_count(before)
-            expect(a.locator('#profile-save-panel')).to_be_hidden()
-
-            # Real server rejects a stale revision/invalid document; local edits survive.
-            a.remove_listener('dialog', initial_dialog)
-            rename = {'value': ''}
-            a.on('dialog', lambda dialog: dialog.accept(rename['value']))
-            for fault in ('conflict', 'invalid', 'disconnect'):
-                faults['next'] = fault
-                if fault == 'disconnect':
-                    healthFailures['remaining'] = 2
-                rename['value'] = 'Retained ' + fault
-                a.locator('#rename-profile').click()
-                expect(a.locator('#profile-save-panel')).to_be_visible()
-                expect(a.locator('#profile-select')).to_contain_text(rename['value'])
-                if fault == 'disconnect':
-                    expect(a.locator('.w-player [data-v="name"]')).not_to_have_text('Carte')
-                expect(a.locator('#profile-save-retry')).to_be_visible(timeout=20000)
-                # For reconnect, wait until the new authenticated snapshot arrives.
-                if fault == 'disconnect':
-                    expect(a.locator('#profile-save-message')).to_contain_text('serveur', timeout=12000)
-                if fault == 'conflict':
-                    a.locator('#locale-select').select_option('EN')
-                    expect(a.locator('#profile-save-message')).to_contain_text('Unsaved changes')
-                    a.locator('#locale-select').select_option('FR')
-                    expect(a.locator('#profile-save-message')).to_contain_text('Modifications non enregistrées')
-                a.locator('#profile-save-retry').click()
-                expect(a.locator('#profile-save-panel')).to_be_hidden(timeout=10000)
-                expect(b.locator('#profile-select')).to_contain_text(rename['value'])
-            # Explicitly loading the server version discards only after user action.
-            faults['next'] = 'conflict'
-            rename['value'] = 'Discard this local edit'
-            a.locator('#rename-profile').click()
-            expect(a.locator('#profile-save-discard')).to_be_visible()
-            a.locator('#profile-save-discard').click()
-            expect(a.locator('#profile-select')).to_contain_text('Retained disconnect')
-            expect(a.locator('#profile-save-panel')).to_be_hidden()
-            # Data which coincides with a translated UI word must remain unchanged.
-            rename['value'] = 'Carte'
-            a.locator('#rename-profile').click()
-            expect(a.locator('#profile-save-panel')).to_be_hidden()
-            a.locator('#board .widget').first.locator('.edit-controls button').nth(3).click()
-            title_input = a.locator('#board .widget').first.locator('.details input[type="text"]')
-            title_input.fill('Carte')
-            title_input.press('Tab')
-            expect(a.locator('#profile-save-panel')).to_be_hidden()
-            for locale in ('EN', 'FR'):
-                a.locator('#locale-select').select_option(locale)
-                expect(a.locator('#profile-select option:checked')).to_have_text('Carte')
-                expect(a.locator('#board .widget').first.locator('.widget-heading')).to_have_text('Carte')
-                expect(a.locator('.w-player [data-v="name"]')).to_have_text('Carte')
-            assert not errors, errors
+            context.close()
             browser.close()
-        # Data is server-side and persists after clients disconnect.
-        store = json.loads((Path(runtime.name) / 'data' / 'profiles.json').read_text('utf-8'))
-        assert store['profiles'][0]['name'] == 'Shared v1.0.0 setup'
-        print(f'OK: {browser_name} real server, demo isolation, auth, shared profiles, mobile, GSI propagation, bilingual search')
+        print('PASS: fresh target initialization, PIN gate, Studio publication, GSI and responsive production')
     finally:
-        proc.terminate()
-        try:
-            proc.wait(timeout=5)
-        except subprocess.TimeoutExpired:
-            proc.kill(); proc.wait(timeout=5)
-        runtime.cleanup()
+        stop_server(runtime, process)
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--browser', choices=['chromium', 'firefox', 'webkit'], default='chromium')
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--browser', choices=['chromium','firefox','webkit'], default='chromium')
     run(parser.parse_args().browser)

@@ -1,5 +1,8 @@
 # Dashboard and navigation — P6
 
+> Current V1-01 runtime: target-only, with native defaults on a genuinely empty installation. Historical editors/autosave are removed; earlier delivery boundaries below are historical context. See [current startup and recovery rules](target-runtime.md).
+
+
 > P9.5 update: these phase boundaries describe their original delivery. The integrated production composition and the explicit, separately authorized transition are documented in [Production activation](production-activation.md). Valid historical installations remain usable until offline confirmation.
 
 

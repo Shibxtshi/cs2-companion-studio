@@ -20,18 +20,18 @@ def run():
         hp = client.get('/health')
         assert hp.status_code == 200 and hp.json()['version'] == '1.0.0'
         html = client.get('/')
-        assert client.get('/static/js/profile-sync.js').status_code == 200
+        assert client.get('/static/js/profile-sync.js').status_code == 404
         assert html.status_code == 200
-        assert 'Mon dashboard' in html.text
-        js = client.get('/static/js/studio.js').text
-        assert 'catalog-items' in js
+        assert 'id="studio-app"' in html.text
+        js = client.get('/static/js/application.js').text
+        assert 'CCSStudioLifecycle' in js
         widgetSource = client.get('/static/js/widgets.js')
         assert widgetSource.status_code == 200
         assert 'data-bomb-clock' in widgetSource.text
         with client.websocket_connect('/ws', headers={'origin':'http://testserver'}) as ws:
             ws.send_json({'type': 'auth', 'pin': '123456'})
             assert ws.receive_json()['type'] == 'auth_ok'
-            assert ws.receive_json()['type'] == 'profiles_state'
+            assert ws.receive_json()['type'] == 'profiles_catalog'
             ws.receive_json()
             msg = {
                 'auth': {'token': 'studio-gsi-token-local-test'},

@@ -48,7 +48,7 @@ jobs:
       - name: Check JavaScript syntax
         if: runner.os == 'Linux'
         run: |
-          node tests/js/test_profile_sync.js
+          node tests/js/test_studio_data.js
           node tests/js/test_reconnect.js
           node tests/js/test_i18n.js
           node tests/js/test_display_format.js
@@ -93,9 +93,7 @@ jobs:
           node --check static/js/widget-renderer.js
           node --check static/js/dashboard-client.js
           node --check static/js/reconnect.js
-          node --check static/js/profile-sync.js
           node --check static/js/widgets.js
-          node --check static/js/studio.js
           node --check static/js/i18n.js
           node --check static/js/experience.js
 
@@ -136,10 +134,6 @@ jobs:
           HOME: /root
         run: python tests/browser/test_live_browser.py --browser ${{ matrix.browser }}
 
-      - name: Characterize all widgets with frozen synthetic fixtures
-        env:
-          HOME: /root
-        run: python tests/browser/test_widget_characterization.py --browser ${{ matrix.browser }}
 
       - name: Verify all themes, local fonts and profile isolation
         env:
@@ -160,7 +154,6 @@ jobs:
         env:
           HOME: /root
         run: |
-          python tests/browser/test_dashboard_navigation.py --browser ${{ matrix.browser }}
           python tests/browser/test_dashboard_target.py --browser ${{ matrix.browser }}
 
       - name: Verify all 87 widget presentations and states
@@ -183,6 +176,7 @@ jobs:
           python tests/browser/test_experience.py --browser ${{ matrix.browser }}
           python tests/browser/test_experience_edges.py --browser ${{ matrix.browser }}
           python tests/browser/test_logo_navigation.py --browser ${{ matrix.browser }}
+          python tests/browser/test_rendering_regressions.py --browser ${{ matrix.browser }} --output /tmp/ccs-rendering-regressions
           python tests/browser/test_production_studio.py --browser ${{ matrix.browser }} --output /tmp/ccs-production-browser-results
 
       - name: Verify production acceptance, browser persistence and failure recovery

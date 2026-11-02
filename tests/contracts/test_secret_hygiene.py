@@ -17,7 +17,7 @@ spec.loader.exec_module(checker)
 def test_local_env_is_not_an_error(tmp_path):
     for name in ('.gitignore', '.dockerignore', 'Dockerfile', 'compose.yaml'):
         shutil.copyfile(ROOT / name, tmp_path / name)
-    for name in ('static/index.html', 'static/js/studio.js', 'static/js/profile-sync.js', 'static/js/widgets.js', 'static/css/styles.css'):
+    for name in ('static/index.html', 'static/js/application.js', 'static/js/profile-publication.js', 'static/js/widgets.js', 'static/css/styles.css'):
         destination = tmp_path / name
         destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copyfile(ROOT / name, destination)

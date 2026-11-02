@@ -11,7 +11,7 @@ import tempfile
 
 from playwright.sync_api import expect, sync_playwright
 from test_profile_publication import ROOT, PIN, launch, stop, prepare, edit, wait_state
-from test_widget_characterization import LIVE, settle
+from widget_fixtures import LIVE, settle
 sys.path.insert(0, str(ROOT))
 from companion.profile_contracts import encode_document, validate_contract
 

@@ -41,18 +41,14 @@ html[data-navigation-revealed="true"] .nav-label {display:block}
 .display-preferences p {flex-basis:100%;margin:0}
 .check-label {display:flex;align-items:center;gap:8px;min-height:44px}
 #shell-theme-control {margin:24px 0}
-.editor-transition {padding:12px 16px;border-left:2px solid var(--warning);color:var(--warning);background:var(--warning-bg)}
-html[data-section="dashboard"] .custom-tools,html[data-section="dashboard"] .editor-transition,html[data-section="dashboard"] #edit,html[data-section="dashboard"] #add,html[data-section="dashboard"] #catalog,html[data-section="dashboard"] #edit-hint {display:none!important}
-html[data-section="settings"] .workspace-head,html[data-section="settings"] #board,html[data-section="settings"] #empty-board,html[data-section="settings"] .custom-tools,html[data-section="settings"] .editor-transition,html[data-section="settings"] #catalog,html[data-section="settings"] #edit-hint {display:none!important}
+html[data-section="settings"] #board,html[data-section="settings"] #empty-board {display:none!important}
 html:not([data-section="settings"]) #dashboard-settings {display:none}
-html[data-section="studio"] .workspace-head {margin-bottom:16px}
 html[data-shell-active="true"] .board {gap:var(--space-2)}
 html[data-shell-active="true"] .widget {padding:16px 18px}
 html[data-shell-active="true"] .widget::before {width:2px;opacity:.55}
-html[data-shell-active="true"] .board[data-view="default"] .widget.w-weapon {width:auto}
 html[data-shell-active="true"] .foot-actions {margin-top:24px}
 html[data-immersive="true"][data-shell-active="true"] .app {margin:0;padding:8px}
-html[data-immersive="true"] .topbar,html[data-immersive="true"] .dashboard-heading,html[data-immersive="true"] .workspace-head,html[data-immersive="true"] .foot-actions,html[data-immersive="true"] .infofoot,html[data-immersive="true"] #notice {display:none}
+html[data-immersive="true"] .topbar,html[data-immersive="true"] .dashboard-heading,html[data-immersive="true"] .foot-actions,html[data-immersive="true"] .infofoot,html[data-immersive="true"] #notice {display:none}
 html[data-immersive="true"][data-fullscreen-status="true"] .topbar {display:block;border:0;margin:0;padding:0}
 html[data-immersive="true"][data-fullscreen-status="true"] .topbar .brand,html[data-immersive="true"][data-fullscreen-status="true"] .topbar .language-label,html[data-immersive="true"][data-fullscreen-status="true"] #locale-select,html[data-immersive="true"][data-fullscreen-status="true"] #open-help {display:none}
 html[data-immersive="true"][data-fullscreen-status="true"] .header-controls {justify-content:flex-end;margin:0 0 8px}
@@ -98,7 +94,6 @@ html[data-immersive="true"] .navigation-edge:focus-visible {opacity:1}
   .dashboard-heading {gap:12px;margin-bottom:16px}
   .dashboard-heading p {font-size:11px}
   html[data-section="dashboard"] .head-actions {width:auto}
-  html[data-section="dashboard"] .workspace-head {gap:8px}
   html[data-section="dashboard"] .tabs {width:100%}
   html[data-section="dashboard"] .tab {flex:1;padding:8px;font-size:12px}
 }

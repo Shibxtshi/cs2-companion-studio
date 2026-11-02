@@ -12,7 +12,7 @@ import time
 from playwright.sync_api import expect, sync_playwright
 from test_customization_studio import document
 from test_profile_publication import PIN, launch, stop
-from test_widget_characterization import KINDS, LIVE, settle
+from widget_fixtures import KINDS, LIVE, settle
 from companion.profile_contracts import encode_document
 
 

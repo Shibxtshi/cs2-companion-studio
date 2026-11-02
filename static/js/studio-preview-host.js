@@ -11,7 +11,7 @@
   const data = CCSStudioData({renderer, board});
   for (const id of ['login', 'profile-save-panel']) byId(id)?.classList.add('hidden');
   byId('view').classList.remove('hidden');
-  for (const node of document.querySelectorAll('.workspace-head,#logout,#open-help')) node.hidden = true;
+  for (const node of document.querySelectorAll('#logout,#open-help')) node.hidden = true;
   const label = document.createElement('p');
   label.className = 'tiny'; label.setAttribute('role', 'status');
   board.before(label);

@@ -13,7 +13,7 @@ from playwright.sync_api import expect, sync_playwright
 from test_customization_studio import document
 from test_studio_workflows import close_preview
 from test_profile_publication import PIN, launch, stop
-from test_widget_characterization import KINDS, LIVE, settle
+from widget_fixtures import KINDS, LIVE, settle
 from companion.profile_contracts import encode_document, validate_contract
 
 SIZES = [(1920,1080),(1366,768),(1280,900),(1024,768),(768,1024),(390,844),(320,740)]

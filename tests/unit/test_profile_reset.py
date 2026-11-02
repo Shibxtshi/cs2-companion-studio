@@ -12,7 +12,8 @@ import pytest
 
 from companion import profile_recovery as recovery
 from companion.profile_contracts import encode_document, new_server_document
-from companion.profile_store import ProfileStore, read_document
+from companion.profile_store import read_document
+from tests.historical_profiles import HistoricalProfileFixture
 
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -64,7 +65,7 @@ def test_reset_only_current_format_and_preserves_private_state(private):
     before = snapshot(private)
     backupId = recovery.prepare_reset(private)
     assert recovery.reset_profiles(private, backupId, lambda _: True)
-    restored = ProfileStore(private / 'profiles.json')
+    restored = HistoricalProfileFixture(private / 'profiles.json')
     assert restored.revision == 1
     assert len(restored.data['profiles'][0]['widgets']) == 5
     assert restored.data['activeProfile'] == 'p-default'
@@ -205,7 +206,7 @@ def test_interruption_has_a_deterministic_recovery_state(private, monkeypatch, a
     assert (private / recovery.BACKUP_DIRECTORY / backupId / 'profiles.json').read_bytes() == before
     recovery.verify_backup(private, backupId)
     if afterCommit:
-        assert ProfileStore(private / 'profiles.json').revision == 1
+        assert HistoricalProfileFixture(private / 'profiles.json').revision == 1
     else:
         assert (private / 'profiles.json').read_bytes() == before
         assert recovery.reset_profiles(private, backupId, lambda _: True)
@@ -215,7 +216,7 @@ def test_raw_restore_preserves_newer_current_and_leaves_rotating_backup(private)
     original = (private / 'profiles.json').read_bytes()
     backupId = recovery.prepare_reset(private)
     recovery.reset_profiles(private, backupId, lambda _: True)
-    store = ProfileStore(private / 'profiles.json')
+    store = HistoricalProfileFixture(private / 'profiles.json')
     document = copy.deepcopy(store.data)
     document['profiles'][0]['name'] = 'After reset'
     store.put(document, store.revision)
@@ -318,7 +319,7 @@ def test_incompatible_startup_requires_explicit_offline_action(private):
     backupId = recovery.prepare_reset(private)
     recovery.reset_profiles(private, backupId, lambda _: True)
     ready = subprocess.run([sys.executable, '-c',
-        "import companion.server; from companion.profile_store import ProfileStore; assert isinstance(companion.server.profile_store, ProfileStore)"],
+        "import companion.server; from tests.historical_profiles import HistoricalProfileFixture; assert isinstance(companion.server.profile_store, HistoricalProfileFixture)"],
         cwd=ROOT, env=env, capture_output=True, text=True, timeout=20)
-    assert ready.returncode == 0, ready.stderr
+    assert ready.returncode != 0 and 'Historical profiles' in ready.stderr
     assert (private / recovery.BACKUP_DIRECTORY / backupId / 'profiles.json').read_bytes() == original

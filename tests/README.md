@@ -15,14 +15,13 @@ Checks are grouped by responsibility and execution model.
 | browser/ | Real server, desktop/mobile, profiles and reconnect journeys | Standalone Playwright runner |
 | js/ | Profile synchronization controller behavior | Node.js |
 | standalone/ | Backend suites with process-global synthetic fixtures | Separate Python process per module |
-| browser/legacy/ | Historical offline Chromium checks | Manual/reference only |
 
 ## Local quality gate
 
 ```bash
 python -m pip install -r requirements-dev.txt pytest
 python scripts/run_checks.py
-node tests/js/test_profile_sync.js
+node tests/js/test_studio_data.js
 node tests/js/test_reconnect.js
 node tests/js/test_i18n.js
 node tests/js/test_display_format.js
@@ -61,7 +60,6 @@ python tests/browser/test_live_browser.py --browser chromium
 
 Install the matching Playwright browser binaries first, or set CS2_CHROMIUM_BIN to an installed compatible browser for a local Chromium check. CI runs Chromium, Firefox and WebKit against a real synthetic server using the version-matched prebuilt image.
 
-The consolidated historical runner is `python -m tests.browser.legacy.test_e1_browser`; it requires local /usr/bin/chromium and Playwright. The former i18n, experience and widget-editor wrappers all ran this same check and have been removed. It is not a substitute for the current integration journey.
 
 All automated checks use synthetic data. They do not certify real CS2/UAC/LAN installation, anti-cheat approval or release readiness. See [architecture](../docs/development/architecture.md) and [release gates](../docs/releases/checklist.md).
 
@@ -69,18 +67,13 @@ Edge cases include repeated health failures, authentication concurrency, malform
 
 Publication-preparation regressions cover binary WebSocket frames before/after authentication and deeply nested/non-finite profile storage. Linux CI also builds a ZIP from tracked source with git archive and checks its paths; this is not a full-history secret scan or a published release artifact.
 
-## Widget characterization and local comparison evidence
+## Widget states and production comparison
 
-```bash
-python tests/browser/test_widget_characterization.py --browser chromium
-python tests/browser/test_widget_characterization.py --browser chromium --output ../comparison-evidence --benchmark --repeats 9
-```
-
-The default path checks the frozen synthetic fixtures in tests/browser/fixtures/ without changing them. CI runs it in Chromium, Firefox and WebKit after the real HTTP/WebSocket journey. --record is a deliberate baseline-authoring operation; do not regenerate expected data from a failing refactor.
-
---output optionally saves desktop/mobile EN/FR screenshots of the synthetic dashboard, plus a performance JSON when --benchmark is requested. It never captures the login PIN or reads personal runtime files. Date and timer anchors are frozen for characterization; benchmark pages use real clocks.
-
-Benchmarks use fresh contexts, a fixed 1280x900 viewport and the same fixtures. Metrics include navigation DCL, initial dashboard opening, 29/60-widget rebuilds, entry into the existing editor, and 29-widget refresh. UI click metrics force layout; initial/transport updates also include Playwright round-trip overhead. Raw samples accompany median/min/max. Run baseline and candidate sequentially on the same machine, repeat, and report noise rather than inventing a pass threshold. No benchmark timing is a CI performance gate.
+The synthetic LIVE/EMPTY/KINDS corpus now lives in widget_fixtures.py. Original P1 JSON references remain unchanged
+as historical evidence; their old-editor runner was removed with that editor. Current coverage uses
+`python tests/browser/test_widget_preview.py --browser chromium` (87 presentations and states) and the real
+`test_production_studio.py` / `test_rendering_regressions.py` journeys. Production measurements use
+`benchmark_production.py`; the retired legacy-board benchmark is not comparable to the target layout.
 
 ## Design-system checks
 
@@ -108,13 +101,12 @@ Optional backend measurements: python tests/benchmarks/profile_publication.py --
 
 ## P6 dashboard checks
 
-Run node tests/js/test_dashboard_layout.js, python tests/browser/test_dashboard_navigation.py --browser chromium and python tests/browser/test_dashboard_target.py --browser chromium (also firefox/webkit in CI). The target test uses disposable P5 storage, real authenticated transport and synthetic GSI; it never accesses personal profiles. Add --output PATH to the target test for local screenshots and reflow timings. Keep those artifacts outside the source tree.
+Run node tests/js/test_dashboard_layout.js, python tests/browser/test_dashboard_target.py --browser chromium (also firefox/webkit in CI). The target test uses disposable P5 storage, real authenticated transport and synthetic GSI; it never accesses personal profiles. Add --output PATH to the target test for local screenshots and reflow timings. Keep those artifacts outside the source tree.
 
 ## P7 widget variants
 
 Run node tests/js/test_widget_presentation.js and python tests/browser/test_widget_preview.py --browser chromium (also firefox/webkit). The synthetic review server is not packaged into Docker or started by production. --output PATH optionally writes the standalone gallery and screenshots outside the source tree. P1 JSON fixture bytes stay unchanged; reviewed display-only normalizations are explicit in the characterization comparator. P6 target tests additionally cover all 87 combinations and intrinsic-height clipping at seven resolutions.
 
-Optional matched-board timings: python tests/browser/benchmark_widget_updates.py --browser chromium --repeats 5 --output PATH. Run baseline/candidate sequentially with matching browser/viewport/fixtures. It reports DOM counts and card/list identity as well as 29/60-widget render/update samples; no latency threshold is enforced.
 
 ## P8 Customization Studio
 
@@ -174,11 +166,19 @@ Use the [manual acceptance guide](../docs/guides/final-acceptance.fr.md) for rea
 Run `node tests/js/test_i18n.js`, `node tests/js/test_studio_data.js` and
 `python tests/browser/test_rendering_regressions.py --browser chromium --output PRIVATE_OUTPUT_DIRECTORY`.
 The browser runner also supports Firefox and WebKit with matching installed engines. It starts the real
-production ASGI composition with temporary target/historical files and synthetic credentials only.
-It checks computed RGBA surfaces across four themes, Dashboard/Studio/preview and historical hosts,
+production ASGI composition with temporary target files and synthetic credentials only.
+It checks computed RGBA surfaces across four themes, Dashboard/Studio/preview and target hosts,
 explicit publication/reload, same-ID type replacement with undo/redo and retained unaffected cards,
 focus restoration, and transient demo bomb controls without profile or IndexedDB writes.
 The Node controller test checks timer/listener disposal and rejection of demo actions in real-data mode.
 
 The documentation contract checks run through pytest. Screenshots are optional private evidence, not
 new P1 reference fixtures; neither test success nor these commands authorize changes to personal data.
+
+## V1-01 native startup
+
+Fresh private data directories initialize the target format directly. Historical/invalid/future files and recovery artifacts
+are refused without replacement. Run `tests/unit/test_target_runtime.py` through the backend gate, then
+`python tests/browser/test_live_browser.py --browser chromium` for first-install production auth/Studio/publication/GSI.
+The historical editor, sync controller, their offline browser runner and its Node suite are removed; target publication,
+security, recovery, renderer and widget tests remain. See [runtime boundaries](../docs/development/target-runtime.md).
