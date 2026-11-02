@@ -169,6 +169,8 @@ const formatDynamic=(s,lang)=>{
  const dictionary=translations[lang]||{};
  if(Object.prototype.hasOwnProperty.call(dictionary,value))return dictionary[value];
  const rules=[
+ [/^Dégâts · ([0-9]+) HP$/,(_m,n)=>`Damage · ${n} HP`],
+ [/^Soins · ([0-9]+) HP$/,(_m,n)=>`Healing · ${n} HP`],
  [/^Round ([0-9—]+) · (.*)$/,(_m,n,state)=>`Round ${n} · ${state}`],
  [/^Bonus de défaite \+(.*)$/,(_m,x)=>`Loss bonus +${x}`],
  [/^Gagnant : (.*)$/ ,(_m,x)=>`Winner: ${x}`],

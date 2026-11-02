@@ -1,7 +1,7 @@
 /* Transient preview data and demo controls; never passed to draft persistence. */
 (() => {
   'use strict';
-  window.CCSStudioData = ({renderer, board}) => {
+  window.CCSStudioData = ({renderer, board, onDemo = null}) => {
     let state = null;
     let demo = false;
     let anchor = null;
@@ -24,7 +24,7 @@
       next.bomb_state = value === 'stop' ? 'defused' : 'planted';
       next.bomb_timer = value === 'stop' ? {status: 'idle', enabled: true, duration: 40}
         : {status: 'active', enabled: true, remaining: Number(value), duration: 40};
-      update(next, true);
+      if (onDemo) onDemo(next); else update(next, true);
     }
     board.addEventListener('click', click);
     return Object.freeze({update, refresh,

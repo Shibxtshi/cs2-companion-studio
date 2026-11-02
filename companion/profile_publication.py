@@ -1,4 +1,4 @@
-"""Dormant target store: one atomic published document, never a parallel active store."""
+"""Target runtime store: one atomic published document, never a parallel active writer."""
 from __future__ import annotations
 
 import copy

@@ -6,18 +6,22 @@ CS2 Companion Studio is a single-process FastAPI service with a browser dashboar
 companion/                 Backend implementation
   server.py                Routes, authentication, GSI state and orchestration
   gsi_lifecycle.py          Pure GSI observations and economy projections
-  profile_store.py         Current active profiles, revisions, atomic persistence
-  profile_contracts.py     Inactive target data models and strict validation
-  profile_operations.py    Pure target transitions; no active publication path
+  profile_store.py         Historical profiles and shared atomic-write primitives
+  profile_contracts.py     Target data models and strict validation
+  profile_operations.py    Pure per-profile target publication transitions
   profile_recovery.py      Explicit offline snapshots, reset and recovery
-  profile_publication.py   Inactive target commit service and recovery generation
-  profile_protocol.py      Inactive authenticated target WebSocket adapter
+  profile_publication.py   Target atomic commit service and recovery generation
+  profile_protocol.py      Authenticated target WebSocket adapter
+  profile_runtime.py       Format detection, exclusive writer and lifespan lock
+  profile_activation.py    Verified offline activation and historical rollback
   profile_wire.py          Closed catalog wire model
   security.py              Origin checks and login throttling
   support_diagnostics.py   Privacy-conscious event counters and summaries
   dashboard_delivery.py    Bounded, ordered dashboard fan-out
 static/
-  index.html               Dashboard document
+  index.html               Integrated target Dashboard and Studio
+  legacy.html              Compatible historical Dashboard/editor
+  preview.html             Read-only Studio preview
   css/                     Styles
   js/                      UI, translations, catalog and profile controller
 installer/                 Operational Windows scripts and their shared helpers
@@ -46,7 +50,7 @@ The server composes the smaller backend modules. Economy inference, validation a
 
 The only ASGI entry point is companion.server:app. Internal imports use the companion namespace. There is no root-module compatibility bridge because the software has not been deployed. Configuration is validated before runtime directories are created.
 
-The browser loads translations, the widget catalog, profile synchronization, reconnect control, then dashboard/experience code. Canonical assets live under static/js/ and static/css/; old flat asset URLs are not served. The map phase field is map_phase. Personal names and custom widget titles are excluded from DOM translation.
+The target browser composition loads shared rendering/transport, draft/publication and Studio modules, then application.js. The historical document loads profile-sync.js and studio.js instead; it does not run a target writer. Canonical assets live under static/js/ and static/css/; old flat asset URLs are not served. The map phase field is map_phase. Personal names and custom widget titles are excluded from DOM translation.
 
 ## Stable operational paths
 
@@ -74,22 +78,22 @@ Profile files use the same depth/finite-number checks as network JSON and are re
 
 ## Frontend module boundaries
 
-P1 separates display projections, widget DOM rendering and HTTP/WebSocket transport from studio.js. Profile/editor state, current autosave and retry policy retain their existing owners. Read [frontend responsibilities and approved future boundaries](frontend-modules.md) before extending them.
+Display projections, widget DOM rendering and HTTP/WebSocket transport are shared modules. application.js composes the target Dashboard and Studio on one authenticated connection. The Studio lifecycle owns local edits and explicit publication; studio.js and profile-sync.js own historical editing/autosave only. Read [frontend responsibilities and approved future boundaries](frontend-modules.md) before extending them.
 
-The approved identity, token ownership and temporary theme preview are documented in [design-system.md](design-system.md).
+The approved identity, token ownership, target profile themes and historical temporary theme preview are documented in [design-system.md](design-system.md).
 
 ## Profile transition
 
-P3 prepares strict target contracts and pure per-profile revision transitions without activating them. The current store, autosave and WebSocket messages remain active. Read [profile contracts and staged transition](profile-contracts.md) before P4/P5 work. The stable offline command and private snapshot procedure are documented in [profile recovery](../guides/profile-recovery.md); they can operate when invalid storage blocks server startup.
+The validated on-disk format selects the reader, writer and frontend together. A historical document keeps its compatible store, editor and autosave. A target ccs-dashboard-store document selects the published store, X/Y Dashboard and Studio with explicit versioned operations. Target operations never use historical autosave messages. Invalid or interrupted storage stops safely; startup never converts or resets existing profiles. Read [profile contracts](profile-contracts.md) and [production activation](production-activation.md). The stable offline command and private snapshot procedure are documented in [profile recovery](../guides/profile-recovery.md); they can operate when invalid storage blocks server startup.
 
 ## Local drafts
 
-P4 supplies inactive, configuration-only IndexedDB persistence and bounded session history. The current editor/autosave are not connected to it. See [local draft boundaries, lifecycle and integration requirements](local-drafts.md) before P5/P8.
+The target Studio uses configuration-only IndexedDB drafts, bounded session history and a publication-intent journal. A local save is not publication. The Dashboard reads only published profiles; each tab retains its own selection. The historical editor remains independent of these drafts. See [local draft boundaries and lifecycle](local-drafts.md).
 
 ## Explicit publication foundations
 
 The production runtime validates the on-disk format and selects either the compatible historical composition or the integrated target composition. Exactly one store and writer are active. The target uses the existing authenticated `/ws` handler, P5 publication and P8 lifecycle; no synthetic launcher, public toggle or second ASGI entry point is needed. The lifespan recovery lock excludes offline activation. See [publication architecture](profile-publication.md) and [production activation](production-activation.md).
 
-## P6 dashboard boundary
+## Dashboard and Studio boundary
 
-The active legacy frontend now uses the shared navigation shell. The X/Y projection and inactive read-only target host are described in [dashboard.md](dashboard.md); target storage and explicit Studio publication remain inactive.
+Both formats use the shared navigation shell with compatible data adapters. The target Dashboard uses the [X/Y projection](dashboard.md), 29 widget types and per-widget presentations; the separate [Customization Studio](customization-studio.md) edits drafts and publishes explicitly. Synthetic test hosts remain regression tools, not production launchers. Existing historical data requires separately confirmed offline activation with verified backups; see the [operator procedure](production-activation.md).

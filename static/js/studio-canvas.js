@@ -32,12 +32,21 @@
       const widgets = next.configuration.layout.widgets;
       const current = new Map([...board.querySelectorAll(':scope > .widget')].map(card => [card.dataset.id, card]));
       for (const [id, card] of current) if (!widgets.some(widget => widget.id === id)) card.remove();
+      let replacementFocus = null;
       for (const widget of widgets) {
         let card = current.get(widget.id);
+        const previous = card;
+        const focused = card?.contains(document.activeElement) ? document.activeElement : null;
+        if (card && card.dataset.kind !== widget.kind) {
+          card = null;
+        }
         if (!card) {
           card = renderer.createCard(widget, CS2WidgetCatalog[widget.kind]);
           card.tabIndex = 0;
-          tools(card); board.append(card);
+          tools(card);
+          if (previous) previous.replaceWith(card); else board.append(card);
+          if (focused) replacementFocus = focused.dataset.studioGesture
+            ? card.querySelector(`[data-studio-gesture="${focused.dataset.studioGesture}"]`) : card;
         }
         if (card.dataset.variant !== widget.variant) renderer.setVariant(card, widget.variant);
         const title = card.querySelector('.widget-heading');
@@ -65,6 +74,7 @@
       const signature = CCSDraftContract.canonical(next.configuration.layout);
       if (layoutSignature !== signature) { layoutSignature = signature; grid.setLayout(next.configuration.layout); }
       data.refresh();
+      replacementFocus?.focus({preventScroll: true});
     }
     function selectCard(event) {
       const card = event.target.closest('.widget');

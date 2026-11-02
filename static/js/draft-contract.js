@@ -1,4 +1,4 @@
-/* Strict configuration-only validation for the inactive draft foundation. */
+/* Strict configuration-only validation for target Studio drafts and offline previews. */
 (() => {
   'use strict';
   const schema = window.CCSDraftSchema;
