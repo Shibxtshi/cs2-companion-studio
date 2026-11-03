@@ -164,7 +164,7 @@
   "experience.studioBody": "Customization Studio edits a local draft: widgets, variants, X/Y geometry and profile preferences. Keep draft and leave preserves local work; Save and apply publishes it. Each tab keeps its own profile selection.",
   "experience.studioTopic": "Profiles & Studio",
   "experience.targetHelp": "Published preferences belong to this profile. Change them in Customization Studio, then Save and apply.",
-  "experience.themesBody": "Choose one of four complete themes in Studio → Properties → Profile. Save and apply publishes it. Personal widget colors remain overrides.",
+  "experience.themesBody": "Choose one of ten complete themes in Studio → Properties → Profile. Save and apply publishes it. Personal widget colors remain overrides.",
   "experience.topics": "Help topics",
   "experience.unavailable": "Server unreachable. Check Docker and the local address.",
   "experience.unknown": "Not checked",

@@ -181,9 +181,7 @@
     setStudioAvailable(value) { studioAvailable = !!value; paint(); },
     setTargetProfile(profile) {
       targetName = profile.name;
-      const theme = byId('theme-preview');
-      theme.value = profile.configuration.theme;
-      theme.dispatchEvent(new Event('change'));
+      CCSThemes.apply(profile.configuration.theme);
       navigation = profile.configuration.navigation.mode;
       floating = profile.configuration.navigation.floatingButton;
       showConnection = profile.configuration.fullscreen.showConnectionStatus;

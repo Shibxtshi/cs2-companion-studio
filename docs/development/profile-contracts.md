@@ -65,7 +65,7 @@ Example target profile (synthetic, not the current on-disk format):
 }
 ~~~
 
-The example configuration retains current accent/background/density customization while adding theme, navigation, fullscreen and geometry. Empty colors mean automatic theme colors. Themes are tactical-blue (default), competitive-red, performance-green and creator-purple. Widget variant (standard/compact/minimal) is independent of surface style (solid/glass/outline). IDs are unique within each profile, not globally across unrelated profiles. Profile names need not be unique.
+The example configuration retains current accent/background/density customization while adding theme, navigation, fullscreen and geometry. Empty colors mean automatic theme colors. Theme identifiers and display names are maintained in companion/profile_contracts.py and generated into the browser schema: tactical-blue (default), competitive-red, performance-green, creator-purple, midnight, arctic-white, neon-pink, crimson, solar-orange and monochrome. The format remains v1; existing theme values remain valid, and unknown values are rejected. Widget variant (standard/compact/minimal) is independent of surface style (solid/glass/outline). IDs are unique within each profile, not globally across unrelated profiles. Profile names need not be unique.
 
 ### Approved grid decision
 

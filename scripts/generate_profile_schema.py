@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the inactive browser draft schema from the authoritative P3 models."""
+"""Generate browser contracts and theme choices from the authoritative profile models."""
 import argparse
 import json
 from pathlib import Path
@@ -9,11 +9,13 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT))
 from companion.profile_contracts import DraftDocument, Profile, Receipt, contract_schema, MAX_DRAFT_BYTES, MAX_PROFILE_BYTES, MAX_ROWS, MAX_OPERATION_BYTES, MAX_STORE_BYTES
 
+from companion.profile_contracts import THEME_NAMES
 from companion.profile_wire import ProfileCatalog
 
 
 def generated_source():
-    payload = {'draft': DraftDocument.model_json_schema(), 'profile': Profile.model_json_schema(),
+    payload = {'themes': [{'id': key, 'name': value} for key, value in THEME_NAMES.items()],
+               'draft': DraftDocument.model_json_schema(), 'profile': Profile.model_json_schema(),
                'operation': contract_schema('operation'), 'receipt': Receipt.model_json_schema(),
                'catalog': ProfileCatalog.model_json_schema(),
                'limits': {'draftBytes': MAX_DRAFT_BYTES, 'profileBytes': MAX_PROFILE_BYTES,

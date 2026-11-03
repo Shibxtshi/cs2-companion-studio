@@ -9,7 +9,7 @@ from playwright.sync_api import expect, sync_playwright
 from test_production_studio import production, login
 from companion.profile_activation import target_document
 
-THEMES = ['tactical-blue', 'competitive-red', 'performance-green', 'creator-purple']
+from companion.profile_contracts import THEMES
 
 
 def fixture():

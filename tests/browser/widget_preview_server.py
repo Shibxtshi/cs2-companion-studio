@@ -16,7 +16,7 @@ def run(runtime, port):
     def HTMLResponse(html):
         return BaseHTMLResponse(locale_page(html))
     import uvicorn
-    modules = ('widgets', 'display-format', 'i18n', 'theme-preview', 'widget-presentation', 'widget-renderer')
+    modules = ('draft-schema', 'widgets', 'display-format', 'i18n', 'theme-preview', 'widget-presentation', 'widget-renderer')
 
     @server.app.get('/__widget_preview__')
     def page():
@@ -31,9 +31,7 @@ def run(runtime, port):
             + '<header class="preview-head"><div class="brand"><div class="brandmark" aria-hidden="true"></div>'
             + '<div><div class="brand-name" translate="no">CCS</div><div class="sub" translate="no">MATCH CENTER / PLAYER EDITION</div></div></div>'
             + '<div class="preview-controls"><label>Language<select id="locale-select" class="select"><option value="EN">EN</option><option value="FR">FR</option></select></label>'
-            + '<label>Thème d’aperçu<select id="theme-preview" class="select">'
-            + '<option value="tactical-blue">Tactical Blue</option><option value="competitive-red">Competitive Red</option>'
-            + '<option value="performance-green">Performance Green</option><option value="creator-purple">Creator Purple</option></select></label></div></header>'
+            + '<label>Thème d’aperçu<select id="theme-preview" class="select" data-theme-select></select></label></div></header>'
             + '<main class="preview-main"><div class="preview-intro"><div class="preview-eyebrow">P7 / CATALOGUE DES WIDGETS</div>'
             + '<h1>Trois façons de lire la partie.</h1><p>Données synthétiques · Aperçu non enregistré · 29 widgets · 87 présentations</p>'
             + '<p class="tiny">Les détails secondaires restent accessibles. Les réserves et avertissements essentiels restent visibles.</p></div>'
