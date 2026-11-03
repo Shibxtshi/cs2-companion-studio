@@ -47,10 +47,10 @@
     const heading = document.createElement('header');
     heading.className = 'preview-section-heading';
     const title = document.createElement('h3');
-    title.textContent = definition.title;
+    CS2I18N.bind(title, 'widgets.' + kind + '.title');
     const category = document.createElement('span');
     category.className = 'tiny';
-    category.textContent = definition.cat;
+    CS2I18N.bind(category, definition.cat);
     const code = document.createElement('code');
     code.textContent = kind;
     code.setAttribute('translate', 'no');
