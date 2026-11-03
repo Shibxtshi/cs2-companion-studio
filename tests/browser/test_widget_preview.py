@@ -20,6 +20,7 @@ from playwright.sync_api import expect, sync_playwright
 from test_live_browser import ROOT
 from test_profile_publication import stop
 from widget_fixtures import LIVE, EMPTY, KINDS, settle
+from companion.profile_contracts import THEMES
 
 VARIANTS = ['standard','compact','minimal']
 
@@ -43,7 +44,7 @@ def write_gallery(output, html, corpus):
         (ROOT / 'static/locales' / entry['file']).read_text('utf-8')) for entry in registry['languages']}}
     scripts = ['window.CCSLocaleResources=' + json.dumps(resources, ensure_ascii=False).replace('<', r'\u003c') + ';']
     scripts += [(ROOT/'static/js'/f'{name}.js').read_text('utf-8') for name in
-             ('widgets','display-format','i18n','theme-preview','widget-presentation','widget-renderer')]
+             ('draft-schema','widgets','display-format','i18n','theme-preview','widget-presentation','widget-renderer')]
     scripts.append((ROOT/'tests/browser/widget-preview.js').read_text('utf-8'))
     initialization='CS2I18N.setLocale("FR");widgetPreview.setCorpus('+json.dumps(corpus,ensure_ascii=False)+');'
     scripts.append(initialization)
@@ -202,9 +203,12 @@ def run(browserName,output):
                     expect(page.locator('.widget-heading').first).to_have_text('Carte')
                     expect(page.locator('.w-player [data-v="name"]').first).to_have_text('Carte')
                     expect(page.locator('.w-player [data-v="activity"]').first).to_have_text('Playing' if locale=='EN' else 'En jeu')
-                for theme in ['tactical-blue','competitive-red','performance-green','creator-purple']:
+                for theme in THEMES:
                     page.select_option('#theme-preview',theme)
                     settle(page)
+                    assert page.locator('.presented-widget').count() == 87
+                    assert page.locator('.widget-heading').count() == 87
+                    assert page.evaluate('document.documentElement.dataset.theme') == theme
                     assert page.locator('.widget').first.evaluate('card=>card.style.getPropertyValue("--widget-accent")')=='#76bbfd'
                     assert page.locator('.widget').first.evaluate('card=>card.style.getPropertyValue("--widget-bg")')=='#182333'
                     assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'),theme
@@ -234,7 +238,7 @@ def run(browserName,output):
                 assert not faults,faults
                 if output:
                     (output/'validation.json').write_text(json.dumps({'browser':browser.version,'representatives':KINDS,
-                         'combinations':87,'widths':[1920,1366,1280,1024,768,390,320],'states':['normal','partial','missing','zero','stale','waiting','long','demo'],'themes':4,'errors':faults},indent=2),encoding='utf8')
+                         'combinations':87,'widths':[1920,1366,1280,1024,768,390,320],'states':['normal','partial','missing','zero','stale','waiting','long','demo'],'themes':len(THEMES),'errors':faults},indent=2),encoding='utf8')
                 browser.close()
         finally:
             stop(process)

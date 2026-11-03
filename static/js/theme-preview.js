@@ -1,25 +1,27 @@
-/* Temporary, tab-local preview. Profile persistence belongs to a later phase. */
+/* Shared theme application; preview is tab-local and never writes a profile. */
 (() => {
   'use strict';
-
-  const THEME_BACKGROUNDS = Object.freeze({
-    'tactical-blue': '#090E14',
-    'competitive-red': '#0B0D11',
-    'performance-green': '#0A100E',
-    'creator-purple': '#100C16'
-  });
+  const themes = Object.freeze(CCSDraftSchema.themes.map(entry => Object.freeze({...entry})));
+  const known = new Set(themes.map(entry => entry.id));
   const DEFAULT_THEME = 'tactical-blue';
   const select = document.getElementById('theme-preview');
   const meta = document.querySelector('meta[name="theme-color"]');
-
-  function applyTheme(value) {
-    const theme = Object.prototype.hasOwnProperty.call(THEME_BACKGROUNDS, value)
-      ? value : DEFAULT_THEME;
-    document.documentElement.dataset.theme = theme;
-    if (select) select.value = theme;
-    if (meta) meta.content = THEME_BACKGROUNDS[theme];
+  let applied = null;
+  for (const control of document.querySelectorAll('[data-theme-select]')) {
+    control.replaceChildren(...themes.map(entry => new Option(entry.name, entry.id)));
   }
-
-  applyTheme(DEFAULT_THEME);
-  select?.addEventListener('change', event => applyTheme(event.target.value));
+  function apply(value) {
+    const theme = known.has(value) ? value : DEFAULT_THEME;
+    if (applied !== theme || document.documentElement.dataset.theme !== theme) {
+      document.documentElement.dataset.theme = theme;
+      // Read the palette only on a theme change, not on every Studio draft repaint.
+      if (meta) meta.content = getComputedStyle(document.documentElement).getPropertyValue('--ccs-bg').trim();
+      applied = theme;
+    }
+    if (select) select.value = theme;
+    return theme;
+  }
+  window.CCSThemes = Object.freeze({apply, choices: themes});
+  apply(DEFAULT_THEME);
+  select?.addEventListener('change', event => apply(event.target.value));
 })();

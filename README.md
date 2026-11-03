@@ -105,7 +105,7 @@ The backend lives in `companion/`, web assets in `static/css/` and `static/js/`,
 
 ## Identity and theme preview
 
-CCS uses the Repère identity and local Inter / Barlow Condensed fonts. Tactical Blue is the default, alongside Competitive Red, Performance Green and Creator Purple. In the target runtime, choose a profile theme in Customization Studio and publish with Save and apply. Historical profile documents are refused without replacement; they require an explicit offline decision. Personal widget colors remain overrides. See [design foundations](docs/development/design-system.md) and [font licenses/provenance](static/fonts/README.md).
+CCS uses the Repère identity and local Inter / Barlow Condensed fonts. Tactical Blue is the default. Ten complete themes are available: Tactical Blue, Competitive Red, Performance Green, Creator Purple, Midnight, Arctic White (light), Neon Pink, Crimson, Solar Orange and Monochrome. In the target runtime, choose a profile theme in Customization Studio and publish with Save and apply. Historical profile documents are refused without replacement; they require an explicit offline decision. Personal widget colors remain overrides. See [design foundations](docs/development/design-system.md) and [font licenses/provenance](static/fonts/README.md).
 
 ### Dashboard navigation
 

@@ -45,6 +45,22 @@ const checked = contract.validateDraft(corpus.draft);
 checked.configuration.layout.widgets[0].title = 'independent';
 assert.equal(corpus.draft.configuration.layout.widgets[0].title, '');
 
+for (const {id} of CCSDraftSchema.themes) {
+  const themed = content(corpus.profile);
+  const themeHistory = new CCSEditHistory(themed);
+  themed.configuration.theme = id;
+  contract.content(themed);
+  if (id !== corpus.profile.configuration.theme) {
+    themeHistory.commit(themed);
+    assert.equal(themeHistory.value.configuration.theme, id);
+    themeHistory.undo();
+    assert.equal(themeHistory.value.configuration.theme, corpus.profile.configuration.theme);
+    themeHistory.redo();
+    assert.equal(themeHistory.value.configuration.theme, id);
+  }
+}
+assert.throws(() => contract.content({...content(corpus.profile), configuration: {...corpus.profile.configuration, theme: 'unknown-theme'}}), errorCode('invalid_document'));
+
 const history = new CCSEditHistory(content(corpus.profile));
 const initial = history.value;
 const states = [];

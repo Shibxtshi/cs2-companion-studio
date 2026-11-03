@@ -200,6 +200,11 @@
       for (const item of document.querySelectorAll('.studio-panel-tabs button')) item.setAttribute('aria-pressed', String(item === button));
       canvas.refresh();
     });
+    function activateAppearance() {
+      if (!content) return;
+      CCSThemes.apply(content.configuration.theme);
+      document.documentElement.style.setProperty('--profile-accent', content.configuration.appearance.accent || 'var(--ccs-accent)');
+    }
     function inspector(mode) {
       inspectorMode = mode;
       byId('studio-widget-properties').hidden = mode !== 'widget'; byId('studio-profile-properties').hidden = mode !== 'profile';
@@ -223,7 +228,7 @@
     document.addEventListener('keydown', keyboard);
     document.addEventListener('cs2:locale-changed', locale);
     locale();
-    return Object.freeze({canvas, issue, status, choose, text, message,
+    return Object.freeze({canvas, issue, status, choose, text, message, activateAppearance,
       reset() {
         content = null; selectedId = null; paintedSelection = null; sessionState = null;
         canvas.reset(); byId('studio-profile').replaceChildren();
@@ -238,8 +243,8 @@
       paint(next, currentState) {
         content = CCSDraftContract.content({name: next.name, configuration: next.configuration}); sessionState = currentState;
         if (!content.configuration.layout.widgets.some(widget => widget.id === selectedId)) selectedId = null;
-        document.documentElement.dataset.theme = content.configuration.theme;
-        document.documentElement.style.setProperty('--profile-accent', content.configuration.appearance.accent || 'var(--ccs-accent)');
+        // A hidden editor must not override the published Dashboard's appearance.
+        if (!byId('studio-app')?.hidden) activateAppearance();
         byId('studio-grid-caption').textContent = CS2I18N.t('studio.columns', {count: content.configuration.layout.columns});
         byId('studio-empty').hidden = content.configuration.layout.widgets.length > 0;
         paintSelection(); status(saveCode, publicationCode);

@@ -1,4 +1,4 @@
-/* Approved complete palettes. Tactical Blue is the non-persistent default. */
+/* Complete semantic palettes. Profile publication persists the selected theme. */
 :root,
 :root[data-theme="tactical-blue"] {
   --ccs-bg:#090E14;
@@ -76,3 +76,138 @@
   --ccs-focus:#E2D0FF;
 }
 
+
+:root[data-theme="midnight"] {
+  --ccs-bg:#05070D;
+  --ccs-nav:#090D16;
+  --ccs-surface:#101622;
+  --ccs-raised:#192236;
+  --ccs-input:#080E19;
+  --ccs-border:#2D3C55;
+  --ccs-control-border:#7186A8;
+  --ccs-text:#EDF1FC;
+  --ccs-muted:#A9B7CF;
+  --ccs-accent:#A4B9F1;
+  --ccs-hover:#C0CFF7;
+  --ccs-pressed:#8EA4DC;
+  --ccs-on-accent:#0B1429;
+  --ccs-tint:#222F49;
+  --ccs-ink:#C1D0FA;
+  --ccs-focus:#D2DDFC;
+}
+
+:root[data-theme="arctic-white"] {
+  --ccs-bg:#EEF2F7;
+  --ccs-nav:#E5EBF3;
+  --ccs-surface:#FFFFFF;
+  --ccs-raised:#E2E9F2;
+  --ccs-input:#F7F9FC;
+  --ccs-border:#728298;
+  --ccs-control-border:#60728B;
+  --ccs-text:#182536;
+  --ccs-muted:#4B5E73;
+  --ccs-accent:#155BB5;
+  --ccs-hover:#104B98;
+  --ccs-pressed:#0C3C7C;
+  --ccs-on-accent:#FFFFFF;
+  --ccs-tint:#DCE9FA;
+  --ccs-ink:#164B86;
+  --ccs-focus:#174EA6;
+  color-scheme:light;
+  --success:#12613C;
+  --success-bg:#E1F3E8;
+  --error:#A61E36;
+  --error-bg:#FCE7EB;
+  --warning:#755000;
+  --warning-bg:#FFF1CC;
+  --info:#164E91;
+  --info-bg:#E2EDFB;
+  --team-ct:#215BA1;
+  --team-t:#7D5200;
+  --timer-warning:#755000;
+  --timer-urgent:#9B4200;
+  --timer-danger:#A61E36;
+  --shadow-menu:0 8px 24px #18253620;
+  --shadow-dialog:0 20px 64px #18253635;
+  --dialog-backdrop:#18253666;
+}
+
+:root[data-theme="neon-pink"] {
+  --ccs-bg:#120B15;
+  --ccs-nav:#1B1120;
+  --ccs-surface:#231729;
+  --ccs-raised:#312039;
+  --ccs-input:#150E1B;
+  --ccs-border:#4E365B;
+  --ccs-control-border:#A17EA9;
+  --ccs-text:#FCF0FA;
+  --ccs-muted:#CEB1CD;
+  --ccs-accent:#F58BCB;
+  --ccs-hover:#FFA8DC;
+  --ccs-pressed:#E572B8;
+  --ccs-on-accent:#280E20;
+  --ccs-tint:#48263E;
+  --ccs-ink:#FFB3E1;
+  --ccs-focus:#FFD0EC;
+}
+
+:root[data-theme="crimson"] {
+  --ccs-bg:#140B0E;
+  --ccs-nav:#201116;
+  --ccs-surface:#2B171D;
+  --ccs-raised:#3B2028;
+  --ccs-input:#1B0F14;
+  --ccs-border:#57323D;
+  --ccs-control-border:#B1818B;
+  --ccs-text:#FFF0F2;
+  --ccs-muted:#D1AEB6;
+  --ccs-accent:#F36A7C;
+  --ccs-hover:#FF8C9A;
+  --ccs-pressed:#E8566D;
+  --ccs-on-accent:#240810;
+  --ccs-tint:#451C29;
+  --ccs-ink:#FFADB9;
+  --ccs-focus:#FFC5CE;
+}
+
+:root[data-theme="solar-orange"] {
+  --ccs-bg:#130F0A;
+  --ccs-nav:#1D1710;
+  --ccs-surface:#271E14;
+  --ccs-raised:#352A1D;
+  --ccs-input:#19130D;
+  --ccs-border:#53432F;
+  --ccs-control-border:#A28B6F;
+  --ccs-text:#FFF5E8;
+  --ccs-muted:#C7B5A3;
+  --ccs-accent:#F6A24B;
+  --ccs-hover:#FFBE78;
+  --ccs-pressed:#DE8D35;
+  --ccs-on-accent:#241405;
+  --ccs-tint:#48311B;
+  --ccs-ink:#FFC68A;
+  --ccs-focus:#FFDAAF;
+}
+
+:root[data-theme="monochrome"] {
+  --ccs-bg:#0B0B0B;
+  --ccs-nav:#111111;
+  --ccs-surface:#1B1B1B;
+  --ccs-raised:#292929;
+  --ccs-input:#141414;
+  --ccs-border:#414141;
+  --ccs-control-border:#8A8A8A;
+  --ccs-text:#F4F4F4;
+  --ccs-muted:#B8B8B8;
+  --ccs-accent:#D4D4D4;
+  --ccs-hover:#EEEEEE;
+  --ccs-pressed:#B8B8B8;
+  --ccs-on-accent:#111111;
+  --ccs-tint:#343434;
+  --ccs-ink:#E2E2E2;
+  --ccs-focus:#FFFFFF;
+  --info:#D4D4D4;
+  --info-bg:#292929;
+  --team-ct:#E2E2E2;
+  --team-t:#B8B8B8;
+}

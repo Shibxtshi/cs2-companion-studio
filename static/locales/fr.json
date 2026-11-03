@@ -164,7 +164,7 @@
   "experience.studioBody": "Customization Studio modifie un brouillon local : widgets, variantes, géométrie X/Y et préférences du profil. Conserver le brouillon et quitter préserve le travail local ; Enregistrer et appliquer le publie. Chaque onglet conserve sa sélection de profil.",
   "experience.studioTopic": "Profils et Studio",
   "experience.targetHelp": "Les préférences publiées appartiennent à ce profil. Modifie-les dans Customization Studio, puis utilise Enregistrer et appliquer.",
-  "experience.themesBody": "Choisis l’un des quatre thèmes complets dans Studio → Propriétés → Profil. Enregistrer et appliquer le publie. Les couleurs personnalisées des widgets restent prioritaires.",
+  "experience.themesBody": "Choisis l’un des dix thèmes complets dans Studio → Propriétés → Profil. Enregistrer et appliquer le publie. Les couleurs personnalisées des widgets restent prioritaires.",
   "experience.topics": "Rubriques d’aide",
   "experience.unavailable": "Serveur inaccessible. Vérifie Docker et l’adresse locale.",
   "experience.unknown": "Non vérifié",

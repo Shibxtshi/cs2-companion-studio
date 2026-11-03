@@ -77,7 +77,7 @@ as historical evidence; their old-editor runner was removed with that editor. Cu
 
 ## Design-system checks
 
-Run node tests/js/test_theme_preview.js and python tests/browser/test_themes.py --browser chromium. CI also runs the theme journey in Firefox and WebKit. Optional --output ../theme-evidence saves synthetic desktop/mobile screenshots and contrast samples. It covers four palettes, all 29 widget outputs, EN/FR, keyboard focus, four viewport widths, local fonts and profile/storage isolation. It does not certify arbitrary user-chosen widget colors or browser-owned native dialogs.
+Run node tests/js/test_theme_preview.js and python tests/browser/test_themes.py --browser chromium. CI also runs the theme journey in Firefox and WebKit. Optional --output ../theme-evidence saves synthetic desktop/mobile screenshots and contrast samples. It covers ten themes on the real production composition, draft/history/preview and explicit publication, EN/FR, keyboard focus, seven viewport widths, native color-scheme and measured contrast samples. The widget gallery checks 87 presentations across ten themes (870 combinations). It does not certify arbitrary user-chosen widget colors or browser-owned native dialogs.
 
 ## Target profile contracts and offline recovery (P3)
 
@@ -167,7 +167,7 @@ Run `node tests/js/test_i18n.js`, `node tests/js/test_studio_data.js` and
 `python tests/browser/test_rendering_regressions.py --browser chromium --output PRIVATE_OUTPUT_DIRECTORY`.
 The browser runner also supports Firefox and WebKit with matching installed engines. It starts the real
 production ASGI composition with temporary target files and synthetic credentials only.
-It checks computed RGBA surfaces across four themes, Dashboard/Studio/preview and target hosts,
+It checks computed RGBA surfaces across ten themes, Dashboard/Studio/preview and target hosts,
 explicit publication/reload, same-ID type replacement with undo/redo and retained unaffected cards,
 focus restoration, and transient demo bomb controls without profile or IndexedDB writes.
 The Node controller test checks timer/listener disposal and rejection of demo actions in real-data mode.

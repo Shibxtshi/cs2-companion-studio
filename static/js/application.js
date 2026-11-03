@@ -152,6 +152,7 @@
         current.workspace.canvas.values(game, demo);
       }
       section = next; byId('studio-app').hidden = next !== 'studio';
+      if (next === 'studio') studio.workspace.activateAppearance();
       if (next !== 'studio') { renderPublished(); renderer.updateValues(game, {modeDemo: demo, anchor}); }
       return true;
     } catch (error) { issue(error); return false; }

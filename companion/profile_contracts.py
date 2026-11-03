@@ -23,7 +23,13 @@ MAX_TOMBSTONES = 1024
 DEFAULT_COLUMNS = 24
 MAX_COLUMNS = 64
 MAX_ROWS = 4096
-THEMES = ('tactical-blue', 'competitive-red', 'performance-green', 'creator-purple')
+THEME_NAMES = {
+    'tactical-blue': 'Tactical Blue', 'competitive-red': 'Competitive Red',
+    'performance-green': 'Performance Green', 'creator-purple': 'Creator Purple',
+    'midnight': 'Midnight', 'arctic-white': 'Arctic White', 'neon-pink': 'Neon Pink',
+    'crimson': 'Crimson', 'solar-orange': 'Solar Orange', 'monochrome': 'Monochrome',
+}
+THEMES = tuple(THEME_NAMES)
 
 Integer = Annotated[int, Field(strict=True, ge=0, le=MAX_REVISION)]
 Positive = Annotated[int, Field(strict=True, ge=1, le=MAX_REVISION)]
@@ -34,7 +40,7 @@ Digest = Annotated[str, Field(strict=True, pattern=r'^[a-f0-9]{64}$', max_length
 Color = Annotated[str, Field(strict=True, pattern=r'^(#[a-fA-F0-9]{6})?$', max_length=7)]
 Name = Annotated[str, Field(strict=True, min_length=1, max_length=32)]
 Title = Annotated[str, Field(strict=True, max_length=36)]
-Theme = Literal['tactical-blue', 'competitive-red', 'performance-green', 'creator-purple']
+Theme = Literal[*THEMES]
 
 
 class ContractError(ValueError):

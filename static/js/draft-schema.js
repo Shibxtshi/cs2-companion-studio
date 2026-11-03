@@ -56,7 +56,13 @@
               "tactical-blue",
               "competitive-red",
               "performance-green",
-              "creator-purple"
+              "creator-purple",
+              "midnight",
+              "arctic-white",
+              "neon-pink",
+              "crimson",
+              "solar-orange",
+              "monochrome"
             ],
             "title": "Theme",
             "type": "string"
@@ -436,7 +442,13 @@
               "tactical-blue",
               "competitive-red",
               "performance-green",
-              "creator-purple"
+              "creator-purple",
+              "midnight",
+              "arctic-white",
+              "neon-pink",
+              "crimson",
+              "solar-orange",
+              "monochrome"
             ],
             "title": "Theme",
             "type": "string"
@@ -781,7 +793,13 @@
               "tactical-blue",
               "competitive-red",
               "performance-green",
-              "creator-purple"
+              "creator-purple",
+              "midnight",
+              "arctic-white",
+              "neon-pink",
+              "crimson",
+              "solar-orange",
+              "monochrome"
             ],
             "title": "Theme",
             "type": "string"
@@ -1259,7 +1277,13 @@
               "tactical-blue",
               "competitive-red",
               "performance-green",
-              "creator-purple"
+              "creator-purple",
+              "midnight",
+              "arctic-white",
+              "neon-pink",
+              "crimson",
+              "solar-orange",
+              "monochrome"
             ],
             "title": "Theme",
             "type": "string"
@@ -1568,6 +1592,48 @@
     ],
     "title": "Receipt",
     "type": "object"
-  }
+  },
+  "themes": [
+    {
+      "id": "tactical-blue",
+      "name": "Tactical Blue"
+    },
+    {
+      "id": "competitive-red",
+      "name": "Competitive Red"
+    },
+    {
+      "id": "performance-green",
+      "name": "Performance Green"
+    },
+    {
+      "id": "creator-purple",
+      "name": "Creator Purple"
+    },
+    {
+      "id": "midnight",
+      "name": "Midnight"
+    },
+    {
+      "id": "arctic-white",
+      "name": "Arctic White"
+    },
+    {
+      "id": "neon-pink",
+      "name": "Neon Pink"
+    },
+    {
+      "id": "crimson",
+      "name": "Crimson"
+    },
+    {
+      "id": "solar-orange",
+      "name": "Solar Orange"
+    },
+    {
+      "id": "monochrome",
+      "name": "Monochrome"
+    }
+  ]
 };
 })();
