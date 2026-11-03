@@ -11,8 +11,8 @@ This is the current development status, not a release announcement. The code rep
 | V1-03 | Complete: shared JSON translations and FR/EN revision, PR #32 merged |
 | V1-04 | Complete: ten themes, PR #33 merged |
 | CI correction | Complete: moved browser-harness paths, PR #34 merged |
-| V1-05 | Documentation prepared for review; not marked merged by this branch |
-| V1-06 | Not started; publication decisions and final gates remain separate |
+| V1-05 | Complete: user/contributor/developer documentation and offline link checks, PR #35 merged |
+| V1-06 | In validation/review; no public release, tag or visibility change authorized |
 
 Current scope is individual-player CCS, not a broadcast console. Streamer Mode and Overlay Studio remain future, separately authorized work. Fresh development installations do not authorize erasing another installation, credentials or backups.
 

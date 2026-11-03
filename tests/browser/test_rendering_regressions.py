@@ -10,6 +10,7 @@ from test_production_studio import production, login
 from companion.profile_activation import target_document
 
 from companion.profile_contracts import THEMES
+from rendering_checks import assert_painted_rgba
 
 
 def fixture():
@@ -49,7 +50,7 @@ def assert_surfaces(page, selector):
         factor = {'solid': 1, 'glass': .67, 'outline': .15}[item['style']]
         expected = [255, 0, 0, 255] if item['custom'] else item['automatic']
         expected = expected[:3] + [round(expected[3] * factor * item['opacity'] / 100)]
-        assert all(abs(actual - wanted) <= 3 for actual, wanted in zip(item['actual'], expected)), item
+        assert_painted_rgba(item['actual'], expected)
         if item['style'] == 'outline' and item['custom']:
             assert item['border'] == [0, 255, 0, 255], item
         if item['style'] == 'glass':

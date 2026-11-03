@@ -57,7 +57,7 @@ def run(runtime, port):
         html = (ROOT / 'static/preview.html').read_text('utf-8')
         dependencies = ''.join('<script defer src="/static/js/' + module + '.js"></script>'
                                for module in ('profile-selection', 'published-profiles'))
-        html = html.replace('<script defer src="/static/js/studio-preview-host.js"></script>', '')
+        html = html.replace('<script type="application/ccs-module" data-ccs-src="/static/js/studio-preview-host.js"></script>', '')
         html = html.replace('</head>', '<link rel="stylesheet" href="/static/css/studio-density.css"></head>')
         html = html.replace('</body>', dependencies + '<script defer src="/__dashboard_target__.js"></script></body>')
         return HTMLResponse(html)

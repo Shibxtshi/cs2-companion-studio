@@ -54,6 +54,8 @@ def run(browserName, output):
                     result=context.new_page()
                     result.on('pageerror',lambda error:faults.append(str(error)))
                     result.goto(url+'/__dashboard_test__')
+                    expect(result.locator('script[data-ccs-src="/static/js/studio-preview-host.js"]')).to_have_count(0)
+                    expect(result.locator('#login')).to_be_visible()
                     result.locator('#pin').fill(PIN)
                     result.locator('#connect').click()
                     expect(result.locator('#dashboard-profile-menu')).to_be_visible()

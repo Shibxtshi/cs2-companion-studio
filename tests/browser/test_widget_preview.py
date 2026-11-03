@@ -93,6 +93,7 @@ def run(browserName,output):
                 response=page.goto(url+'/__widget_preview__')
                 original_html=response.text()
                 page.wait_for_function('() => window.widgetPreview !== undefined')
+                expect(page.locator('html')).to_have_attribute('data-i18n-ready', 'true')
                 page.evaluate("CS2I18N.setLocale('FR');performance.now=()=>1000")
                 expect(page.locator('[data-preview-kind="health"] .preview-section-heading h3')).to_have_text('Santé')
                 expect(page.locator('[data-preview-kind="health"] .preview-section-heading span')).to_have_text('Joueur')

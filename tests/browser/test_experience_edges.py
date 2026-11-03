@@ -33,6 +33,7 @@ def run(browserName):
             # CSS zoom exercises enlarged layout, not a claim about every OS/browser zoom mode.
             page.evaluate("document.documentElement.style.zoom='2'")
             assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
+            page.locator('#pin').focus()
             page.locator('#help-from-login').click()
             expect(page.locator('#help-dialog')).to_be_visible()
             page.keyboard.press('Tab')

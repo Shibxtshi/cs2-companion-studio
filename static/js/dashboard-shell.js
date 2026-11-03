@@ -42,7 +42,10 @@
   settings.innerHTML = '<button type="button" class="btn" id="settings-help" data-i18n="experience.help"></button><h2 data-shell-text="preferences"></h2><div class="display-preferences"><label><span data-shell-text="navigation"></span><select class="select" id="navigation-mode"><option value="full" data-shell-text="full"></option><option value="compact" data-shell-text="compact"></option><option value="hidden" data-shell-text="hidden"></option></select></label><label class="check-label"><input type="checkbox" id="navigation-floating" checked><span data-shell-text="floating"></span></label><label class="check-label"><input type="checkbox" id="fullscreen-status" checked><span data-shell-text="status"></span></label><p class="tiny" data-shell-text="temporary"></p><p class="tiny" data-shell-text="shortcut"></p></div><div id="shell-theme-control"></div><h2 data-shell-text="help"></h2><div id="shell-support"></div>';
   heading.after(settings);
   settings.querySelector('#shell-theme-control').append(document.querySelector('.theme-preview'));
-  byId('settings-help').addEventListener('click', () => byId('open-help').click());
+  byId('settings-help').addEventListener('click', event => {
+    event.currentTarget.focus();
+    byId('open-help').click();
+  });
   const support = settings.querySelector('#shell-support');
   support.append(byId('session-banner'), document.querySelector('.diagnostics-footer'));
   const edge = document.createElement('button');
