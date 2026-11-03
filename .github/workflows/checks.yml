@@ -74,12 +74,12 @@ jobs:
           node --check static/js/studio-lifecycle.js
           node --check static/js/studio-preview.js
           node --check static/js/studio-preview-host.js
-          node --check static/js/studio-target.js
+          node --check tests/browser/studio-target.js
           node --check static/js/widget-presentation.js
           node --check static/js/dashboard-layout.js
           node --check static/js/dashboard-grid.js
           node --check static/js/dashboard-shell.js
-          node --check static/js/dashboard-target.js
+          node --check tests/browser/dashboard-target.js
           node --check static/js/draft-publications.js
           node --check static/js/published-profiles.js
           node --check static/js/profile-publication.js
