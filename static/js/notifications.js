@@ -18,7 +18,7 @@
     host.dataset.kind = current.kind;
     const message = document.createElement('span');
     const kind = CCSExperienceCopy.text('notification_' + current.kind);
-    message.textContent = kind + ' · ' + (current.key ? CCSExperienceCopy.text(current.key) : CS2I18N.translate(current.message));
+    message.textContent = kind + ' · ' + (current.key ? CCSExperienceCopy.text(current.key) : current.messageKey ? CS2I18N.t(current.messageKey, current.params) : current.message);
     const close = document.createElement('button');
     close.type = 'button'; close.className = 'btn small ghost';
     close.textContent = '×'; close.setAttribute('aria-label', CCSExperienceCopy.text('dismiss'));
@@ -27,12 +27,12 @@
     host.classList.remove('hidden');
   }
   window.CCSNotifications = Object.freeze({
-    show({message = '', key = null, kind = 'info'}) {
+    show({message = '', key = null, messageKey = null, params = {}, kind = 'info'}) {
       if (!KINDS.includes(kind)) kind = 'error';
       // An unrelated success cannot silently erase an unresolved error.
       if (current && ['error', 'warning'].includes(current.kind) && !['error', 'warning'].includes(kind)) return;
       clearTimeout(timer);
-      current = {message, key, kind}; paint();
+      current = {message, key, messageKey, params, kind}; paint();
       if (['info', 'success'].includes(kind)) timer = setTimeout(dismiss, 5000);
     },
     dismiss,

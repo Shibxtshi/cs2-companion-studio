@@ -11,7 +11,10 @@ def run(runtime, port):
     if not (runtime / '.synthetic-widget-preview').is_file():
         raise RuntimeError('Requires a disposable synthetic preview directory')
     from companion import server
-    from fastapi.responses import HTMLResponse, Response
+    from fastapi.responses import HTMLResponse as BaseHTMLResponse, Response
+    from locale_page import locale_page
+    def HTMLResponse(html):
+        return BaseHTMLResponse(locale_page(html))
     import uvicorn
     modules = ('widgets', 'display-format', 'i18n', 'theme-preview', 'widget-presentation', 'widget-renderer')
 

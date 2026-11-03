@@ -24,6 +24,7 @@ def run():
             env = dict(os.environ, PROFILE_DATA_DIR=str(Path(directory) / 'data'),
                        DIAGNOSTICS_DIR=str(Path(directory) / 'logs'))
             subprocess.run([sys.executable, '-m', testModule], cwd=ROOT, env=env, check=True)
+    subprocess.run([sys.executable, 'scripts/check_locales.py'], cwd=ROOT, check=True)
     print('Running: public security and persistence regressions', flush=True)
     subprocess.run([sys.executable, '-m', 'pytest', '-q', 'tests/unit', 'tests/integration', 'tests/contracts'], cwd=ROOT, check=True)
     subprocess.run([sys.executable, 'scripts/check_secrets.py'], cwd=ROOT, check=True)

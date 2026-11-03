@@ -12,6 +12,7 @@ MODULES = ('draft-schema', 'draft-contract', 'edit-history', 'draft-publications
 
 def main():
     expected = {name: hashlib.sha256((Path('static/js') / (name + '.js')).read_bytes()).hexdigest() for name in MODULES}
+    localeDigests = {path.name: hashlib.sha256(path.read_bytes()).hexdigest() for path in Path('static/locales').glob('*.json')}
     code = textwrap.dedent('''
         from pathlib import Path
         from tempfile import TemporaryDirectory
@@ -19,6 +20,16 @@ def main():
         from companion.profile_contracts import encode_document, new_server_document
         from companion.profile_publication import PublishedProfileStore
         from companion.profile_protocol import PublishedProfileProtocol
+        from companion.localization import Translator
+        import subprocess
+        import sys
+        localeDigests = EXPECTED_LOCALES
+        for name, digest in localeDigests.items():
+            assert hashlib.sha256((Path('static/locales') / name).read_bytes()).hexdigest() == digest
+        assert Translator('FR').text('studio.publish') == 'Enregistrer et appliquer'
+        assert Translator('EN').text('studio.publish') == 'Save and apply'
+        helpResult = subprocess.run([sys.executable, 'scripts/recover_profiles.py', '--language', 'FR', '--help'], capture_output=True, text=True, timeout=10)
+        assert helpResult.returncode == 0 and 'hors ligne' in helpResult.stdout
         expected = EXPECTED_HASHES
         for name, digest in expected.items():
             assert hashlib.sha256((Path('static/js') / (name + '.js')).read_bytes()).hexdigest() == digest
@@ -51,7 +62,7 @@ def main():
             assert PublishedProfileStore(path).publish(operation)['replayed']
             assert PublishedProfileProtocol(store).snapshot()['type'] == 'profiles_catalog'
         print('OK: integrated production publication, persisted receipt replay and exact frontend assets; isolated hosts excluded and no mounted data accessed')
-    ''').replace('EXPECTED_HASHES', repr(expected))
+    ''').replace('EXPECTED_HASHES', repr(expected)).replace('EXPECTED_LOCALES', repr(localeDigests))
     subprocess.run(['docker', 'compose', 'exec', '-T', 'cs2-companion-studio', 'python', '-'],
                    input=code, text=True, check=True, timeout=60)
 

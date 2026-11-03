@@ -22,7 +22,7 @@
   function label(element, key) {
     if (element.getAttribute('translate') !== 'no') element.setAttribute('translate', 'no');
     if (element.dataset.experienceText !== key) element.dataset.experienceText = key;
-    put(element, text(key));
+    CS2I18N.bind(element, 'experience.' + key);
   }
   function element(tag, key, className = '') {
     const node = document.createElement(tag);
@@ -202,7 +202,7 @@
       const icon = byId('diag-' + id + '-icon');
       if (icon) put(icon, demo ? '○' : (id === 'http' ? healthState === 'ok' : id === 'ws' ? authorized : id === 'match' ? recent : gsi) ? '✓' : '○');
     }
-    put(byId('diag-freshness'), demo ? text('simulated') : !authorized ? text('stale') : Number.isFinite(state.age_seconds) && state.age_seconds >= 0 ? `${state.age_seconds} ${text('seconds')}` : text('noAge'));
+    put(byId('diag-freshness'), demo ? text('simulated') : !authorized ? text('stale') : Number.isFinite(state.age_seconds) && state.age_seconds >= 0 ? CS2I18N.t('experience.age', {count: state.age_seconds}) : text('noAge'));
     const button = byId('connect');
     put(button, text(socketState === 'connecting' ? 'connecting' : 'connect'));
     label(byId('logout'), demo ? 'exitDemo' : 'logout');
@@ -242,7 +242,7 @@
     byId('help-topics').setAttribute('aria-label', text('topics'));
     renderHelp(); render();
   });
-  document.addEventListener('DOMContentLoaded', () => {
+  CS2I18N.mount( () => {
     if (!byId('login') || !byId('dashboard-settings')) return;
     createLogin(); createHelp(); createSettings(); mounted = true; render(); checkHealth();
   });

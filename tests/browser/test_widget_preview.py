@@ -38,7 +38,11 @@ def write_gallery(output, html, corpus):
     html=re.sub(r'<link[^>]+rel="stylesheet"[^>]*>','',html)
     html=re.sub(r'<script[^>]*></script>','',html)
     html=html.replace('</head>','<style>'+css+'</style></head>')
-    scripts=[(ROOT/'static/js'/f'{name}.js').read_text('utf-8') for name in
+    registry = json.loads((ROOT / 'static/locales/languages.json').read_text('utf-8'))
+    resources = {'registry': registry, 'catalogs': {entry['code']: json.loads(
+        (ROOT / 'static/locales' / entry['file']).read_text('utf-8')) for entry in registry['languages']}}
+    scripts = ['window.CCSLocaleResources=' + json.dumps(resources, ensure_ascii=False).replace('<', r'\u003c') + ';']
+    scripts += [(ROOT/'static/js'/f'{name}.js').read_text('utf-8') for name in
              ('widgets','display-format','i18n','theme-preview','widget-presentation','widget-renderer')]
     scripts.append((ROOT/'tests/browser/widget-preview.js').read_text('utf-8'))
     initialization='CS2I18N.setLocale("FR");widgetPreview.setCorpus('+json.dumps(corpus,ensure_ascii=False)+');'
@@ -137,6 +141,9 @@ def run(browserName,output):
                 for width,height in [(1920,1080),(1366,768),(1280,900),(1024,768),(768,1024),(390,844),(320,740)]:
                     page.set_viewport_size({'width':width,'height':height})
                     settle(page)
+                    if output and not page.evaluate('document.documentElement.scrollWidth <= innerWidth'):
+                        overflow = page.evaluate("() => [...document.querySelectorAll('body *')].map(node => ({tag:node.tagName, className:node.className, text:node.textContent.slice(0,100), right:node.getBoundingClientRect().right})).filter(item => item.right > innerWidth)")
+                        (output / ('overflow-' + str(width) + '.json')).write_text(json.dumps(overflow, ensure_ascii=False), encoding='utf-8')
                     assert page.evaluate('document.documentElement.scrollWidth <= innerWidth'),width
                     if output:
                         for kind in KINDS:

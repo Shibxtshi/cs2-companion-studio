@@ -14,7 +14,8 @@ There is no historical editor or autosave module in the distributed frontend. Se
 | studio-model.js / studio-canvas.js / studio-workspace.js / studio-lifecycle.js | Editing model, keyed DOM, inspector and draft lifecycle |
 | dashboard-layout.js / dashboard-grid.js / dashboard-shell.js | Responsive projection, grid application and navigation |
 | application.js | One production composition, published/draft/game separation and import/export wiring |
-| i18n.js / experience-copy.js / experience.js / notifications.js | Localization, help, diagnostics and feedback |
+| i18n.js / experience-copy.js | Shared JSON catalog loader, explicit message bindings and stable experience-key adapter |
+| experience.js / notifications.js | Help, diagnostics and feedback; phrases come from static/locales/ |
 
 Deferred dependencies load before application.js. Rendering never publishes profiles. The transport owns no widget DOM
 or translated text. PIN remains in the caller's session memory; configuration persistence excludes credentials and GSI.
@@ -65,3 +66,5 @@ See [widget-presentations.md](widget-presentations.md) for the 29-kind, three-va
 ## P8 isolated Studio
 
 See [Customization Studio](customization-studio.md) for configuration-only model, transient data, keyed canvas, workspace controls, P4/P5 lifecycle composition, transport and same-origin preview responsibilities. These assets are not loaded by production index.html; historical behavior remains active until a separate coordinated transition.
+
+The browser loads UTF-8 catalogs from static/locales/ before the ordered data-ccs-src application modules. Translation uses explicit keys and named parameters, never a whole-DOM text replacement. The same catalogs serve PowerShell and offline maintenance tools. See the [translator guide](../contributing/translations.md).

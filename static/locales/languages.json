@@ -1,0 +1,17 @@
+{
+  "reference": "EN",
+  "languages": [
+    {
+      "code": "EN",
+      "name": "English",
+      "file": "en.json",
+      "confirmYes": "Y"
+    },
+    {
+      "code": "FR",
+      "name": "Français",
+      "file": "fr.json",
+      "confirmYes": "O"
+    }
+  ]
+}

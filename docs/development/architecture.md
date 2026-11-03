@@ -48,7 +48,7 @@ The server composes the smaller backend modules. Economy inference, validation a
 
 The only ASGI entry point is companion.server:app. Internal imports use the companion namespace. There is no root-module compatibility bridge because the software has not been deployed. Configuration is validated before runtime directories are created.
 
-The browser loads shared rendering/transport, draft/publication and Studio modules, then application.js. This is the only production composition. Canonical assets live under static/js/ and static/css/; old flat asset URLs are not served. The map phase field is map_phase. Personal names and custom widget titles are excluded from DOM translation.
+The browser loads shared rendering/transport, draft/publication and Studio modules, then application.js. This is the only production composition. Canonical assets live under static/js/ and static/css/; old flat asset URLs are not served. The map phase field is map_phase. Only explicitly keyed UI messages are translated. Personal names, custom titles and free GSI values remain text data. Shared static/locales/ JSON catalogs are loaded before the browser UI and are also consumed by PowerShell and companion/localization.py for offline tools.
 
 ## Stable operational paths
 

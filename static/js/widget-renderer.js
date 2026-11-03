@@ -31,6 +31,7 @@
       article.setAttribute('aria-labelledby',title.id);
       title.textContent = widget.title || definition.title;
       if (widget.title) title.setAttribute('translate', 'no');
+      else CS2I18N.bind(title, 'widgets.' + widget.kind + '.title');
       const icon = document.createElement('span');
       icon.className = 'widget-icon';
       icon.textContent = definition.icon;
@@ -43,6 +44,7 @@
       body.innerHTML = definition.html;
       article.append(body);
       presentation?.decorate(article, widget);
+      CS2I18N.apply(article);
       return article;
     }
 
@@ -55,7 +57,7 @@
 
     function renderInventory(list, player) {
       const items = format.inventory(player, list.dataset.list);
-      if (!items.length) addItem(list, 'Aucune donnée');
+      if (!items.length) addItem(list, CS2I18N.t("widgets.state.noData"));
       for (const weapon of items) {
         const ammo = isNum(weapon.ammo_clip) && weapon.type !== 'Grenade' ? ' · ' + weapon.ammo_clip : '';
         addItem(list, weaponName(weapon.name) + ammo, weapon.state === 'active');
@@ -64,23 +66,23 @@
 
     function renderWins(list, state) {
       const items = state.recent_wins || [];
-      if (!items.length) addItem(list, 'Historique indisponible');
+      if (!items.length) addItem(list, CS2I18N.t("widgets.state.historyUnavailable"));
       for (const win of items) addItem(list, presentation?.roundLabel ? presentation.roundLabel(win) : '#' + win.round + ' · ' + win.winner);
     }
 
     function renderEvents(list, state) {
       const items = state.events || [];
-      if (!items.length) addItem(list, 'Aucun événement enregistré');
+      if (!items.length) addItem(list, CS2I18N.t("widgets.state.noEventsRecorded"));
       for (const event of items.slice(0, 8)) {
         const item = document.createElement('div');
         item.className = 'item';
         const text = document.createElement('span');
-        text.textContent = event.message;
+        text.textContent = format.eventText(event);
         const when = document.createElement('span');
         when.className = 'tiny';
         when.textContent = isNum(event.at)
           ? new Date(event.at * 1000).toLocaleTimeString(
-            window.CS2I18N?.locale() === 'FR' ? 'fr-FR' : 'en-US',
+            CS2I18N.numberLocale(),
             {hour: '2-digit', minute: '2-digit', second: '2-digit'})
           : '';
         item.append(text, when);
@@ -105,37 +107,37 @@
       if (!state) return;
       let left = null;
       let kind = '';
-      let message = 'En attente';
+      let message = CS2I18N.t("widgets.value.waiting");
       const timer = state.bomb_timer || {};
       if (timer.status === 'active' && anchor) {
         left = Math.max(0, anchor.left - (performance.now() - anchor.at) / 1000);
         if (left > 10) {
           kind = 'yellow';
-          message = 'Désamorçage possible sans kit';
+          message = CS2I18N.t("widgets.state.defusePossibleWithoutKit");
         } else if (left > 5) {
           kind = 'orange';
-          message = 'Kit nécessaire pour commencer';
+          message = CS2I18N.t("widgets.state.kitRequiredToStart");
         } else {
           kind = 'red';
-          message = 'Trop tard pour commencer';
+          message = CS2I18N.t("widgets.state.tooLateToStart");
         }
-        if (left === 0) message = 'Explosion estimée';
+        if (left === 0) message = CS2I18N.t("widgets.state.estimatedExplosion");
       } else if (timer.status === 'expired') {
         left = 0;
         kind = 'red';
-        message = 'Explosion estimée';
+        message = CS2I18N.t("widgets.state.estimatedExplosion");
       } else if (timer.status === 'disabled') {
-        message = 'Minuteur désactivé';
+        message = CS2I18N.t("widgets.state.timerDisabled");
       } else if (timer.status === 'stale') {
-        message = 'Données interrompues';
+        message = CS2I18N.t("widgets.state.dataInterrupted");
       } else if (timer.status === 'unknown_start') {
-        message = 'Heure de pose inconnue';
+        message = CS2I18N.t("widgets.state.plantTimeUnknown");
       } else if (state.bomb_state === 'defused') {
-        message = 'Bombe désamorcée';
+        message = CS2I18N.t("widgets.state.bombDefused");
       } else if (state.bomb_state === 'exploded') {
-        message = 'Bombe explosée';
+        message = CS2I18N.t("widgets.state.bombExploded");
       } else {
-        message = 'En attente d’une pose';
+        message = CS2I18N.t("widgets.state.waitingForPlant");
       }
 
       let geometryChanged = false;
@@ -148,7 +150,7 @@
         if (clock.className !== 'bomb-clock ' + kind) clock.className = 'bomb-clock ' + kind;
         bar.style.width = left === null ? '0%' : percent(100 * left / (timer.duration || 40));
         if (bar.className !== 'bomb-fill ' + kind) bar.className = 'bomb-fill ' + kind;
-        const translated = window.CS2I18N?.translate(message) || message;
+        const translated = message;
         if (label.textContent !== message && label.textContent !== translated) label.textContent = message;
         const layoutKey = message + ':' + clock.textContent.length;
         if (bombLayoutKeys.get(card) !== layoutKey) { bombLayoutKeys.set(card,layoutKey); geometryChanged = true; }
@@ -175,7 +177,7 @@
         const shape = [];
         binding.values.forEach(node => {
           const next = values[node.dataset.v] ?? '—';
-          const expected = node.closest('[translate="no"]') ? next : window.CS2I18N?.translate(next) || next;
+          const expected = next;
           shape.push(WRAPPING_FIELDS.has(node.dataset.v) ? next : next.length);
           if (node.textContent !== next && node.textContent !== expected) node.textContent = next;
         });

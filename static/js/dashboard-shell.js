@@ -4,34 +4,8 @@
   const byId = id => document.getElementById(id);
   const root = document.documentElement;
   const view = byId('view');
-  const translations = {
-    en: {
-      dashboard: 'Dashboard', studio: 'Customization Studio', settings: 'Settings',
-      streamer: 'Streamer Studio', coming: 'Coming soon', navigation: 'Navigation',
-      full: 'Full', compact: 'Compact', hidden: 'Hidden', floating: 'Floating button',
-      temporary: 'Preview for this tab · not saved in profiles',
-      profile: 'Displayed profile', default: 'Default dashboard', demo: 'Demonstration',
-      fullscreen: 'Fullscreen', exit: 'Exit fullscreen', status: 'Show connection in fullscreen',
-      reveal: 'Show navigation', shortcut: 'Show navigation: Alt+M. Escape closes menus or exits immersive mode.',
-      preferences: 'Display preferences', help: 'Connection and help',
-      target: 'Target profile · independent selection in this tab',
-      home: 'CCS · Return to Dashboard',
-    },
-    fr: {
-      dashboard: 'Dashboard', studio: 'Customization Studio', settings: 'Paramètres',
-      streamer: 'Streamer Studio', coming: 'À venir', navigation: 'Navigation',
-      full: 'Complète', compact: 'Compacte', hidden: 'Masquée', floating: 'Bouton flottant',
-      temporary: 'Aperçu pour cet onglet · non enregistré dans les profils',
-      profile: 'Profil affiché', default: 'Dashboard par défaut', demo: 'Démonstration',
-      fullscreen: 'Plein écran', exit: 'Quitter le plein écran', status: 'Afficher la connexion en plein écran',
-      reveal: 'Afficher la navigation', shortcut: 'Afficher la navigation : Alt+M. Échap ferme les menus ou quitte le mode immersif.',
-      preferences: 'Préférences d’affichage', help: 'Connexion et aide',
-      target: 'Profil cible · sélection indépendante dans cet onglet',
-      home: 'CCS · Revenir au Dashboard',
-    },
-  };
-  const locale = () => window.CS2I18N?.locale() === 'FR' ? 'fr' : 'en';
-  const text = key => translations[locale()][key];
+
+  const text = key => CS2I18N.t('navigation.' + key);
   let section = 'dashboard';
   let navigation = 'compact';
   let floating = true;
@@ -65,7 +39,7 @@
   const settings = document.createElement('section');
   settings.id = 'dashboard-settings';
   settings.hidden = true;
-  settings.innerHTML = '<button type="button" class="btn" id="settings-help">Help / Aide</button><h2 data-shell-text="preferences"></h2><div class="display-preferences"><label><span data-shell-text="navigation"></span><select class="select" id="navigation-mode"><option value="full" data-shell-text="full"></option><option value="compact" data-shell-text="compact"></option><option value="hidden" data-shell-text="hidden"></option></select></label><label class="check-label"><input type="checkbox" id="navigation-floating" checked><span data-shell-text="floating"></span></label><label class="check-label"><input type="checkbox" id="fullscreen-status" checked><span data-shell-text="status"></span></label><p class="tiny" data-shell-text="temporary"></p><p class="tiny" data-shell-text="shortcut"></p></div><div id="shell-theme-control"></div><h2 data-shell-text="help"></h2><div id="shell-support"></div>';
+  settings.innerHTML = '<button type="button" class="btn" id="settings-help" data-i18n="experience.help"></button><h2 data-shell-text="preferences"></h2><div class="display-preferences"><label><span data-shell-text="navigation"></span><select class="select" id="navigation-mode"><option value="full" data-shell-text="full"></option><option value="compact" data-shell-text="compact"></option><option value="hidden" data-shell-text="hidden"></option></select></label><label class="check-label"><input type="checkbox" id="navigation-floating" checked><span data-shell-text="floating"></span></label><label class="check-label"><input type="checkbox" id="fullscreen-status" checked><span data-shell-text="status"></span></label><p class="tiny" data-shell-text="temporary"></p><p class="tiny" data-shell-text="shortcut"></p></div><div id="shell-theme-control"></div><h2 data-shell-text="help"></h2><div id="shell-support"></div>';
   heading.after(settings);
   settings.querySelector('#shell-theme-control').append(document.querySelector('.theme-preview'));
   byId('settings-help').addEventListener('click', () => byId('open-help').click());
@@ -176,9 +150,7 @@
     byId('dashboard-context').textContent = section === 'dashboard'
       ? text('target') : text('temporary');
     if (root.dataset.production === 'target' && section !== 'dashboard') {
-      byId('dashboard-context').textContent = locale() === 'fr'
-        ? 'Brouillons locaux · publication explicite dans le Studio'
-        : 'Local drafts · explicit publication in Studio';
+      byId('dashboard-context').textContent = CS2I18N.t("dashboard.shell.localDraftsExplicitPublicationInStudio");
     }
     byId('dashboard-fullscreen').textContent = text('fullscreen');
     byId('dashboard-fullscreen').hidden = section !== 'dashboard';

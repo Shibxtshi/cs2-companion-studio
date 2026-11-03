@@ -3,7 +3,6 @@
   'use strict';
   const contract = CCSDraftContract;
   const contentOf = value => contract.content({name: value.name, configuration: value.configuration});
-  const fr = () => CS2I18N.locale() === 'FR';
   window.CCSStudioLifecycle = ({profiles, send, workspace, exit, disconnected, sharedSelection = false}) => {
     let store = null;
     let contextKey = null;
@@ -24,7 +23,6 @@
     let operationKind = 'update';
     let confirmedPublication = null;
     let finalizedResult = null;
-    const message = (en, french) => fr() ? french : en;
     function issue(error) {
       const code = typeof error === 'string' ? error : error.code || 'error';
       if (code === 'context_revoked') blocked = true;
@@ -68,8 +66,7 @@
     }
     function showConflict() {
       const published = profiles.profile(editingId);
-      workspace.conflict(true, message('Your draft is retained. No version is overwritten automatically.',
-        'Ton brouillon est conservé. Aucune version n’est écrasée automatiquement.'));
+      workspace.conflict(true, CS2I18N.ref("studio.conflict.noAutomaticOverwrite"));
       workspace.review(session?.preview || view, published ? contentOf(published) : null);
     }
     function buildController() {
@@ -130,9 +127,9 @@
       }
       if (found.status === 'available' && !resume) {
         paint();
-        const answer = await workspace.choose(message('Resume local draft?', 'Reprendre le brouillon local ?'),
-          message('The dashboard remains unchanged until you explicitly publish.', 'Le dashboard reste inchangé avant une publication explicite.'),
-          [['resume', message('Resume', 'Reprendre')], ['discard', message('Discard…', 'Abandonner…')], ['cancel', workspace.text('cancel')]]);
+        const answer = await workspace.choose(CS2I18N.ref("studio.lifecycle.resumeLocalDraft"),
+          CS2I18N.ref("studio.dialog.resumeWarning"),
+          [['resume', CS2I18N.ref("studio.lifecycle.resume")], ['discard', CS2I18N.ref("studio.dialog.discardPromptAction")], ['cancel', workspace.message('cancel')]]);
         if (answer === 'discard') { await discardDraft(); return; }
         if (answer !== 'resume') { paint(); return; }
       }
@@ -203,10 +200,9 @@
     }
     async function retry() {
       if (blocked) {
-        const answer = await workspace.choose(message('Authenticate again?', 'Se reconnecter ?'),
-          message('The previous local access is no longer valid. Close this session and discard its unconfirmed in-memory changes? Existing recovery records are not deleted.',
-            'L’ancien accès local n’est plus valide. Fermer cette session et abandonner ses changements non confirmés en mémoire ? Les copies de récupération existantes ne seront pas supprimées.'),
-          [['confirm', message('Close and authenticate again', 'Fermer et se reconnecter')], ['cancel', workspace.text('cancel')]]);
+        const answer = await workspace.choose(CS2I18N.ref("studio.lifecycle.authenticateAgain"),
+          CS2I18N.ref("studio.dialog.accessRevokedWarning"),
+          [['confirm', CS2I18N.ref("studio.lifecycle.closeAndAuthenticateAgain")], ['cancel', workspace.message('cancel')]]);
         if (answer !== 'confirm') return;
         session?.dispose(); publication?.dispose(); store?.close();
         session = null; publication = null; store = null; contextKey = null; editingId = null; view = null; journal = false;
@@ -223,11 +219,10 @@
       const current = profiles.profile(editingId);
       if (!journal && !session.state.dirty && current
           && contract.canonical(session.preview) === contract.canonical(contentOf(current))) { session.dispose(); session = null; return true; }
-      const chosen = action || await workspace.choose(message('Leave the Studio?', 'Quitter le Studio ?'),
-        message('Local drafts are independent of the published dashboard. An operation already sent cannot be cancelled by leaving.',
-          'Le brouillon est indépendant du dashboard publié. Quitter n’annule pas une opération déjà envoyée.'),
-        [['publish', workspace.text('publish')], ['keep', workspace.text('keep')],
-          ['discard', message('Discard changes', 'Abandonner les modifications')], ['cancel', message('Continue editing', 'Continuer l’édition')]]);
+      const chosen = action || await workspace.choose(CS2I18N.ref("studio.lifecycle.leaveTheStudio"),
+        CS2I18N.ref("studio.dialog.leaveWarning"),
+        [['publish', workspace.message('publish')], ['keep', workspace.message('keep')],
+          ['discard', CS2I18N.ref("studio.dialog.discardChangesAction")], ['cancel', CS2I18N.ref("studio.lifecycle.continueEditing")]]);
       if (chosen === 'cancel') return false;
       if (chosen === 'publish') return (await publish())?.code === 'published';
       if (chosen === 'discard') return discardDraft({reopen: false});
@@ -238,10 +233,9 @@
     async function discardDraft({reopen = true} = {}) {
       if (journal) { issue('publication_pending'); return false; }
       const found = await store.read(editingId);
-      const answer = await workspace.choose(message('Discard local draft?', 'Abandonner le brouillon local ?'),
-        message('Only the reviewed local draft will be removed. Other tabs cannot be overwritten.',
-          'Seul le brouillon local examiné sera supprimé. Aucun travail plus récent d’un autre onglet ne sera écrasé.'),
-        [['discard', message('Discard', 'Abandonner')], ['cancel', workspace.text('cancel')]]);
+      const answer = await workspace.choose(CS2I18N.ref("studio.dialog.discardTitle"),
+        CS2I18N.ref("studio.dialog.discardWarning"),
+        [['discard', CS2I18N.ref("studio.dialog.discardAction")], ['cancel', workspace.message('cancel')]]);
       if (answer !== 'discard') return false;
       if (session && !session.state.closed) await session.discard();
       else await store.remove(editingId, found.token);
@@ -261,8 +255,8 @@
       const creations = records.filter(record => record.status === 'valid' && record.draft.baseRevision === 0
         && !profiles.profile(record.profileId));
       if (profiles.catalog.profiles.length + creations.length >= 12) contract.fail('profile_limit');
-      const initial = value ? imported ? value.name : (value.name.slice(0, 24) + message(' copy', ' copie')) : '';
-      const name = await workspace.name(message('New local profile', 'Nouveau profil local'), initial);
+      const initial = value ? imported ? value.name : CS2I18N.t('studio.profileCopyName', {name: value.name.slice(0, 24)}) : '';
+      const name = await workspace.name(CS2I18N.ref("studio.lifecycle.newLocalProfile"), initial);
       if (!name) return;
       const configuration = value ? structuredClone(value.configuration) : {
         theme: 'tactical-blue', appearance: {accent: '', background: '', density: 'normal'},
@@ -284,11 +278,11 @@
       if (action === 'copy') return createFrom(session?.preview || view);
       if (action === 'drafts') {
         await refreshRecords();
-        const choices = records.map(record => [record.profileId, (record.draft?.name || record.profileId) + ' · ' + record.status]);
-        const selected = await workspace.choose(workspace.text('drafts'),
-          message('Drafts are local to this installation and browser. Invalid data is retained until explicit removal.',
-            'Ces brouillons sont locaux à cette installation et à ce navigateur. Les données invalides restent conservées avant suppression explicite.'),
-          [...choices, ['cancel', workspace.text('cancel')]]);
+        const labels = {valid: 'studio.draftChoice.valid', incompatible: 'studio.draftChoice.incompatible', corrupt: 'studio.draftChoice.corrupt'};
+        const choices = records.map(record => [record.profileId, CS2I18N.ref(labels[record.status], {name: record.draft?.name || record.profileId})]);
+        const selected = await workspace.choose(workspace.message('drafts'),
+          CS2I18N.ref("studio.dialog.localDraftPolicy"),
+          [...choices, ['cancel', workspace.message('cancel')]]);
         if (selected !== 'cancel') { if (selected === editingId && !session) await open(selected); else await selectProfile(selected); }
         return;
       }
@@ -296,10 +290,9 @@
       if (!latest) contract.fail('profile_deleted');
       if (profiles.catalog.profiles.length <= 1) contract.fail('last_profile');
       if (journal) contract.fail('publication_pending');
-      const answer = await workspace.choose(message('Delete published profile?', 'Supprimer le profil publié ?'),
-        message('This explicitly publishes a deletion. Local drafts on every device are retained for recovery.',
-          'Cette action publie explicitement une suppression. Les brouillons locaux de tous les appareils restent récupérables.'),
-        [['delete', message('Delete published profile', 'Supprimer le profil publié')], ['cancel', workspace.text('cancel')]]);
+      const answer = await workspace.choose(CS2I18N.ref("studio.dialog.deleteProfileTitle"),
+        CS2I18N.ref("studio.dialog.deleteProfileWarning"),
+        [['delete', CS2I18N.ref("studio.dialog.deleteProfileAction")], ['cancel', workspace.message('cancel')]]);
       if (answer !== 'delete') return;
       const revision = latest.revision;
       if (session && !session.state.closed) await session.keepAndLeave();
@@ -315,9 +308,8 @@
       const local = session?.preview || view;
       const stored = await store.read(editingId);
       const review = JSON.stringify({local, published: contentOf(latest)}, null, 2);
-      const answer = await workspace.choose(action === 'local' ? workspace.text('replace') : workspace.text('server'),
-        message('Review the complete configurations below. Published revision: ', 'Examine les configurations complètes ci-dessous. Révision publiée : ')
-          + latest.revision + '.', [['confirm', message('Confirm', 'Confirmer')], ['cancel', workspace.text('cancel')]], {review});
+      const answer = await workspace.choose(action === 'local' ? workspace.message('replace') : workspace.message('server'),
+        CS2I18N.ref('studio.reviewRevision', {revision: latest.revision}), [['confirm', CS2I18N.ref("studio.lifecycle.confirm")], ['cancel', workspace.message('cancel')]], {review});
       if (answer !== 'confirm') return;
       if (!publication) buildController();
       if (action === 'local') {
@@ -331,10 +323,9 @@
       }
     }
     async function logout() {
-      const answer = await workspace.choose(message('Log out of CCS?', 'Se déconnecter de CCS ?'),
-        message('Erase local drafts and pending intents for this context? This does not cancel an operation already sent to the server.',
-          'Effacer les brouillons et intentions de ce contexte ? Cela n’annule pas une opération déjà envoyée au serveur.'),
-        [['logout', message('Erase and log out', 'Effacer et déconnecter')], ['cancel', workspace.text('cancel')]]);
+      const answer = await workspace.choose(CS2I18N.ref("studio.lifecycle.logOutOfCcs"),
+        CS2I18N.ref("studio.dialog.logoutWarning"),
+        [['logout', CS2I18N.ref("studio.lifecycle.eraseAndLogOut")], ['cancel', workspace.message('cancel')]]);
       if (answer !== 'logout') return;
       workspace.canvas.cancel();
       await CCSDraftSession.logout({store, confirmed: true});

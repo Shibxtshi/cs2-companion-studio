@@ -72,7 +72,7 @@ def test_widget_catalog_module_and_script_load_order():
 
         def handle_starttag(self, tag, attrs):
             if tag == 'script':
-                source = dict(attrs).get('src', '').split('?')[0]
+                source = (dict(attrs).get('src') or dict(attrs).get('data-ccs-src', '')).split('?')[0]
                 self.sources.append(source)
 
     parser = Scripts()
