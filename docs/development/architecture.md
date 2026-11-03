@@ -46,7 +46,7 @@ The root intentionally retains the README, changelog, license/community policies
 
 The server composes the smaller backend modules. Economy inference, validation and delivery logic should remain independent of browser markup. The package initializer does not start the server; explicitly importing companion.server initializes the application.
 
-The only ASGI entry point is companion.server:app. Internal imports use the companion namespace. There is no root-module compatibility bridge because the software has not been deployed. Configuration is validated before runtime directories are created.
+The only ASGI entry point is companion.server:app. Internal imports use the companion namespace. There is no root-module compatibility bridge. Configuration is validated before runtime directories are created.
 
 The browser loads shared rendering/transport, draft/publication and Studio modules, then application.js. This is the only production composition. Canonical assets live under static/js/ and static/css/; old flat asset URLs are not served. The map phase field is map_phase. Only explicitly keyed UI messages are translated. Personal names, custom titles and free GSI values remain text data. Shared static/locales/ JSON catalogs are loaded before the browser UI and are also consumed by PowerShell and companion/localization.py for offline tools.
 
@@ -64,7 +64,7 @@ See the [documentation index](../README.md) and [maintenance commands](../../scr
 
 ## Reproducible environment
 
-Runtime and test dependency versions, including their current transitive sets, are pinned in requirements.txt and requirements-dev.txt for Python 3.12. Docker and Playwright images use the digests verified in CI. Refresh these as a reviewed set and rerun the dependency audit, both OS suites, Docker and all three browsers; do not remove pins merely to resolve an installation failure. Platform-specific uvloop is conditional.
+Runtime and test dependency versions, including their current transitive sets, are pinned in requirements.txt and requirements-dev.txt for Python 3.12. Docker and Playwright image references are pinned; verify their current execution results separately. Refresh these as a reviewed set and rerun the dependency audit, both OS suites, Docker and all three browsers; do not remove pins merely to resolve an installation failure. Platform-specific uvloop is conditional.
 
 Native development entry point (after generating configuration):
 
@@ -72,13 +72,13 @@ Native development entry point (after generating configuration):
 python -m uvicorn companion.server:app --env-file .env --host 127.0.0.1 --port 8080 --ws-max-size 262144 --ws-max-queue 8
 ```
 
-Profile files use the same depth/finite-number checks as network JSON and are read with a byte cap before parsing. Unsupported binary WebSocket frames close with code 1003. CI actions are pinned to reviewed commit SHAs; refresh them deliberately and rerun the complete matrix. Docker availability failures do not trigger UAC; elevation remains limited to the existing explicit GSI-folder permission workflow.
+Profile files use the same depth/finite-number checks as network JSON and are read with a byte cap before parsing. Unsupported binary WebSocket frames close with code 1003. CI actions are pinned to reviewed commit SHAs; refresh them deliberately and select checks for the affected dependency/platform risks. Docker availability failures do not trigger UAC; elevation remains limited to the existing explicit GSI-folder permission workflow.
 
 ## Frontend module boundaries
 
-Display projections, widget DOM rendering and HTTP/WebSocket transport are shared modules. application.js composes the target Dashboard and Studio on one authenticated connection. The Studio lifecycle owns local edits and explicit publication; the historical editor and autosave have been removed. Read [frontend responsibilities and approved future boundaries](frontend-modules.md) before extending them.
+Display projections, widget DOM rendering and HTTP/WebSocket transport are shared modules. application.js composes the target Dashboard and Studio on one authenticated connection. The Studio lifecycle owns local edits and explicit publication; the historical editor and autosave have been removed. Read [frontend responsibilities](frontend-modules.md) before extending them.
 
-The approved identity, token ownership, target profile themes and historical temporary theme preview are documented in [design-system.md](design-system.md).
+The approved identity, token ownership, profile themes and temporary theme preview are documented in [design-system.md](design-system.md).
 
 ## Profile transition
 
@@ -95,3 +95,20 @@ The production runtime accepts only the target contract. Exactly one store and w
 ## Dashboard and Studio boundary
 
 The production Dashboard and Studio use one shared navigation shell. The target Dashboard uses the [X/Y projection](dashboard.md), 29 widget types and per-widget presentations; the separate [Customization Studio](customization-studio.md) edits drafts and publishes explicitly. Synthetic test hosts remain regression tools, not production launchers. Existing historical data requires separately confirmed offline activation with verified backups; see the [operator procedure](production-activation.md). See [native startup and data-preservation rules](target-runtime.md) for fresh installations.
+
+## Data flows
+
+```mermaid
+flowchart LR
+  CS2 -->|GSI HTTP POST| Server[companion.server]
+  Server -->|authenticated WebSocket state| Dashboard
+  Studio -->|configuration edits| Draft[IndexedDB draft]
+  Draft -->|explicit Save and apply| Publisher[publication controller]
+  Publisher -->|versioned operation| Store[validated atomic published store]
+  Store -->|acknowledgement and catalog| Dashboard
+  Draft -->|read-only local configuration| Preview
+```
+
+Game data remains a transient renderer input, never profile/draft content. The Diagram’s publication transport goes through the same authenticated server WebSocket. Published configuration loads the Dashboard; preview uses a validated opener-supplied configuration without a writer.
+
+Python profile models → official schema generator → `draft-schema.js` → browser validation (plus semantic/byte checks). Shared JSON catalogs → `i18n.js`, `installer/i18n.ps1` and `companion/localization.py` → explicit messages. No frontend build framework or parallel translation dictionary is required. See [developer entry points](README.md).

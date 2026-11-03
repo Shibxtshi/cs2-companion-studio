@@ -1,6 +1,6 @@
-# Public release checklist (V1P)
+# Public release checklist — V1.0.0 candidate
 
-The step-9 archive is a **publication candidate**, not a published or security-certified release. Use this checklist **before making the repository public**.
+The code version is a **publication candidate**, not a published or security-certified release. Documentation prepared in V1-05 does not satisfy any unchecked gate. Use this checklist **before making the repository public**.
 
 ## Ownership, licensing and openness — BLOCKING
 
@@ -28,7 +28,7 @@ The step-9 archive is a **publication candidate**, not a published or security-c
 - [ ] Rebuild the Docker image using the pinned runtime dependencies; check startup and authenticated access.
 - [ ] Test Windows guided installer with no elevation and the genuine permission-required scenario on a test machine.
 - [ ] Validate a fresh install on Windows with Steam/CS2 training and a second device on trusted Wi-Fi.
-- [ ] Validate upgrade from existing instance preserving `.env` and `data/`; confirm profiles survive restart and update.
+- [ ] Validate a documented compatible target-format update preserving `.env`, `data/`, installation/GSI backups and profile persistence. Historical storage is not automatically converted; rehearse separate explicit recovery if offered.
 - [ ] Capture **fresh screenshots of the current release** using synthetic/demo values only; do not reuse outdated screenshots.
 - [ ] Run `python scripts/check_public_archive.py <your-release-zip>` on the final artifact before upload.
 
@@ -43,10 +43,14 @@ The step-9 archive is a **publication candidate**, not a published or security-c
 
 Uncompleted items are **release blockers**, not warnings to silently ignore.
 
-## Evidence recorded on 2026-10-27
+## Historical evidence — not current candidate validation
+
+The dated records below remain provenance only.
+
+### Evidence recorded on 2026-10-27
 
 All eight CI jobs passed for main 3db5d855605e7285a534db16bfdcd57c7e737b6c (PR #7). The maintainer reports the existing application works on their local PC. This records evidence, not completion of the fresh-install/UAC, upgrade, LAN, licensing/contact or final-artifact gates above. Recheck CI on the exact final release revision.
 
-## Preparation audit — 2026-10-28
+### Preparation audit — 2026-10-28
 
 Main 44a1f395 (including merged #15) passed all eight CI jobs. This is evidence for that revision only. The next audit patch adds controlled binary WebSocket rejection, bounded/strict profile-file decoding, a missing EN save-error translation, removal of Docker-failure UAC escalation, immutable CI action revisions and an automatic tracked-source ZIP privacy check. Its own CI must pass before integration. These changes do not tick manual installation, licensing, screenshots, full-history secret review or final-artifact gates. No tag, release or visibility change is authorized.

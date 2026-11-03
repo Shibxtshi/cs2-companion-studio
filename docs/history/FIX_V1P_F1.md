@@ -1,5 +1,8 @@
 # V1P-F.1 — Local security check correction
 
+> Historical archive: retained descriptions and commands concern the dated version only. For current operation use the [documentation index](../README.md); this is not current validation evidence.
+
+
 This is a maintenance update to V1P-F. The dashboard, GSI endpoints, PIN,
 profiles, WebSocket, and Docker configuration are unchanged (`/health` still
 reports `1p-f`).

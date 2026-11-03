@@ -60,7 +60,7 @@ python scripts/recover_profiles.py --data-dir PATH_TO_DATA --activate BACKUP_ID 
 
 The warning explains that ALL old profile names, layouts and customizations are replaced by one empty target dashboard. This is reset, not migration. Confirmation requires `ACTIVATE BACKUP_ID`. Cancellation preserves the original bytes. The tool revalidates the backup, candidate and unchanged source after confirmation, then installs and validates the new document atomically. A new `storeId` establishes a separate browser draft context. The verified historical backup remains distinct from the rotating `.bak`.
 
-Start the compatible P9.5 application normally. No test launcher is required. Verify PIN, Dashboard, Studio, a local draft, explicit publication, profile/variant after reload and server restart, another tab, GSI, demo privacy, diagnostics and import/export. Do not resume old tabs after switching generations. Never adopt old IndexedDB drafts or pending intents automatically; they remain in their old context. Recover a valid configuration only through an explicitly reviewed target import and a new publication.
+Start the compatible target application normally. No test launcher is required. Verify PIN, Dashboard, Studio, a local draft, explicit publication, profile/variant after reload and server restart, another tab, GSI, demo privacy, diagnostics and import/export. Do not resume old tabs after switching generations. Never adopt old IndexedDB drafts or pending intents automatically; they remain in their old context. Recover a valid configuration only through an explicitly reviewed target import and a new publication.
 
 ## Target import/export
 

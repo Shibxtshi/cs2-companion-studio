@@ -1,34 +1,23 @@
-# Secondary screens and user feedback — P9
+# Secondary screens and user feedback
 
-The maintainer approved the first visual direction on 2026-10-29. Identity, fonts, themes and semantic tokens remain those of [P2](design-system.md). P9 does not activate target profiles.
+Production `application.js` composes Dashboard/Studio; common screens use the same tokens, ten themes and shared JSON translations.
 
 ## Responsibilities
 
-- `experience-copy.js`: closed EN/FR secondary-screen vocabulary; no runtime values or secrets.
-- `experience.js`: login, optional three-step quick start, native topic-based help, grouped Settings and diagnostics. It consumes machine-readable authentication/state events, never translated status text.
-- `notifications.js`: bounded feedback. Errors/warnings/pending states do not expire; unrelated success cannot erase an unresolved error. Explicit dismissal and transient information/success expiry after five seconds. All text uses textContent.
-- `experience.css`: P2-token responsive layouts; no widget geometry or profile-writing behavior.
-- `studio.js`: historical profiles/autosave/import/export, readable login errors and guarded download preparation. A prepared download is not proof that a file reached disk. Import failures never display parser excerpts or supplied file contents.
-- `studio-workspace.js`: P8 native confirmations and local/publication states, context help and translated fallback messages without raw internal error disclosure. Dialogs restore focus to a connected trigger.
+- `experience-copy.js`: stable experience-key adapter to shared catalogs, not a separate translation dictionary.
+- `experience.js`: sign-in, optional quick start, topic-based help, grouped Settings and diagnostics. Machine-readable authentication/state events drive status, not translated text comparisons.
+- `notifications.js`: bounded feedback. Errors/warnings/pending states persist until resolution or explicit dismissal. An unrelated success cannot clear an unresolved error. Information/success can expire after five seconds. Content is text, never parser HTML.
+- `experience.css`: token-based responsive secondary screens, without geometry or profile writes.
+- `studio-workspace.js`: native confirmations, explicit draft/publication status, translated error codes and focus restoration.
 
-## States and privacy
+Before authentication only public `/health` is checked; PIN stays in session memory, never an URL, draft or onboarding preference. A refused pre-authentication socket does not prove throttling: copy explains possible temporary limits without inventing a countdown.
 
-Only public /health is checked before authentication. PIN handling stays with the existing transport; no URL, draft or onboarding credential storage. The server still enforces attempts, Origin and message bounds. A refused pre-authentication WebSocket does not prove a throttle cause; UI mentions temporary limits as a possibility, without inventing a retry countdown.
+Diagnostics distinguishes HTTP health, authenticated WebSocket, recent GSI and recent match data. Packet age is server-reported. Disconnect clears live indicators; demonstration never certifies real CS2 reception. Diagnostic export is authenticated and unavailable in demo. No raw packet, PIN or token belongs in diagnostics.
 
-Diagnostics distinguish the last HTTP health check, authenticated WebSocket, recent GSI and recent match data. The online flag is used only with authenticated, recent GSI reception. Disconnect clears live indicators. Age is server-reported GSI packet age, not a separate client source of truth. Demo never certifies CS2 connectivity. Export remains authenticated and unavailable in demo; no endpoint or export field is added.
+Quick start is optional. Explicit dismissal/completion stores only the local `ccs-quick-start-v1` preference. Help can reopen it, including when storage is unavailable. Settings describes the selected published profile and offers temporary appearance previews where available. Persistent theme/density/navigation/fullscreen changes are Studio edits followed by explicit publication; there is no second settings writer or historical autosave.
 
-Quick start is optional and never blocks connection. Only explicit dismissal/completion stores the local `ccs-quick-start-v1` flag; Help always reopens it. The flag contains no profile, authentication or game data. Storage refusal leaves Help available.
+Native dialogs support cancel, keyboard and focus return. Guarded navigation/logo exits use the Studio lifecycle, never automatic publication. Confirmed logout warns and erases current-context local drafts/intents before authentication closes; an erasure failure is not complete logout. Network loss does not erase drafts.
 
-## Active and target preferences
+## Verification
 
-Production Settings explains temporary theme/navigation/fullscreen previews for this tab. Historical density stays in the current editor. Widget presentation and X/Y dimensions are documented as distinct controls in the isolated Studio, not added to historical profiles.
-
-The authenticated target Dashboard reads published preferences; Settings controls remain temporary previews. Persistent changes use P8 drafts/P5 publication. No second writer or activation switch exists.
-
-Current automatic server saving and target local saving/publication remain distinct. Historical native confirmations/prompts stay in place. P8 retains native dialog composition instead of adding a custom focus trap.
-
-## Validation
-
-Run `node tests/js/test_experience.js` and `python tests/browser/test_experience.py --browser chromium` (also firefox/webkit), plus existing suites. Tests use disposable servers, synthetic credentials/GSI, real server termination, malformed files and download faults. No installed profiles are read. Coverage includes bilingual copy, secondary-screen sizes, native focus, onboarding persistence, error privacy and demo isolation.
-
-Hosted Actions absent or blocked must be reported as not executed. Local evidence is not hosted-CI success or accessibility certification. The separate [activation proposal](target-activation-plan.md) needs approval and implementation after P9/before P10.
+See [tests](../../tests/README.md): experience, edge, logo, production and localization journeys use disposable data/credentials. They cover server loss, privacy, bilingual messages, native focus, responsive layouts and demo isolation. These are synthetic checks, not global accessibility certification or proof of hosted CI execution.

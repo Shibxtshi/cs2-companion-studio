@@ -1,40 +1,25 @@
-# Documentation
+# CCS documentation
 
-Start with the [project README](../README.md) for installation and features, or the [French overview](README.fr.md).
+[Français](README.fr.md) · [Project overview](../README.md)
 
-| Need | Document |
-| --- | --- |
-| Install, update or recover a Windows instance | [Windows guide](guides/windows-installation.md) |
-| Rehearse final acceptance and personal activation separately | [P10 acceptance guide (French)](guides/final-acceptance.fr.md) |
-| Operate the integrated historical/target runtime safely | [Production activation](development/production-activation.md) |
-| Recover incompatible/corrupt profile storage offline | [Profile recovery](guides/profile-recovery.md) |
-| Understand explicit publication and activation gates | [Profile publication](development/profile-publication.md) |
-| Understand local drafts and session history | [Local draft foundations](development/local-drafts.md) |
-| Understand current and target profile formats | [Profile contracts and transition](development/profile-contracts.md) |
-| Understand usage limits and affiliation | [Usage and affiliation](guides/usage-and-affiliation.md) |
-| Find the code and understand its boundaries | [Architecture and repository map](development/architecture.md) |
-| Follow naming and compatibility conventions | [Code style](development/code-style.md) |
-| Run automated checks | [Test guide](../tests/README.md) |
-| Find Windows operational scripts | [Installer index](../installer/README.md) |
-| Find maintenance commands | [Script guide](../scripts/README.md) |
-| Understand protections and limitations | [Technical security notes](security/technical-notes.md) |
-| Report a vulnerability | [Security policy](../SECURITY.md) |
-| Track product work | [Roadmap](ROADMAP.md) |
-| Prepare a publication | [Release checklist](releases/checklist.md) |
-| Review the unpublished 1.0.0 candidate | [Draft release notes](releases/release-notes-1.0.0.md) |
-| Consult older V1P records | [Historical index](history/README.md) |
+CCS is an independent personal project developed with substantial ChatGPT/Codex (OpenAI) assistance. No Valve/FACEIT/OpenAI affiliation, independent security audit or competitive approval is claimed. Code version `1.0.0` does not announce a published release. The [license](../LICENSE) is an unapproved, non-effective draft, not a rights grant.
 
-The release checklist remains authoritative for publication gates. Historical notes are retained as records, not current instructions. Local assistant instructions and working context are not part of the distributed repository.
+## Choose a path
 
-- [Dashboard and navigation (P6)](development/dashboard.md) — display projection and navigation; target activation now follows the validated storage format.
+- [User documentation](user/README.md): installation, first widget, Dashboard, Studio, 29 widgets, ten themes, LAN, backups and troubleshooting.
+- [Contributor guide](contributing/README.md): issues, PRs, targeted tests, conventions, rights and AI assistance.
+- [Translations](contributing/translations.md): shared EN/FR JSON catalogs, parameters and adding a language.
+- [Developer reference](development/README.md): architecture, modules, flows, contracts, storage, publication and tests.
 
-## P7 widget presentations
+User pages use `page.md` / `page.fr.md` with language links. Technical references are maintained in English to avoid conflicting copies.
 
-See [widget-presentations.md](development/widget-presentations.md) for the 29-kind, three-variant renderer, shared data nodes, measured minima, preserved historical Standard path and target variants. P9.5 integrates target persistence in production when target storage is active.
+## Operation and publication
 
-- [Target Customization Studio and activation boundary](development/customization-studio.md)
+- [Private backups and recovery](user/backup.md), [unencrypted LAN](user/network.md), [maintenance](user/maintenance.md).
+- [Support](../SUPPORT.md) and [private security reporting](../SECURITY.md).
+- [Offline operator procedure](development/production-activation.md) and [recovery tools](guides/profile-recovery.md).
+- [Tests](../tests/README.md), [Windows scripts](../installer/README.md), [maintenance commands](../scripts/README.md).
+- [Roadmap](ROADMAP.md), [release checklist](releases/checklist.md), [unpublished release notes](releases/release-notes-1.0.0.md).
+- [Historical records](history/README.md): provenance, not current operating instructions.
 
-## P9 UI completion
-
-- [Secondary screens, help and feedback](development/user-experience.md)
-- [Proposed target activation lot — separate approval](development/target-activation-plan.md)
+Never expose CCS directly to the Internet. The PIN does not encrypt HTTP/WebSocket. No guide authorizes changes to another person’s installation.

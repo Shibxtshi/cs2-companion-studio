@@ -1,9 +1,6 @@
-# Customization Studio — P8
+# Customization Studio
 
-> P9.5 update: these phase boundaries describe their original delivery. The integrated production composition and the explicit, separately authorized transition are documented in [Production activation](production-activation.md). Valid historical installations remain usable until offline confirmation.
-
-
-The maintainer approved the three-panel visual direction on 2026-10-29. This is a complete isolated target composition, not activation on personal profiles. Production index.html and companion.server:app still use the historical editor/store/autosave. No conversion, reset, second writer or public switch exists.
+Production `application.js` composes the three-panel workspace, persistent local drafts and explicit publication on the Dashboard’s authenticated transport. No historical editor or autosave writer is active. See the [user walkthrough](../user/studio.md), [runtime](target-runtime.md) and [offline recovery](production-activation.md).
 
 ## Responsibilities
 
@@ -19,7 +16,7 @@ The maintainer approved the three-panel visual direction on 2026-10-29. This is 
 | studio-preview.js / studio-preview-host.js | Read-only same-origin preview window using the actual P6 shell/grid and P7 renderer |
 | customization-studio.css / studio-density.css | P2-token layout and global padding density, independent of presentation and geometry |
 
-The guarded tests/browser/publication_server.py substitutes the single P5 target store only with a disposable marker directory. /__studio_test__ and /__studio_preview__ exist only in that launcher; tests are absent from production Docker. The same authenticated WebSocket provides catalog and publication. A production browser cannot activate target storage with a command. New assets in static are inert until explicitly composed.
+The guarded `tests/browser/publication_server.py` remains a synthetic regression host only. Its special routes are absent from production; no launcher is needed to use the integrated Studio.
 
 Existing contracts remain authoritative: [P3](profile-contracts.md), [drafts/history](local-drafts.md), [publication](profile-publication.md), [grid](dashboard.md) and [widgets](widget-presentations.md). No schema/version or backend business calculation changes.
 
@@ -57,19 +54,6 @@ IndexedDB is origin-isolated, not encrypted. Browser eviction/clearing can remov
 
 ## Verification
 
-See [test commands](../../tests/README.md). Three real browser journeys cover Studio editing/resume/conflict resolution, profile and transaction/network/disk faults, and 87 combinations/seven resolutions/four themes/60 instances/keyboard/touch. Existing eight journeys and all backend/security, JavaScript, PowerShell and Docker checks remain. Fixtures are synthetic and P1 golden data is not regenerated.
+See [test commands](../../tests/README.md). Three real browser journeys cover Studio editing/resume/conflict resolution, profile and transaction/network/disk faults, and 87 combinations/seven resolutions/representative themes/60 instances/keyboard/touch. Production and theme journeys additionally exercise the real ASGI composition and all ten themes. Backend/security, JavaScript, PowerShell and Docker checks remain available. Fixtures are synthetic and P1 golden data is not regenerated.
 
 Optional matrix output provides raw operation timings including automation/debounce where labelled. Measure standalone performance sequentially with real clocks; no arbitrary timing gate or general speedup is claimed. Hosted Actions can be refused before startup for billing restrictions and must not be described as successful. Exact local results and limitations accompany the PR.
-
-## Proposed future activation procedure — not authorized
-
-1. Complete target readers, Studio writers, import/export and full navigation/preview. Validate all supported browsers before changing the active composition.
-2. Explain that historical layouts cannot be silently fed to the new renderer; offer a deliberate target reset rather than claiming unimplemented migration. Preserve .env, PIN, GSI token, data directory and all recovery copies.
-3. Stop the service and close historical browser tabs before touching the active profile file. Create a unique private snapshot outside static using the existing recovery patterns. Verify byte length, cryptographic digest, readability and source format. Failure leaves the original untouched.
-4. Present the backup location, data that will be reset and restoration procedure. Require explicit operator confirmation. P8 does not perform this step on real data.
-5. Prepare a validated target document with a fresh storeId. Atomically install the selected document only in a coordinated version where the one backend store and all frontend readers/writers use that contract. Remove legacy autosave in that same change; never dual-write.
-6. Verify the new document, authenticated catalog, draft isolation, publication and reconnect after startup. Keep the private pre-transition snapshot even after success. Never change credentials or delete data/.
-7. If verification fails, keep the service stopped, preserve the failed target state separately and restore the exact verified historical snapshot together with the compatible previous application version. Never run an old frontend against a target file.
-8. Intentional rollback of an already active target generation requires renewed generation identity before accepting stale clients. Close old tabs, retain recovery snapshots and follow P5 receipt/rollback constraints. A raw file copy alone is not a safe live rollback policy.
-
-This is a proposal to review separately, not an executable migration, installation switch, reset command or permission to activate target storage.

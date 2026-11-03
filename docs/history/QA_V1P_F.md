@@ -1,5 +1,8 @@
 # V1P-F — Quality assurance and security release gate
 
+> Historical archive: retained descriptions and commands concern the dated version only. For current operation use the [documentation index](../README.md); this is not current validation evidence.
+
+
 This is **stage 8 of the V1P roadmap**, not a claim of penetration-test certification or FACEIT approval. The app processes **only synthetic GSI data** in automated tests.
 
 ## What runs automatically after pushing to GitHub

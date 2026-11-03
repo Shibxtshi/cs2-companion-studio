@@ -1,25 +1,19 @@
-# V1P publication roadmap
+# CCS V1.0.0 preparation roadmap
 
-- [x] **1 — Stabilize V3**: snapshot compatibility, separate static assets, baseline tests.
-- [x] **2 — Remove shipped secrets**: ignore rules, setup generator, examples, secret hygiene check.
-- [x] **3 — Initial LAN/API hardening**: origin check, PIN throttling, request caps, security headers, safer Docker default. (Further security audit before release remains required.)
-- [x] **4 — Harden GSI state lifecycle (V1P-B)**: reconnects, map/round/player changes, stale-data handling, confidence-labelled economy with conservative missing-value behavior and tests. Maintainer reports working local PC operation; fresh-install, upgrade and second-device validation remain to be recorded.
-- [x] **5 — Installer (V1P-C, full installation matrix pending)**: guided detection of CS2/Steam, secret generation/reuse, safe GSI backup/restore, LAN opt-in, diagnostics and onboarding.
-- [x] **6 — Widget UX (V1P-D)**: direct snapping resize on desktop, per-widget backgrounds/styles/opacity, five layout templates, mobile-friendly controls, backward-compatible profile migration.
-- [x] **7 — User experience (V1P-E / V1P-E.1)**: bilingual guided start, help, authenticated live diagnostics, reconnect status, mobile layout and accessibility, followed by server-side shared profiles, demo isolation and sanitized support logs.
-- [x] **8 — V1P-F CI/test suite implemented**: Windows/Linux regressions, 3-browser E2E, Docker smoke, dependency audit and SBOM pipeline, security coverage. **CI validated on GitHub runners; retain the final fresh-build release gate.**
-- [x] **9 — Source-available release documentation drafted**: SECURITY, CONTRIBUTING, changelog and publication checklist exist. Final license adoption, private contacts, current screenshots and release validations remain blockers.
-- [ ] **10 — Tag/publish v1.0.0**: final review, versioned GitHub release and support instructions.
+This is the current development status, not a release announcement. The code reports `1.0.0`; no public publication is implied.
 
-No public publication is implied by this development snapshot.
+| Lot | Status |
+|---|---|
+| P1–P10 / P9.5 | Dashboard/Studio/profile foundations and integration delivered; historical records are not current operating instructions |
+| R1 / R1.1 | General review and scoped stabilization completed before the V1 simplification work |
+| V1-01 | Complete: target-only Dashboard/Studio, native empty initialization, incompatible files refused without conversion |
+| V1-02 | Complete: cleanup and simplified production/test boundaries |
+| V1-03 | Complete: shared JSON translations and FR/EN revision, PR #32 merged |
+| V1-04 | Complete: ten themes, PR #33 merged |
+| CI correction | Complete: moved browser-harness paths, PR #34 merged |
+| V1-05 | Documentation prepared for review; not marked merged by this branch |
+| V1-06 | Not started; publication decisions and final gates remain separate |
 
-**V1P-E.1 corrections completed:** server-side profile storage and cross-device synchronization, multilingual widget search, rename, demo isolation, sanitized diagnostics and independent-project disclaimer. No automatic browser profile migration.
+Current scope is individual-player CCS, not a broadcast console. Streamer Mode and Overlay Studio remain future, separately authorized work. Fresh development installations do not authorize erasing another installation, credentials or backups.
 
-
-## v1.0.0 preparation — final step
-
-The public-facing README, AI disclosure, code of conduct, support instructions, issue/PR templates, custom no-resale source-available license draft and publication checklist are drafted. This is **not yet a public release**; the license holder/private contact and all CI release gates must be completed before step 10. See [release checklist](releases/checklist.md).
-
-## Development quality follow-up
-
-PR #6 established compatible code conventions and historical documentation; merged PR #7 extracted the widget catalog and isolated test execution. Subsequent development focuses on preserving unsaved profiles, explicit private recovery, testable frontend synchronization and bounded dashboard fan-out. These improvements do not authorize publication or complete the manual release gates.
+See [user documentation](user/README.md), [developer reference](development/README.md), [historical index](history/README.md) and the [release checklist](releases/checklist.md). Legal approval, contribution/third-party rights, reporting channel, final-artifact and real-environment validation remain distinct from writing documentation. No release/tag/public visibility change or automatic merge is authorized by this roadmap.

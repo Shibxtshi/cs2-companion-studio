@@ -1,188 +1,144 @@
 # Test suites
 
-Checks are grouped by responsibility and execution model.
+Run from the source root, using disposable fixtures and credentials only. Never point destructive tests at an installed personal service. This page lists commands, **not results**. Record OS, Python/browser versions, exact commit, executed/passed/failed/skipped/not-run checks and limitations. Historical evidence is not a fresh run. Hosted CI can be unavailable; never infer a green status from local tests.
 
-> Phase-specific foundation sections retain their original delivery boundaries. P9.5 now integrates the target composition in the real application when target storage is active; see [production activation](../docs/development/production-activation.md). The isolated module suites remain regressions, not substitutes for production acceptance.
+## Prerequisites and backend
 
-
-| Directory | Scope | Execution |
-| --- | --- | --- |
-| unit/ | Recovery, disk failures and dashboard delivery | pytest |
-| integration/ | HTTP/WebSocket security and private-path isolation | pytest |
-| contracts/ | Catalog parity, source hygiene, documentation and release metadata | pytest |
-| docker/ | Disposable Compose instance, persistence and settings reload | Standalone Python runners in Docker CI |
-| windows/ | PowerShell parsing and synthetic installer helpers | PowerShell 5.1; no UAC/Steam/CS2 |
-| browser/ | Real server, desktop/mobile, profiles and reconnect journeys | Standalone Playwright runner |
-| js/ | Profile synchronization controller behavior | Node.js |
-| standalone/ | Backend suites with process-global synthetic fixtures | Separate Python process per module |
-
-## Local quality gate
+Use Python 3.12 in a virtual environment and Node.js for JavaScript tests. The development requirements include the pinned runtime/test dependencies; browser engines and Docker are separate prerequisites.
 
 ```bash
 python -m pip install -r requirements-dev.txt pytest
 python scripts/run_checks.py
+```
+
+The gate launches six standalone modules in **separate processes**, validates catalogs, runs unit/integration/contracts and secret hygiene. Standalone modules set process-global fixtures and must not be collected into the same pytest process. For example:
+
+```bash
+python -m tests.standalone.test_security
+python -m pytest -q tests/unit tests/integration tests/contracts
+python scripts/check_locales.py
+python scripts/generate_profile_schema.py --check
+python scripts/check_docs.py
+```
+
+| Directory | Responsibility |
+|---|---|
+| `tests/unit/` | Target runtime, strict profiles, recovery, atomic failures, publication and delivery |
+| `tests/integration/` | HTTP/WebSocket, PIN/Origin/security, malformed messages and publication |
+| `tests/contracts/` | Schema parity, catalogs, public documents, assets, archive/privacy and version invariants |
+| `tests/standalone/` | Economy, timer, studio/backend, security, lifecycle and profile/diagnostics suites |
+| `tests/js/` | Pure/controller behavior, history, local draft contract and UI adapters |
+| `tests/browser/` | Real browser journeys, guarded synthetic hosts and production composition |
+| `tests/windows/` | PowerShell syntax, installer helpers and shared locales without actual Steam/UAC |
+| `tests/docker/` | Disposable image, startup, isolation, settings, recovery and publication |
+
+Select checks for the changed behavior; expand across affected security/GSI/storage/platform boundaries. Public release gates remain separate. A skipped Windows symlink check is not proof that Linux symlink behavior passed.
+
+## JavaScript
+
+Node needs no frontend framework installation for these suites. Run each relevant file directly:
+
+```bash
 node tests/js/test_studio_data.js
 node tests/js/test_reconnect.js
 node tests/js/test_i18n.js
 node tests/js/test_display_format.js
 node tests/js/test_dashboard_client.js
+node tests/js/test_theme_preview.js
+node tests/js/test_drafts.js
+node tests/js/test_profile_publication.js
+node tests/js/test_dashboard_layout.js
+node tests/js/test_widget_presentation.js
+node tests/js/test_studio_model.js
+node tests/js/test_experience.js
 ```
 
-Ordinary pytest checks can also run with `python -m pytest -q`. Standalone and historical suites are excluded from pytest collection. Run a single backend suite with `python -m tests.standalone.test_security`; never collect these as ordinary pytest modules because they configure process-wide credentials and game state.
+Use `node --check <actual-file.js>` for syntax. The browser harnesses are `tests/browser/studio-target.js` and `tests/browser/dashboard-target.js`, not production static assets.
+
+## Browser checks
+
+Install the matching package and engines in the disposable development environment:
+
+```bash
+python -m pip install playwright==1.57.0
+python -m playwright install chromium firefox webkit
+python tests/browser/test_live_browser.py --browser chromium
+```
+
+Linux engines also need their OS libraries (or the version-matched pinned Playwright image in CI). Repeat a selected journey with `--browser firefox` / `--browser webkit` when installed. Production runners can use `CCS_CHROMIUM_EXECUTABLE` for installed Chrome; older isolated module runners use `CS2_CHROMIUM_BIN`. Inspect the selected runner/helper before setting an override. Missing binaries mean not executed, not passed. Mobile/touch emulation is not a physical-device test.
+
+| Runner under `tests/browser/` | Scope |
+|---|---|
+| `test_live_browser.py` | Fresh real production startup, normal PIN, Studio/publication, synthetic GSI, absent historical assets |
+| `test_production_studio.py` | Production auth/catalog, profiles/tabs, draft/history, import/export, publication and responsive widgets |
+| `test_production_acceptance.py` | Profile operations, local/published separation, geometry, exits, preview and recovery controls |
+| `test_production_resilience.py` | Browser close/reopen, logout, IndexedDB unavailable/quota/abort |
+| `test_production_faults.py` | Throttling, stale/metadata-only GSI, invalid imports, lost reply and server restart |
+| `test_rendering_regressions.py` | Computed custom surfaces/opacity, same-ID type replacement, focus and demo bomb controls |
+| `test_themes.py` | Ten published palettes, light/native controls, draft/history/preview, profiles, FR/EN and contrast samples |
+| `test_localization.py` | Real auth/publication, hot language changes, personal-text isolation and temporary third language |
+| `test_experience.py`, `test_experience_edges.py`, `test_logo_navigation.py` | Help/onboarding/settings/diagnostics, offline/errors/zoom, guarded logo exits, mouse/keyboard/touch |
+| `test_widget_preview.py` | 29 × 3 presentations across ten themes (870 combinations), missing/zero/stale/demo/long content and overrides |
+| `test_drafts.py`, `test_profile_publication.py` | Native IndexedDB, CAS/context revocation, journals/receipts/conflicts and failure injection |
+| `test_dashboard_target.py` | Isolated layout/collision/tab-sync host; not a production substitute |
+| `test_customization_studio.py`, `test_studio_workflows.py`, `test_studio_matrix.py` | Isolated component Studio model/workflows, 87 presentations and responsive/touch |
+
+Examples (private output directories outside source, replace with an absolute writable path on Windows):
+
+```bash
+python tests/browser/test_production_studio.py --browser chromium --output /tmp/ccs-production-review
+python tests/browser/test_themes.py --browser chromium --output /tmp/ccs-theme-review
+python tests/browser/test_rendering_regressions.py --browser chromium --output /tmp/ccs-rendering-review
+```
+
+Production suites start the real `companion.server:app` with temporary data and normal authentication. Guarded `publication_server.py` hosts remain useful for isolated module tests only; they and their routes are not distributed in Docker. Never substitute them for a claim of production acceptance. P1 JSON fixtures are historical observations; do not regenerate them to hide regressions. Source/game calculations remain shared by variants.
 
 ## Windows checks
+
+On Windows with PowerShell 5.1, from the source root:
 
 ```powershell
 powershell -NoProfile -File tests/windows/check_syntax.ps1
 powershell -NoProfile -File tests/windows/test_helpers.ps1
+powershell -NoProfile -File tests/windows/test_locales.ps1
 ```
 
-These test the operational scripts in installer/ and the test runners themselves. Helper tests use temporary synthetic files and mock Docker; they do not install into Steam/CS2 or request elevation.
+Helpers use temporary files and mocked Docker/HTTP. They do not prove real UAC, Steam detection on every machine, a real game session or LAN reachability.
 
 ## Docker checks
 
-Docker CI creates disposable credentials and volumes, builds the image, then runs:
+Use only a **separate extracted checkout/Compose project** with synthetic `.env`, private writable test `data/`/`logs/` and a free host port. Review `.github/workflows/checks.yml` for the exact fixture setup, UID 10001 ownership and runner order before running. These scripts read/change their configured instance; never run them from a personal installation.
 
 ```bash
+docker compose up -d --build --wait --wait-timeout 120
 python tests/docker/smoke.py
 python tests/docker/settings.py
 python tests/docker/profile_contracts.py
+python tests/docker/profile_publication.py
+docker compose down --remove-orphans
 ```
 
-Run these only against the disposable synthetic instance from the CI workflow. They modify game state and settings. The settings runner toggles the timer and checks authenticated WebSocket state, unchanged image IDs and profile content. They are excluded from ordinary pytest collection.
+This builds/starts and later removes the disposable project containers/network, not host bind-mounted data. The settings suite changes its synthetic timer setting; profile recovery tests stay in container temporary storage. Only `scripts/recover_profiles.py` is shipped as a maintenance command. Native Linux Docker UID/permissions and Windows Docker Desktop binds have different filesystem behavior; label the environment.
 
-## Browser checks
+## Archive, dependencies and CI
+
+In a clean Git checkout, create a candidate ZIP **outside source**, then inspect it:
 
 ```bash
-python -m pip install playwright==1.57.0
-python tests/browser/test_live_browser.py --browser chromium
+git archive --format=zip --output=../ccs-source-check.zip HEAD
+python scripts/check_public_archive.py ../ccs-source-check.zip
 ```
 
-Install the matching Playwright browser binaries first, or set CS2_CHROMIUM_BIN to an installed compatible browser for a local Chromium check. CI runs Chromium, Firefox and WebKit against a real synthetic server using the version-matched prebuilt image.
+This checks archive contents, not all Git history or legal readiness. The dependency-audit job installs `pip-audit==2.10.1`, audits `requirements.txt` and generates CycloneDX; it requires network access. Preserve audit outputs privately until reviewed.
 
+`.github/workflows/checks.yml` defines Windows/Linux regressions, PowerShell 5.1, Chromium/Firefox/WebKit, dependency audit/SBOM and Docker smoke jobs. It uses pinned action/image references. Consult actual runs on the exact commit; a workflow file or old green run is not present evidence. Do not change billing/visibility or weaken tests to obtain a green result.
 
-All automated checks use synthetic data. They do not certify real CS2/UAC/LAN installation, anti-cheat approval or release readiness. See [architecture](../docs/development/architecture.md) and [release gates](../docs/releases/checklist.md).
+## Measurements and manual limits
 
-Edge cases include repeated health failures, authentication concurrency, malformed/Unicode inputs, JSON complexity, private archive variants and untranslated personal labels. Windows helper tests also inject a failed atomic write without touching Steam/CS2.
-
-Publication-preparation regressions cover binary WebSocket frames before/after authentication and deeply nested/non-finite profile storage. Linux CI also builds a ZIP from tracked source with git archive and checks its paths; this is not a full-history secret scan or a published release artifact.
-
-## Widget states and production comparison
-
-The synthetic LIVE/EMPTY/KINDS corpus now lives in widget_fixtures.py. Original P1 JSON references remain unchanged
-as historical evidence; their old-editor runner was removed with that editor. Current coverage uses
-`python tests/browser/test_widget_preview.py --browser chromium` (87 presentations and states) and the real
-`test_production_studio.py` / `test_rendering_regressions.py` journeys. Production measurements use
-`benchmark_production.py`; the retired legacy-board benchmark is not comparable to the target layout.
-
-## Design-system checks
-
-Run node tests/js/test_theme_preview.js and python tests/browser/test_themes.py --browser chromium. CI also runs the theme journey in Firefox and WebKit. Optional --output ../theme-evidence saves synthetic desktop/mobile screenshots and contrast samples. It covers ten themes on the real production composition, draft/history/preview and explicit publication, EN/FR, keyboard focus, seven viewport widths, native color-scheme and measured contrast samples. The widget gallery checks 87 presentations across ten themes (870 combinations). It does not certify arbitrary user-chosen widget colors or browser-owned native dialogs.
-
-## Target profile contracts and offline recovery (P3)
-
-Unit suites test strict server/export/draft/operation documents, all 29 kinds, geometry bounds, per-profile compare-and-swap and bounded retry receipts. Recovery tests use temporary synthetic files and inject backup/write/validation failures, interruption before/after replacement, rollback failure, process death and concurrent recovery tools. They never reset personal profiles. Windows may skip the symlink test when symlink creation is unavailable; Linux CI runs that path.
-
-Integration tests ensure current WebSocket saves reject target version markers without changing the active revision/file. Existing autosave, import/export, authentication, GSI, reconnect and theme/browser tests continue to run. The Docker profile_contracts runner checks the packaged inactive modules and recovery entirely under container /tmp; it never resets the live mounted profile store. See [contract boundaries](../docs/development/profile-contracts.md) and [operator procedure](../docs/guides/profile-recovery.md).
-
-## Persistent draft foundations (P4)
-
-Run node tests/js/test_drafts.js and python tests/browser/test_drafts.py --browser chromium. The shared corpus also runs against P3 Python models during pytest; the generated schema must match scripts/generate_profile_schema.py. Browser CI adds the native IndexedDB journey in Chromium, Firefox and WebKit without replacing existing journeys.
-
-The draft runner creates a temporary persistent browser profile and synthetic server, reopens the full browser process, injects quota/transaction/deletion failures, and checks tab conflicts, context isolation, logout revocation and HTTP origins. No personal browser profile or CCS data is read. --output ../draft-evidence saves raw 60-widget timing samples and deterministic write/history metrics. Local latency is descriptive, not a CI performance gate. The current app does not load the draft modules; see [draft foundations](../docs/development/local-drafts.md) for the P5/P8 integration boundary.
-
-## Explicit publication foundations (P5)
-
-Run node tests/js/test_profile_publication.js and python tests/browser/test_profile_publication.py --browser chromium (also Firefox/WebKit in CI). Python unit/integration suites cover the target store and its use through the existing authenticated WebSocket. The tests-only browser launcher substitutes one synthetic target store into companion.server:app; it requires a disposable marker directory and is never used by production Docker/Windows launchers.
-
-The browser journey uses the real P1 transport and native IndexedDB to verify journal-before-send, acknowledgement loss, reload/server restart, retries, explicit conflicts, later local edits, cleanup failures, profile independence, local tab conflicts, deletion/orphans, confirmed logout, generation changes and preservation of P4 database-version-1 records. --output ../publication-evidence records seven 60-widget publications with three real clients.
-
-Optional backend measurements: python tests/benchmarks/profile_publication.py --output ../publication-evidence/backend.json. These use temporary data only, with 12 profiles × 60 widgets and 64 receipts, nine samples per operation and fast in-memory fan-out peers. Run performance measurements sequentially; scheduling results are not LAN latency and no timing threshold is a CI gate. Existing demo/GSI/widget/theme/browser suites are retained. See [publication boundaries](../docs/development/profile-publication.md).
-
-## P6 dashboard checks
-
-Run node tests/js/test_dashboard_layout.js, python tests/browser/test_dashboard_target.py --browser chromium (also firefox/webkit in CI). The target test uses disposable P5 storage, real authenticated transport and synthetic GSI; it never accesses personal profiles. Add --output PATH to the target test for local screenshots and reflow timings. Keep those artifacts outside the source tree.
-
-## P7 widget variants
-
-Run node tests/js/test_widget_presentation.js and python tests/browser/test_widget_preview.py --browser chromium (also firefox/webkit). The synthetic review server is not packaged into Docker or started by production. --output PATH optionally writes the standalone gallery and screenshots outside the source tree. P1 JSON fixture bytes stay unchanged; reviewed display-only normalizations are explicit in the characterization comparator. P6 target tests additionally cover all 87 combinations and intrinsic-height clipping at seven resolutions.
-
-
-## P8 Customization Studio
-
-Run node tests/js/test_studio_model.js and all three browser journeys: test_customization_studio.py, test_studio_workflows.py and test_studio_matrix.py under tests/browser/, each with --browser chromium (also firefox/webkit). These use the guarded synthetic P5 launcher, native IndexedDB, the actual P7 renderer and existing authenticated transport. Production remains historical; no personal files are loaded or reset.
-
-The workflow journey injects native quota/transaction/cleanup failures, real disk refusal, lost acknowledgements, reload/server restart and cross-tab conflicts. The matrix covers 29 x 3 presentations at seven resolutions, four themes, 60 instances, keyboard/touch and unchanged desktop geometry. Optional --output PATH records private synthetic captures and raw descriptive timing samples. No timing threshold is a CI gate. See [Studio architecture and activation boundary](../docs/development/customization-studio.md).
-
-Hosted Actions may be refused before startup by account billing restrictions. Record that as not executed; local Windows/Linux/Docker/browser evidence does not make hosted checks green. Keep workflow definitions and triggers intact for future reactivation.
-
-## P9 secondary screens and feedback
-
-Logo navigation: `python tests/browser/test_logo_navigation.py --browser chromium` (also Firefox/WebKit). It verifies real PIN gates, mouse/Enter/touch, Settings and Help returns without document reload, per-tab target selection, a delayed historical save and all four existing target Studio exit choices. Only synthetic temporary stores are used. The target Studio and Dashboard remain separate documents; that existing authenticated transition is retained, while within-dashboard home actions use the shared section router.
-
-Run `node tests/js/test_experience.js` and `python tests/browser/test_experience.py --browser chromium` (also `firefox`/`webkit`). The runner uses disposable profiles, the existing PIN/WebSocket path and synthetic GSI. It covers optional onboarding/dismissal, native help/focus, four themes, EN/FR, seven widths, import/download faults without parser-content disclosure, diagnostics, real server interruption and demo isolation. `--output PATH` writes synthetic screenshots outside the source tree. Preparing a browser download does not prove it reached disk.
-
-Node checks verify persistent errors/pending states, explicit dismissal and that unrelated success cannot hide an error. Do not regenerate P1 widget fixtures. See [UI responsibilities](../docs/development/user-experience.md) and the separate [activation proposal](../docs/development/target-activation-plan.md).
-
-Also run `python tests/browser/test_experience_edges.py --browser chromium` (Firefox/WebKit supported) for real throttling, unavailable-server/demo transitions, ended-session messaging and keyboard focus under 200% CSS zoom. CSS zoom is a bounded automated check, not certification of every browser/OS zoom mode.
-
-Optional sequential measurements: `python tests/browser/benchmark_experience.py --repeats 5 --output PATH`. Compare the same browser/viewport/fixtures on baseline/candidate. Opening includes HTTP/fonts/automation; named UI samples use real clocks, microtasks and forced layout inside the browser. There is no timing gate or general speedup claim.
-
-Optional sequential Studio measurements: python tests/browser/benchmark_studio.py --repeats 5 --output PATH. This reports native UI timings separately from labelled automation/debounce, IndexedDB put-to-completion, post-GC Chromium heap, serialized history and DOM counts. It uses temporary data and explicitly publishes only to the synthetic target. P7 had no integrated target Studio, so do not present these as a like-for-like P7 Studio speedup.
-
-## Integrated production Studio (P9.5)
-
-`python tests/browser/test_production_studio.py --browser chromium --output PRIVATE_OUTPUT_DIRECTORY` starts the real `companion.server:app` against temporary target profiles, not the synthetic publication server. Repeat with Firefox and WebKit when installed. Set `CCS_CHROMIUM_EXECUTABLE` for an installed Chrome executable. It checks shared authentication, independent tab selection, local drafts and history, explicit publication, reviewed import/export, restoration after reload, 60 widgets, 87 type/variant combinations, four themes and responsive display. Outputs contain synthetic data only. Never point tests at personal data.
-
-`tests/unit/test_profile_activation.py` covers offline preparation, cancellation, integrity/source changes, disk failure, interrupted restoration and the runtime lock. Run it through `python scripts/run_checks.py`; standalone suites remain separate processes. Hosted Actions are independent evidence and may remain unavailable because of account limits.
-
-## P10 native production acceptance
-
-These standalone suites start `companion.server:app` with temporary synthetic target storage and normal PIN authentication. They do not accept a personal data path. Run each process separately with matching Playwright/browser dependencies from the existing browser setup:
+`benchmark_production.py`, `benchmark_studio.py`, `benchmark_experience.py` and `tests/benchmarks/profile_publication.py` accept output options documented by `--help`. Use sequential matching scenarios, raw samples and a private output path. Example:
 
 ```bash
-python tests/browser/test_production_acceptance.py --browser chromium --output /tmp/ccs-p10-acceptance
-python tests/browser/test_production_resilience.py --browser chromium
-python tests/browser/test_production_faults.py --browser chromium --output /tmp/ccs-p10-faults
+python tests/browser/benchmark_production.py --browser chromium --repeats 5 --output /tmp/ccs-performance.json
 ```
 
-Repeat with `firefox` and `webkit`. On Windows, substitute an absolute writable output directory. The acceptance suite covers profile creation/copy/deletion, published/local separation, geometry/history, seven viewports, all four exit actions, preview and hidden-navigation recovery. Resilience covers real browser close/reopen, confirmed logout, quota/abort and unavailable IndexedDB. Faults covers real login throttling, metadata-only/stale GSI, invalid imports, lost acknowledgements and actual server restart during publication. Existing 29-widget/87-presentation and cross-tab conflict suites remain required; these new suites do not replace them.
-
-Recovery regression tests use temporary directories, including subprocess CLI locking, consumed activation candidates, interrupted restore and generation changes. Run them through `scripts/run_checks.py`; never point recovery commands at real data during automated acceptance.
-
-### Descriptive performance and optional bounded stability
-
-```bash
-python tests/browser/benchmark_production.py --browser chromium --repeats 5 --output /tmp/ccs-p10-performance.json
-python tests/browser/benchmark_production.py --browser chromium --soak-only --soak-seconds 1800 --output /tmp/ccs-p10-stability.json
-```
-
-The optional soak is not run by default CI. It uses 60 widgets, synthetic GSI, periodic Studio visits, retained card identity and checks for unexpected profile/draft writes, WebSockets and JavaScript errors. Chromium records document-listener and post-GC heap samples; other browsers do not provide equivalent heap evidence. Each timing repetition starts a fresh identical fixture. Movement/resizing timings use the accessible keyboard controls and include confirmed local persistence; they are not pointer-drag timings. Pointer functionality remains covered by browser acceptance; unstable headless pointer timing samples must not be presented as performance results. Timings include automation/waits and are descriptive, not arbitrary pass thresholds. Compare only matching scenarios/environments; emulation is not a physical-device test. Retain the JSON, operating system, browser and exact source revision privately.
-
-Use the [manual acceptance guide](../docs/guides/final-acceptance.fr.md) for real CS2 and the separately authorized P10-B. Neither successful synthetic tests nor a PR merge authorize resetting personal profiles. Hosted CI that cannot start must remain reported as not executed.
-
-## R1.1 rendering regressions
-
-Run `node tests/js/test_i18n.js`, `node tests/js/test_studio_data.js` and
-`python tests/browser/test_rendering_regressions.py --browser chromium --output PRIVATE_OUTPUT_DIRECTORY`.
-The browser runner also supports Firefox and WebKit with matching installed engines. It starts the real
-production ASGI composition with temporary target files and synthetic credentials only.
-It checks computed RGBA surfaces across ten themes, Dashboard/Studio/preview and target hosts,
-explicit publication/reload, same-ID type replacement with undo/redo and retained unaffected cards,
-focus restoration, and transient demo bomb controls without profile or IndexedDB writes.
-The Node controller test checks timer/listener disposal and rejection of demo actions in real-data mode.
-
-The documentation contract checks run through pytest. Screenshots are optional private evidence, not
-new P1 reference fixtures; neither test success nor these commands authorize changes to personal data.
-
-## V1-01 native startup
-
-Fresh private data directories initialize the target format directly. Historical/invalid/future files and recovery artifacts
-are refused without replacement. Run `tests/unit/test_target_runtime.py` through the backend gate, then
-`python tests/browser/test_live_browser.py --browser chromium` for first-install production auth/Studio/publication/GSI.
-The historical editor, sync controller, their offline browser runner and its Node suite are removed; target publication,
-security, recovery, renderer and widget tests remain. See [runtime boundaries](../docs/development/target-runtime.md).
-
-## V1-03 shared localization
-
-Run `python scripts/check_locales.py`, `node tests/js/test_i18n.js`, `powershell.exe -NoProfile -File tests/windows/test_locales.ps1` and `python tests/browser/test_localization.py --browser chromium`. The catalog/maintenance tests also run through the backend gate. The Windows journey extracts a disposable archive and mocks Docker/HTTP; it never invokes a personal installation. The browser journey uses real production authentication/publication with synthetic profiles, verifies language persistence, personal-text isolation, dialog/preview switching and a complete temporary third language. Catalogs and named parameters are strict data, not HTML.
+The optional `--soak-only --soak-seconds 1800` production benchmark is not default CI. Automation/waits, debounce, storage and browser scheduling affect timing; these are descriptive measurements, not universal speedup claims or arbitrary thresholds. Old legacy editor timings are not equivalent to target Studio timings. Synthetic GSI, keyboard/pointer/touch emulation, process restart and temporary-directory recovery are not real CS2, physical-device or anti-cheat certification. See [release gates](../docs/releases/checklist.md) and [user first use](../docs/user/first-use.md).

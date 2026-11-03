@@ -15,7 +15,7 @@ Thank you for considering a contribution to this **solo-maintained personal proj
 2. Keep changes scoped. Avoid introducing game-memory readers, injections, FACEIT-specific competitive advantages, or third-party assets without an appropriate license.
 3. Add or update tests and documentation. Test locally with `python scripts/run_checks.py`.
 4. If you used **AI assistance for substantial code, docs or tests**, describe which parts were AI-assisted and how you reviewed/validated them. AI use is allowed; hiding it is unnecessary.
-5. Confirm you have the right to submit your contribution and it is compatible with the repository's final license.
+5. Confirm your right to submit the contribution. The project license is still a non-effective draft; resolve contribution terms with the maintainer rather than assuming a finalized license or automatic rights grant.
 
 ### PR information
 
@@ -31,3 +31,5 @@ This repository is maintained on a best-effort, personal-time basis, with no gua
 Read the [architecture and repository map](docs/development/architecture.md), [code conventions](docs/development/code-style.md), and [test guide](tests/README.md). Add backend code to companion/, browser assets to static/js/ or static/css/, and tests to the appropriate execution category. Keep runtime files and local assistant context out of commits and archives.
 
 For language contributions, use the shared JSON catalogs and the [translation guide](docs/contributing/translations.md).
+
+The [contributor index](docs/contributing/README.md) covers scoped widget, theme, translation, documentation and security changes, with risk-based tests. No review timeline is promised.

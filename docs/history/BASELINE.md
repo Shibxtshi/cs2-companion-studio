@@ -1,5 +1,8 @@
 # Historical baseline (V1P-A–D) — see README for current profile storage
 
+> Historical archive: retained descriptions and commands concern the dated version only. For current operation use the [documentation index](../README.md); this is not current validation evidence.
+
+
 # V3 baseline / V1P-A compatibility contract
 
 Original source: `CS2_GSI_Companion_Studio_v3_Docker.zip` (snapshot kept separate from public distribution).

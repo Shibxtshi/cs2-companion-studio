@@ -1,41 +1,20 @@
-# Dashboard and navigation — P6
+# Dashboard layout and navigation
 
-> Current V1-01 runtime: target-only, with native defaults on a genuinely empty installation. Historical editors/autosave are removed; earlier delivery boundaries below are historical context. See [current startup and recovery rules](target-runtime.md).
-
-
-> P9.5 update: these phase boundaries describe their original delivery. The integrated production composition and the explicit, separately authorized transition are documented in [Production activation](production-activation.md). Valid historical installations remain usable until offline confirmation.
-
-
-The maintainer approved the first visual direction on 2026-10-29. Repère, Tactical Blue, the four P2 palettes and the existing widget markup remain the foundations. P7 variants and P8 editing interactions are not implemented.
-
-## Modules and active boundary
-
-| Module | Responsibility |
-| --- | --- |
-| dashboard-shell.js | Shared navigation, current editor entry, Settings controls and native/fallback fullscreen |
-| dashboard-layout.js | Pure bounded geometry projection, without storage or DOM access |
-| dashboard-grid.js | ResizeObserver-based target layout adapter; live values do not recreate cards |
-| tests/browser/dashboard-target.js | Test-only read-only host using the authenticated catalog and transport; excluded from Docker |
-| dashboard.css | Shell and target geometry rules using the P2 tokens |
-| studio.js | Active legacy profiles, editor, autosave and existing import/export |
-
-Production index.html loads the shell/layout helpers and still loads studio.js. It never loads dashboard-target, published-profiles or the draft/publication modules. The server still instantiates its single legacy ProfileStore. No storage conversion, reset, generation renewal, dual writer or public activation switch exists.
-
-The test-only /__dashboard_test__ route substitutes the frontend host only inside the existing disposable P5 target composition. It uses the same HTML, shell, renderer, PIN/Origin gates and canonical ASGI app. The test route and launcher are absent from the Docker image. A normal production client cannot activate the target host through a command.
+The production Dashboard is consultative and uses `application.js`, the published catalog and the X/Y projection. It never reads a local draft as published state. The integrated Studio is the only editor. [Startup rules](target-runtime.md) explain target-only storage.
 
 ## Navigation
 
-Dashboard is read-only: editing controls are shown only in Customization Studio, whose notice identifies the current automatically saved editor. Settings groups existing display controls, theme preview, help and diagnostics. Streamer Studio is explicitly disabled and labelled coming soon, with no empty destination.
+Dashboard is read-only. Settings offers temporary display controls, help and diagnostics; permanent profile choices are Studio draft edits followed by explicit publication. Streamer Studio is unavailable/coming soon, without a working destination.
 
 Full navigation shows labels, compact navigation shows accessible labelled icons, and hidden navigation retains a focusable/touchable edge button. The floating button is optional. Alt+M toggles navigation outside text/select editing; Escape closes a revealed menu or exits immersive mode. Browser interception can prevent a shortcut, so the edge button is always the independent recovery mechanism. Mobile full navigation uses a horizontally scrollable top row.
 
-Legacy navigation/fullscreen choices are unsaved tab-local previews. The P5 target host reads those preferences from each selected profile. They are never written to the legacy format or treated as global device preferences. Current activeProfile selection remains shared in production; only the target host supports independent selection in each tab. An unrelated profile update does not rebuild the selected target dashboard.
+The selected published profile supplies navigation/fullscreen preferences. Each tab owns selection through `profile-selection.js`; a remote publication refreshes affected profiles without switching other tabs. An unrelated profile update does not rebuild the selected Dashboard.
 
 Fullscreen requests the native API and retains an immersive page fallback on rejection/absence. Its two presentations are widgets only or widgets plus connection status. A small exit control and the edge recovery control remain available; essential recovery controls are intentionally not removed. Native Escape and the in-page Escape handler both permit exit. Geometry is unaffected.
 
 ## Display projection
 
-The saved layout remains immutable. Rows are 32 CSS pixels with 8-pixel gaps. A four-row card is 152 pixels tall. Type-specific minimum width/height accommodate the current content; these are presentation minima, not P7 variants or modifications to the P3 validator. Long content can scroll inside the body; only overflow regions enter the tab order.
+The saved layout remains immutable. Rows are 32 CSS pixels with 8-pixel gaps. A four-row card is 152 pixels tall. Type-specific minimum width/height accommodate the current content; these depend on type/presentation and do not modify the storage validator. Long content can scroll inside the body; only overflow regions enter the tab order.
 
 Desktop mode uses the saved column count when the actual board width can provide 32 pixels per column plus gaps. Widgets are ordered by saved Y, X and original array order. An available position is retained. A collision moves the later card below intersecting cards, preserving its column and width where the minimum content width permits. Larger content minima may expand its visual footprint and clamp its column into the container. Saved rectangles are never changed.
 
@@ -49,14 +28,8 @@ ResizeObserver watches only container width, coalesces work through requestAnima
 
 A lost live connection clears displayed game values and the running bomb anchor rather than retaining player data behind a reconnect label. A deliberate demo switch rebuilds the public five-widget board; authenticated custom cards and titles cannot remain on the demo surface. This intentionally supersedes the historical P1 authenticated-to-demo observation. All other golden widget values remain checked without regenerating the fixtures. The bomb estimate remains disabled by default.
 
-## Activation gates still outstanding
+## Modules and verification
 
-P6 does not activate target storage. A future coordinated change still needs target-compatible profile creation/editing and import/export, P8 Studio with draft/resume/logout/exit/error choices, P5 explicit publication wired to that UI, and a warned/verified-private-backup/explicitly confirmed generation transition. Retire the legacy writer/autosave only as part of that same switch. Preserve .env, credentials, data and recovery copies. Read [publication](profile-publication.md), [contracts](profile-contracts.md) and [drafts](local-drafts.md).
+`dashboard-layout.js` is a pure bounded projection; `dashboard-grid.js` applies/coalesces layout and intrinsic-size changes; `dashboard-shell.js` owns navigation/fullscreen. `application.js` composes published rendering and guarded Studio exits. `tests/browser/dashboard-target.js` is a test-only host, not a production asset.
 
-## Verification
-
-See tests/README.md. Pure Node tests cover stable ordering, collision freedom, 60 widgets, bounds, responsive restoration and fallback. Browser tests cover real historical HTTP/GSI/WS/auth/autosave/import/export, golden widget values, theme isolation, keyboard/touch recovery, fullscreen fallback, and the isolated target with two tabs plus another device and remote P5 publication/deletion. Screenshots and raw timing evidence remain private local artifacts outside the source tree. No real personal profile is used by the tests.
-
-## P7 widget presentations
-
-See [widget-presentations.md](widget-presentations.md) for the 29-kind, three-variant renderer, shared data nodes, measured minima, preserved legacy Standard path and inactive target persistence.
+Run `node tests/js/test_dashboard_layout.js` and the production browser journeys in [tests/README.md](../../tests/README.md). Coverage includes collisions, bounds/fallback, responsive restoration, 60 widgets, keyboard/touch recovery and per-tab publication selection. Results must identify the exact tested revision/environment; historical reports are not fresh execution. See [widget presentations](widget-presentations.md).

@@ -1,5 +1,8 @@
 # V1P-E — Expérience utilisateur (étape 7)
 
+> Historical archive: retained descriptions and commands concern the dated version only. For current operation use the [documentation index](../README.md); this is not current validation evidence.
+
+
 - Nouvelle connexion avec étapes de démarrage pour les personnes découvrant GSI et Docker.
 - Aide contextuelle accessible depuis l'accueil et le tableau de bord, y compris sans jeu lancé.
 - Diagnostic en trois parties : serveur, connexion WebSocket authentifiée et données GSI reçues.

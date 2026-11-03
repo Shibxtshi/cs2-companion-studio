@@ -9,3 +9,5 @@ This folder preserves the internal V1P development history and earlier quality b
 - [First-upload GitHub setup notes](GITHUB_SETUP.md)
 
 The historical MIT references in older records describe an abandoned proposal; the current `LICENSE` remains a non-effective, custom no-resale draft pending qualified review.
+
+Additional dated records retained at stable paths: [P1 validation](../development/p1-validation.md), [P2 validation](../development/p2-validation.md), [P9 activation proposal](../development/target-activation-plan.md), and [P10 acceptance rehearsal (French)](../guides/final-acceptance.fr.md). Their historical feature/test descriptions are not current runtime instructions.
