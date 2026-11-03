@@ -148,7 +148,7 @@ def test_distributed_pages_reference_only_existing_target_assets():
             attributes = dict(attrs)
             self.ids.add(attributes.get('id'))
             if tag == 'script':
-                self.sources.append(attributes.get('src', '').split('?')[0])
+                self.sources.append((attributes.get('src') or attributes.get('data-ccs-src', '')).split('?')[0])
     for name in ['static/index.html', 'static/preview.html']:
         parser = Assets()
         parser.feed((root / name).read_text('utf-8'))

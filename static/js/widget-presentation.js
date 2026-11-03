@@ -78,7 +78,7 @@
     stats:[['kills','K'],['assists','A'],['deaths','D']],
     score_split:[['ct','CT'],['t','T']],
     round_stats:[['round_kills','K'],['round_hs','HS'],['round_damage','DMG']],
-    effects:[['flash','Flash'],['smoke','Smoke'],['fire','Feu']],
+    effects:[['flash','widgets.metrics.flash'],['smoke','widgets.metrics.smoke'],['fire','widgets.metrics.fire']],
   });
   const records = new WeakMap();
   const node = (tag, className, text = '') => {
@@ -87,12 +87,15 @@
     element.textContent = text;
     return element;
   };
+  function localizedNode(tag, className, key) {
+    const element = node(tag, className); CS2I18N.bind(element, key); return element;
+  }
   function minimum(kind, variant = 'standard') {
     const index = VARIANTS.indexOf(variant);
     return Object.hasOwn(MINIMUMS,kind) ? [...MINIMUMS[kind][Math.max(0, index)]] : null;
   }
   function setText(element, value) {
-    const expected = window.CS2I18N?.translate(value) || value;
+    const expected = value;
     if (element.textContent !== value && element.textContent !== expected) element.textContent = value;
   }
   function field(card, key) { return card.querySelector('[data-v="' + key + '"]'); }
@@ -108,7 +111,7 @@
     card.append(status);
     const detail = document.createElement('details');
     detail.className = 'widget-more';
-    const summary = node('summary', '', 'Plus de détails');
+    const summary = localizedNode('summary', '', "widgets.presentation.moreDetails");
     const detailBody = node('div', 'widget-more-content');
     detail.append(summary, detailBody);
     body.append(detail);
@@ -142,14 +145,14 @@
       reading.append(value, node('span', 'health-unit', widget.kind === 'health' ? 'HP' : 'AP'));
       const meter = body.querySelector('.bar');
       meter.setAttribute('role', 'progressbar');
-      meter.setAttribute('aria-label', widget.kind === 'health' ? 'Santé' : 'Armure');
+      CS2I18N.bind(meter, 'widgets.' + widget.kind + '.title', {}, 'aria-label');
       meter.setAttribute('aria-valuemin', '0');
       meter.setAttribute('aria-valuemax', '100');
     } else if (widget.kind === 'weapon') {
       const ammo = field(card, 'ammo_clip').parentElement;
       ammo.classList.add('weapon-ammunition');
       body.classList.add('weapon-presentation');
-      ammo.append(node('span', 'ammo-unit', 'Munitions'));
+      ammo.append(localizedNode('span', 'ammo-unit', "widgets.ammo.title"));
     } else if (widget.kind === 'inventory') {
       const summaryLine = node('div', 'inventory-summary');
       const current = node('strong', 'inventory-current');
@@ -159,8 +162,8 @@
       const count = node('b', '');
       count.dataset.inventoryCount = '';
       count.setAttribute('translate', 'no');
-      quantity.append(count, document.createTextNode(' '), node('span', '', 'objets reçus'));
-      const activeLabel = node('span', 'tiny', 'Arme active');
+      quantity.append(count);
+      const activeLabel = localizedNode('span', 'tiny', "widgets.presentation.activeWeapon");
       const currentGroup = node('div', 'inventory-active');
       currentGroup.append(activeLabel, current);
       summaryLine.append(currentGroup, quantity);
@@ -179,13 +182,13 @@
       card.classList.add('tile-widget');
       for (const [key, label] of TILE_FIELDS[widget.kind]) {
         const tile = field(card, key).parentElement;
-        const short = node('span', 'stat-short', label);
+        const short = widget.kind === 'effects' ? localizedNode('span', 'stat-short', label) : node('span', 'stat-short', label);
         short.setAttribute('aria-hidden', 'true');
         tile.prepend(short);
       }
     } else if (widget.kind === 'round_history') {
       const latest = node('div', 'history-summary');
-      const label = node('span', 'tiny', 'Dernière manche reçue');
+      const label = localizedNode('span', 'tiny', "widgets.presentation.lastReceivedRound");
       const value = node('strong', '');
       value.dataset.latestRound = '';
       value.setAttribute('translate', 'no');
@@ -197,7 +200,7 @@
       const options = document.createElement('details');
       options.className = 'bomb-demo-options';
       controls.before(options);
-      options.append(node('summary', '', 'Scénarios de démo'), controls);
+      options.append(localizedNode('summary', '', "widgets.presentation.demoScenarios"), controls);
     } else if (widget.kind === 'connection') {
       const indicator = node('span', 'connection-indicator');
       indicator.setAttribute('aria-hidden', 'true');
@@ -217,14 +220,14 @@
     } else if (widget.kind === 'grenades') {
       const summary = node('div','grenade-summary');
       const count = node('strong','big'); count.dataset.grenadeCount='';
-      summary.append(count,node('span','muted','grenades reçues'));
+      summary.append(count,localizedNode('span', 'muted', "widgets.presentation.grenadesReceived"));
       body.prepend(summary);
       secondary(body.querySelector('[data-list="grenades"]'));
     } else if (widget.kind === 'gear') {
       card.classList.add('gear-widget');
       secondary(field(card,'armor_line'));
     } else if (widget.kind === 'forecast') {
-      body.prepend(node('span','estimate-label','Si défaite · estimation'));
+      body.prepend(localizedNode('span', 'estimate-label', "widgets.label.onLossEstimate"));
       field(card,'econ_note').classList.add('economy-source');
       secondary(field(card,'lossbonus'));
     } else if (widget.kind === 'events') {
@@ -265,10 +268,10 @@
     const primaryValue = primary ? field(card,primary)?.textContent : null;
     const unavailable = primary ? primaryValue === '—' : false;
     const stale = !state.gsi_connected && CS2DisplayFormat.isNum(state.age_seconds);
-    const status = modeDemo ? 'Données simulées'
-      : !state.online ? state.gsi_connected ? 'GSI actif · match en attente'
-        : stale ? 'Données périmées · hors ligne' : 'Hors ligne — données indisponibles'
-        : unavailable ? 'Valeur indisponible' : '';
+    const status = modeDemo ? CS2I18N.t("app.data.synthetic")
+      : !state.online ? state.gsi_connected ? CS2I18N.t("widgets.value.gsiActiveWaitingForMatch")
+        : stale ? CS2I18N.t("widgets.presentation.staleDataOffline") : CS2I18N.t("widgets.presentation.offlineDataUnavailable")
+        : unavailable ? CS2I18N.t("widgets.presentation.valueUnavailable") : '';
     const hideStatus = !status || (kind === 'connection' && modeDemo);
     if (record.status.hidden !== hideStatus) record.status.hidden = hideStatus;
     if (record.lastStatus !== status) { record.status.textContent = status; record.lastStatus = status; }
@@ -280,7 +283,7 @@
     }
     if (['health','armor'].includes(kind)) {
       const meter = card.querySelector('[role="progressbar"]');
-      if (unavailable) { meter.removeAttribute('aria-valuenow'); meter.setAttribute('aria-valuetext', window.CS2I18N?.translate('Valeur indisponible') || 'Valeur indisponible'); }
+      if (unavailable) { meter.removeAttribute('aria-valuenow'); meter.setAttribute('aria-valuetext', CS2I18N.t("widgets.presentation.valueUnavailable")); }
       else {
         const value = String(Math.max(0, Math.min(100, player[kind])));
         if (meter.getAttribute('aria-valuenow') !== value) meter.setAttribute('aria-valuenow',value);
@@ -291,12 +294,12 @@
       const active = weapons.find(weapon => weapon.state === 'active');
       const current = card.querySelector('[data-inventory-current]');
       setText(current,active ? CS2DisplayFormat.weaponName(active.name) : '—');
-      setText(card.querySelector('[data-inventory-count]'),weapons.length ? String(weapons.length) : '—');
+      setText(card.querySelector('[data-inventory-count]'),weapons.length ? CS2I18N.t('widgets.quantity', {count: weapons.length}) : '—');
     } else if (kind === 'grenades') {
       setText(card.querySelector('[data-grenade-count]'),player.weapons?.length
         ? String(CS2DisplayFormat.inventory(player,'grenades').length) : '—');
     } else if (kind === 'events') {
-      setText(card.querySelector('[data-latest-event]'),state.events?.[0]?.message || 'Aucun événement enregistré');
+      setText(card.querySelector('[data-latest-event]'),state.events?.[0] ? CS2DisplayFormat.eventText(state.events[0]) : CS2I18N.t("widgets.state.noEventsRecorded"));
     } else if (kind === 'round_history') {
       const recent = state.recent_wins || [];
       const last = recent.at(-1);

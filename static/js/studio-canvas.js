@@ -19,10 +19,10 @@
     function tools(card) {
       const controls = document.createElement('div');
       controls.className = 'studio-edit-tools';
-      for (const [kind, symbol, label] of [['move', '✥', 'Move widget'], ['resize', '⤢', 'Resize widget']]) {
+      for (const [kind, symbol, label] of [['move', '✥', 'studio.gesture.move'], ['resize', '⤢', 'studio.gesture.resize']]) {
         const button = document.createElement('button');
         button.type = 'button'; button.dataset.studioGesture = kind;
-        button.textContent = symbol; button.setAttribute('aria-label', label);
+        button.textContent = symbol; CS2I18N.bind(button, label, {}, 'aria-label');
         controls.append(button);
       }
       card.append(controls);
@@ -52,8 +52,9 @@
         if (card.dataset.variant !== widget.variant) renderer.setVariant(card, widget.variant);
         const title = card.querySelector('.widget-heading');
         const value = widget.title || CS2WidgetCatalog[widget.kind].title;
-        if (title.textContent !== value && title.textContent !== CS2I18N.translate(value)) title.textContent = value;
-        if (widget.title) title.setAttribute('translate', 'no'); else title.removeAttribute('translate');
+        if (title.textContent !== value && title.textContent !== value) title.textContent = value;
+        if (widget.title) { title.setAttribute('translate', 'no'); delete title.dataset.i18n; }
+        else { title.removeAttribute('translate'); CS2I18N.bind(title, 'widgets.' + widget.kind + '.title'); }
         for (const [key, value] of [['--widget-accent', widget.color], ['--widget-bg', widget.background]]) {
           if (value) card.style.setProperty(key, value); else card.style.removeProperty(key);
         }
@@ -63,9 +64,7 @@
         for (const button of card.querySelectorAll('.studio-edit-tools button')) {
           button.disabled = locked;
           const moving = button.dataset.studioGesture === 'move';
-          button.setAttribute('aria-label', CS2I18N.locale() === 'FR'
-            ? moving ? 'Déplacer le widget' : 'Redimensionner le widget'
-            : moving ? 'Move widget' : 'Resize widget');
+          CS2I18N.bind(button, moving ? 'studio.gesture.move' : 'studio.gesture.resize', {}, 'aria-label');
         }
       }
       board.dataset.preview = preview ? 'dashboard' : 'edit';

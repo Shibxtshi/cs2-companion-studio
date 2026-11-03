@@ -13,7 +13,10 @@ def run(runtime, port):
     from companion import server, profile_publication
     from companion.profile_publication import PublishedProfileStore
     from companion.profile_protocol import PublishedProfileProtocol
-    from fastapi.responses import HTMLResponse, Response
+    from fastapi.responses import HTMLResponse as BaseHTMLResponse, Response
+    from locale_page import locale_page
+    def HTMLResponse(html):
+        return BaseHTMLResponse(locale_page(html))
     import uvicorn
 
     server.profile_store = PublishedProfileProtocol(PublishedProfileStore(runtime / 'target/profiles.json'))

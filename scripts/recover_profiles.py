@@ -6,6 +6,10 @@ from pathlib import Path
 import sys
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1]))
+from companion.localization import Translator
+
+tr = Translator().text
+
 from companion.profile_recovery import (
     RecoveryError, inspect_current, prepare_reset, reset_profiles, reset_state,
     restore_legacy, restore_reset,
@@ -21,36 +25,41 @@ def restore(directory):
 
 
 def confirm(expected):
-    print('A verified private snapshot is available. No other private settings will be reset.')
+    print(tr('maintenance.snapshotReady'))
     try:
-        return input('Type exactly ' + expected + ' to continue, or press Enter to cancel: ').strip() == expected
+        return input(tr('maintenance.confirm', expected=expected)).strip() == expected
     except EOFError:
         return False
 
 
 def main():
-    parser = argparse.ArgumentParser(description=__doc__)
+    global tr
+    preliminary = argparse.ArgumentParser(add_help=False)
+    preliminary.add_argument('--language', default='EN', choices=list(Translator().languages))
+    language, _remaining = preliminary.parse_known_args()
+    tr = Translator(language.language).text
+    parser = argparse.ArgumentParser(description=tr('maintenance.description'), parents=[preliminary])
     parser.add_argument('--data-dir', type=Path, default=Path(os.environ.get(
         'PROFILE_DATA_DIR', Path(__file__).resolve().parents[1] / 'data')))
     actions = parser.add_mutually_exclusive_group(required=True)
-    actions.add_argument('--restore', action='store_true', help='Restore a validated current-format .bak; stop the service first.')
-    actions.add_argument('--inspect', action='store_true', help='Read-only format classification; never print profile contents.')
-    actions.add_argument('--prepare-reset', action='store_true', help='Create and verify a distinct private snapshot, without resetting.')
-    actions.add_argument('--reset', metavar='BACKUP_ID', help='Confirm resetting to the CURRENT usable format, using a verified snapshot.')
-    actions.add_argument('--inspect-reset', metavar='BACKUP_ID', help='Read-only status after interruption: prepared/applied/changed/missing.')
-    actions.add_argument('--restore-reset', metavar='BACKUP_ID', help='Confirm restoring exact original bytes, possibly incompatible with this version.')
-    actions.add_argument('--prepare-activation', action='store_true', help='Verify historical files and prepare a private target candidate; do not activate.')
-    actions.add_argument('--activate', metavar='BACKUP_ID', help='Explicitly replace verified historical profiles with the prepared target generation.')
-    actions.add_argument('--inspect-activation', metavar='BACKUP_ID', help='Read-only activation/interruption classification.')
-    actions.add_argument('--restore-activation', metavar='BACKUP_ID', help='Restore both original profile files after preserving the current state.')
-    actions.add_argument('--initialize-target', action='store_true', help='Explicit first-install initialization in an empty data directory only.')
-    actions.add_argument('--restore-target', action='store_true', help='Restore validated target .bak into a new generation after preserving current bytes.')
-    parser.add_argument('--application-revision', help='Exact 40-character historical application commit retained for rollback.')
-    parser.add_argument('--service-stopped', action='store_true', help='Explicit acknowledgement that the service/container is stopped; not a liveness probe.')
+    actions.add_argument('--restore', action='store_true', help=tr('maintenance.help.restore'))
+    actions.add_argument('--inspect', action='store_true', help=tr('maintenance.help.inspect'))
+    actions.add_argument('--prepare-reset', action='store_true', help=tr('maintenance.help.prepareReset'))
+    actions.add_argument('--reset', metavar='BACKUP_ID', help=tr('maintenance.help.reset'))
+    actions.add_argument('--inspect-reset', metavar='BACKUP_ID', help=tr('maintenance.help.inspectReset'))
+    actions.add_argument('--restore-reset', metavar='BACKUP_ID', help=tr('maintenance.help.restoreReset'))
+    actions.add_argument('--prepare-activation', action='store_true', help=tr('maintenance.help.prepareActivation'))
+    actions.add_argument('--activate', metavar='BACKUP_ID', help=tr('maintenance.help.activate'))
+    actions.add_argument('--inspect-activation', metavar='BACKUP_ID', help=tr('maintenance.help.inspectActivation'))
+    actions.add_argument('--restore-activation', metavar='BACKUP_ID', help=tr('maintenance.help.restoreActivation'))
+    actions.add_argument('--initialize-target', action='store_true', help=tr('maintenance.help.initialize'))
+    actions.add_argument('--restore-target', action='store_true', help=tr('maintenance.help.restoreTarget'))
+    parser.add_argument('--application-revision', help=tr('maintenance.help.revision'))
+    parser.add_argument('--service-stopped', action='store_true', help=tr('maintenance.help.stopped'))
     args = parser.parse_args()
     if (args.prepare_reset or args.reset or args.restore_reset or args.prepare_activation or args.activate
             or args.restore_activation or args.initialize_target or args.restore_target) and not args.service_stopped:
-        parser.error('stop the service and pass --service-stopped; no files have been changed')
+        parser.error(tr('maintenance.stopFirst'))
     try:
         if (args.reset or args.restore or args.restore_reset or args.activate or args.initialize_target or args.restore_target):
             if any(args.data_dir.glob('.profiles-restore-*.pending')):
@@ -58,67 +67,67 @@ def main():
         if (args.reset or args.restore_reset or args.restore) and inspect_current(args.data_dir).get('status') == 'recognized':
             raise RecoveryError('target_requires_activation_recovery')
         if args.restore_target:
-            print('Restore target backup configuration into a NEW generation. Later publications are not included; old drafts/intents are not adopted.')
+            print(tr('maintenance.restoreTargetWarning'))
             restored, safetyId = restore_target_backup(args.data_dir, confirm)
-            print('Target backup restored and validated.' if restored else 'Cancelled. Current profiles unchanged.')
-            print('Pre-restore private snapshot ID: ' + safetyId)
+            print(tr('maintenance.targetRestored') if restored else tr('maintenance.cancelledCurrent'))
+            print(tr('maintenance.safetyId', id=safetyId))
         elif args.prepare_activation:
             backupId = prepare_activation(args.data_dir, args.application_revision)
-            print('Verified private backup: ' + str(args.data_dir.absolute() / 'profile-reset-backups' / backupId))
-            print('Activation candidate ID: ' + backupId + '. No activation performed.')
-            print('Keep the matching application/image revision available. Credentials and unrelated files were not copied.')
+            print(tr('maintenance.backupPath', path=str(args.data_dir.absolute() / 'profile-reset-backups' / backupId)))
+            print(tr('maintenance.candidateId', id=backupId))
+            print(tr('maintenance.retainImage'))
         elif args.inspect_activation:
-            print('Activation state: ' + activation_state(args.data_dir, args.inspect_activation))
+            print(tr('maintenance.activationState', state=activation_state(args.data_dir, args.inspect_activation)))
         elif args.activate:
-            print('This resets ALL historical profile layouts, names and customizations to a new empty target profile.')
-            print('The verified private backup remains available. PIN, GSI token, .env and unrelated data stay unchanged.')
-            print('Stop all old tabs and writers; run only a compatible application after activation.')
+            print(tr('maintenance.resetWarning'))
+            print(tr('maintenance.privatePreserved'))
+            print(tr('maintenance.stopWriters'))
             applied = activate_profiles(args.data_dir, args.activate, confirm)
-            print('Target generation installed and validated.' if applied else 'Cancelled. Historical profiles unchanged.')
+            print(tr('maintenance.targetInstalled') if applied else tr('maintenance.cancelledHistorical'))
         elif args.restore_activation:
-            print('Restore requires a stopped service and the retained compatible application/image.')
-            print('If target publications succeeded, they will not appear in the historical state. Their snapshot is retained.')
+            print(tr('maintenance.restoreWarning'))
+            print(tr('maintenance.laterPublications'))
             restored, safetyId, revision = restore_activation(args.data_dir, args.restore_activation, confirm)
-            print('Historical files restored.' if restored else 'Cancelled. Current files unchanged.')
-            print('Retained compatible application revision: ' + revision)
+            print(tr('maintenance.historicalRestored') if restored else tr('maintenance.cancelledFiles'))
+            print(tr('maintenance.revision', revision=revision))
             if safetyId:
-                print('Pre-restore private snapshot ID: ' + safetyId)
+                print(tr('maintenance.safetyId', id=safetyId))
         elif args.initialize_target:
-            print('Initialize a new target generation only in an empty directory. Existing profiles are never replaced.')
-            print('Target initialized.' if initialize_target(args.data_dir, confirm) else 'Cancelled. No target created.')
+            print(tr('maintenance.initializeWarning'))
+            print(tr('maintenance.initialized') if initialize_target(args.data_dir, confirm) else tr('maintenance.cancelledNoTarget'))
         elif args.inspect:
             result = inspect_current(args.data_dir)
-            print('Profile classification: ' + result['status'] + '; contract: ' + str(result['kind']))
-            print('The active runtime follows the validated file format; no inspection performs activation.')
+            print(tr('maintenance.classification', status=result['status'], kind=result['kind']))
+            print(tr('maintenance.inspectPolicy'))
         elif args.inspect_reset:
-            print('Reset state: ' + reset_state(args.data_dir, args.inspect_reset))
+            print(tr('maintenance.resetState', state=reset_state(args.data_dir, args.inspect_reset)))
         elif args.prepare_reset:
             backupId = prepare_reset(args.data_dir)
-            print('Verified private backup ID: ' + backupId)
-            print('No reset performed. Keep the snapshot private; .env and unrelated files were not copied.')
+            print(tr('maintenance.backupId', id=backupId))
+            print(tr('maintenance.notReset'))
         elif args.reset:
             if inspect_current(args.data_dir).get('status') == 'recognized':
                 raise RecoveryError('target_requires_activation_recovery')
             if reset_profiles(args.data_dir, args.reset, confirm):
-                print('Current-format profiles reset and validated. The verified snapshot and rotating .bak were retained.')
+                print(tr('maintenance.historicalReset'))
             else:
-                print('Cancelled. Profiles unchanged; the verified snapshot was retained.')
+                print(tr('maintenance.cancelledSnapshot'))
         elif args.restore_reset:
             restored, safetyId = restore_reset(args.data_dir, args.restore_reset, confirm)
-            print('Original bytes restored.' if restored else 'Cancelled. Profiles unchanged.')
+            print(tr('maintenance.bytesRestored') if restored else tr('maintenance.cancelledProfiles'))
             if safetyId:
-                print('Previous current-file snapshot ID: ' + safetyId)
-            print('Raw restored bytes may require their original software version. The rotating .bak was not changed.')
+                print(tr('maintenance.previousSnapshot', id=safetyId))
+            print(tr('maintenance.restoredCompatibility'))
         else:
             restore(args.data_dir)
-            print('Profiles restored from a validated backup. The previous current file was preserved when present. Keep all recovery files private.')
+            print(tr('maintenance.restored'))
     except (OSError, ValueError, UnicodeError) as error:
         code = error.code if isinstance(error, RecoveryError) else 'io_or_invalid_data'
         if code in ('activation_already_attempted', 'activation_prepare_again'):
-            print('Keep every backup. Prepare a NEW activation ID before another attempt; an old storage generation must not be reused.')
-        parser.exit(1, 'Recovery refused or failed (' + code + '). Keep all snapshots; inspect the reset state before retrying.\n')
+            print(tr('maintenance.newAttempt'))
+        parser.exit(1, tr('maintenance.failed', code=code))
     except KeyboardInterrupt:
-        parser.exit(1, 'Interrupted. Keep all snapshots and inspect the reset state before retrying.\n')
+        parser.exit(1, tr('maintenance.interrupted'))
 
 
 if __name__ == '__main__':

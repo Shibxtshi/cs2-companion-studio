@@ -13,21 +13,22 @@ $ErrorActionPreference = 'Stop'
 . (Join-Path $PSScriptRoot 'common.ps1')
 . (Join-Path $PSScriptRoot 'i18n.ps1')
 
-$stage = "Initialisation"
+$stage = T 'initialization'
 try {
     Select-InstallLanguage ([bool]$NonInteractive) $Language
+    $stage = T 'initialization'
     Write-Host ("`n=== " + (T 'intro') + " ===") -ForegroundColor Cyan
     Write-Host (T 'disclaimer')
-    if ($Lan -and $LocalOnly) { throw 'Options -Lan et -LocalOnly incompatibles.' }
-    $stage = 'Verification Docker Desktop'
+    if ($Lan -and $LocalOnly) { throw (T 'lan_options_conflict') }
+    $stage = T 'stageDocker'
     Write-Host (T 'stage1')
     # Docker availability does not justify elevating the entire installer.
     Test-DockerReady
-    $stage = 'Recherche de CS2'
+    $stage = T 'stageCs2'
     Write-Host (T 'stage2')
     $cfgFolder = Find-Cs2ConfigFolder $Cs2Path
     Write-Host ((T 'detected') + " $cfgFolder") -ForegroundColor Green
-    $stage = 'Access to CS2 GSI folder'
+    $stage = T 'stageFolder'
     Write-Host (T 'write_check')
     if (-not (Test-GsiFolderWritable $cfgFolder)) {
         if (Test-AdminSession) { throw (T 'denied_admin') }
@@ -39,7 +40,7 @@ try {
         exit 0
     }
 
-    $stage = 'Preparation de la configuration personnelle'
+    $stage = T 'stageConfiguration'
     Write-Host (T 'stage3')
     $envPath = Join-Path $script:StudioRoot '.env'
     $createdEnv = -not (Test-Path -LiteralPath $envPath -PathType Leaf)
@@ -54,17 +55,18 @@ try {
         Write-Host (T 'existing_env')
     }
     if ($Lan) {
-        Write-Host (T 'lan_warning') -ForegroundColor Yellow
+        Write-Host (T 'installer.network.warning') -ForegroundColor Yellow
         if (-not (Confirm-Action (T 'confirm_lan') $NonInteractive)) {
-            throw 'Mode LAN non confirme. Relancer sans -Lan pour rester local uniquement.'
+            throw (T 'lan_not_confirmed')
         }
         $envText = Set-EnvSetting $envText 'BIND_HOST' '0.0.0.0'
     } elseif ($LocalOnly) {
         $envText = Set-EnvSetting $envText 'BIND_HOST' '127.0.0.1'
     } elseif ($createdEnv -and -not $NonInteractive) {
-        Write-Host (T 'mobile_intro')
-        if (Confirm-Action (T 'enable_mobile') $false) {
-            Write-Host (T 'lan_warning') -ForegroundColor Yellow
+        Write-Host (T 'installer.network.title') -ForegroundColor Cyan
+    Write-Host (T 'installer.network.description')
+        if (Confirm-Action (T 'installer.network.enable') $false) {
+            Write-Host (T 'installer.network.warning') -ForegroundColor Yellow
             if (Confirm-Action (T 'lan_private') $false) {
                 $envText = Set-EnvSetting $envText 'BIND_HOST' '0.0.0.0'
             }
@@ -80,19 +82,19 @@ try {
     $hostBinding = [string]$tmpValues['BIND_HOST']
     $port = 8080
     if ($tmpValues.ContainsKey('PORT')) {
-        if (-not [int]::TryParse([string]$tmpValues['PORT'], [ref]$port)) { throw 'PORT invalide dans .env.' }
+        if (-not [int]::TryParse([string]$tmpValues['PORT'], [ref]$port)) { throw (T 'invalid_port') }
     }
-    if ($token.Length -lt 12 -or $pin.Length -lt 6) { throw 'Identifiants manquants/invalides dans .env.' }
-    if ($port -lt 1024 -or $port -gt 65535) { throw 'PORT doit etre compris entre 1024 et 65535.' }
+    if ($token.Length -lt 12 -or $pin.Length -lt 6) { throw (T 'invalid_credentials') }
+    if ($port -lt 1024 -or $port -gt 65535) { throw (T 'port_range') }
     if ($hostBinding -ne '127.0.0.1' -and $hostBinding -ne '0.0.0.0') {
-        Write-Host "Bind personnalise conserve : $hostBinding" -ForegroundColor Yellow
+        Write-Host (T 'custom_bind' @{ address=$hostBinding }) -ForegroundColor Yellow
     }
 
     $target = Join-Path $cfgFolder $script:GsiName
     $cfgText = New-GsiConfig $token $port
     $oldState = Read-InstallerState
     if ($null -ne $oldState -and $oldState.cfg_path -ne $target) {
-        throw 'Installation precedente associee a un autre CS2. Desinstaller depuis cet emplacement avant de changer de destination.'
+        throw (T 'other_cs2')
     }
     $existed = Test-Path -LiteralPath $target -PathType Leaf
     $different = $existed -and ([System.IO.File]::ReadAllText($target) -ne $cfgText)
@@ -109,7 +111,7 @@ try {
         }
         if (-not $managedOld -and -not $ForceGsiOverwrite -and
             -not (Confirm-Action (T 'gsi_replace') $NonInteractive)) {
-            throw 'Fichier GSI existant non modifie. Relancer avec -ForceGsiOverwrite ou confirmer en mode interactif.'
+            throw (T 'gsi_not_replaced')
         }
         if (-not $managedOld) {
             New-Item -ItemType Directory -Path $script:StateDir -Force | Out-Null
@@ -132,14 +134,14 @@ try {
     })
     Write-Host (T 'gsi_ok') -ForegroundColor Green
     if (-not $NoStart) {
-        $stage = 'Demarrage Docker Compose'
+        $stage = T 'stageCompose'
         Write-Host (T 'stage4')
         Push-Location $script:StudioRoot
         try {
             & docker compose -f (Join-Path $script:StudioRoot 'compose.yaml') config --quiet
-            if ($LASTEXITCODE -ne 0) { throw 'Configuration Docker Compose invalide.' }
+            if ($LASTEXITCODE -ne 0) { throw (T 'settings_invalid') }
             & docker compose -f (Join-Path $script:StudioRoot 'compose.yaml') up -d --build --force-recreate
-            if ($LASTEXITCODE -ne 0) { throw 'Impossible de demarrer Docker (port deja utilise ?).' }
+            if ($LASTEXITCODE -ne 0) { throw (T 'docker_start_failed') }
         } finally { Pop-Location }
         $healthHost = if ($hostBinding -eq '0.0.0.0') { '127.0.0.1' } else { $hostBinding }
         $healthUrl = "http://$($healthHost):$port/health"
@@ -155,21 +157,23 @@ try {
     }
     Write-Host ("`n" + (T 'page_pc') + " : http://localhost:$port")
     if ($hostBinding -eq '0.0.0.0') {
-        Write-Host ((T 'page_phone') + " : http://YOUR_PC_LAN_IP:$port")
-        Write-Host (T 'lan_warning') -ForegroundColor Yellow
+        Write-Host ((T 'installer.network.addressLabel') + " : http://YOUR_PC_LAN_IP:$port")
+        Write-Host (T 'installer.network.addressHelp')
+        Write-Host (T 'installer.network.warning') -ForegroundColor Yellow
         try {
             Get-NetIPAddress -AddressFamily IPv4 -ErrorAction Stop |
                 Where-Object { $_.IPAddress -notmatch '^(127\.|169\.254\.)' -and $_.InterfaceAlias -notmatch '(Docker|vEthernet|Loopback|WSL)' } |
-                Select-Object -ExpandProperty IPAddress | ForEach-Object { Write-Host "IP possible : $_" }
+                Select-Object -ExpandProperty IPAddress | ForEach-Object { Write-Host (T 'candidate_ip' @{ address=$_ }) }
         } catch {}
     }
+    if ($hostBinding -eq '127.0.0.1') { Write-Host (T 'installer.network.localOnly') }
     Write-Host ((T 'personal_pin') + " : $pin") -ForegroundColor Cyan
     Write-Host (T 'secrets')
     Write-Host (T 'other_tools')
     exit 0
 } catch {
     Write-Host ((T 'failstage') + " : $stage") -ForegroundColor Yellow
-    Write-Host ("ERREUR : " + $_.Exception.Message) -ForegroundColor Red
+    Write-Host (T 'error' @{ message=$_.Exception.Message }) -ForegroundColor Red
     Write-Host ((T 'source') + " : " + $_.InvocationInfo.ScriptName + ':' + $_.InvocationInfo.ScriptLineNumber) -ForegroundColor DarkGray
     Write-Host (T 'fail_note')
     exit 1

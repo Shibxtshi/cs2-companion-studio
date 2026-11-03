@@ -17,11 +17,11 @@ try {
                 Write-Host (T 'uninstall_unchanged') -ForegroundColor Yellow
             } elseif ($Yes -or (Confirm-Action (T 'uninstall_q') $false)) {
                 if ([bool]$state.original_existed -and [string]::IsNullOrWhiteSpace([string]$state.backup_path)) {
-                    Write-Host 'Fichier GSI preexistant identique, conserve sans modification.' -ForegroundColor Yellow
+                    Write-Host (T 'gsi_identical') -ForegroundColor Yellow
                 } elseif ([bool]$state.original_existed) {
                     if ([string]::IsNullOrWhiteSpace([string]$state.backup_path) -or
                         -not (Test-Path -LiteralPath ([string]$state.backup_path) -PathType Leaf)) {
-                        throw 'Sauvegarde originale introuvable. GSI conserve pour eviter toute perte.'
+                        throw (T 'backup_missing')
                     }
                     Copy-Item -LiteralPath ([string]$state.backup_path) -Destination $target -Force
                     Write-Host (T 'uninstall_old') -ForegroundColor Green
@@ -32,7 +32,7 @@ try {
                 Remove-Item -LiteralPath $script:StateFile -Force
             } else { Write-Host (T 'uninstall_keep') }
         } else {
-            Write-Host 'Fichier GSI deja absent. Fin de suivi de ce fichier.'
+            Write-Host (T 'gsi_absent')
             Remove-Item -LiteralPath $script:StateFile -Force
         }
     }
@@ -47,6 +47,6 @@ try {
     Write-Host (T 'uninstall_restart')
     exit 0
 } catch {
-    Write-Host ("ERREUR : " + $_.Exception.Message) -ForegroundColor Red
+    Write-Host (T 'error' @{ message=$_.Exception.Message }) -ForegroundColor Red
     exit 1
 }

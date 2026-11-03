@@ -182,3 +182,7 @@ are refused without replacement. Run `tests/unit/test_target_runtime.py` through
 `python tests/browser/test_live_browser.py --browser chromium` for first-install production auth/Studio/publication/GSI.
 The historical editor, sync controller, their offline browser runner and its Node suite are removed; target publication,
 security, recovery, renderer and widget tests remain. See [runtime boundaries](../docs/development/target-runtime.md).
+
+## V1-03 shared localization
+
+Run `python scripts/check_locales.py`, `node tests/js/test_i18n.js`, `powershell.exe -NoProfile -File tests/windows/test_locales.ps1` and `python tests/browser/test_localization.py --browser chromium`. The catalog/maintenance tests also run through the backend gate. The Windows journey extracts a disposable archive and mocks Docker/HTTP; it never invokes a personal installation. The browser journey uses real production authentication/publication with synthetic profiles, verifies language persistence, personal-text isolation, dialog/preview switching and a complete temporary third language. Catalogs and named parameters are strict data, not HTML.

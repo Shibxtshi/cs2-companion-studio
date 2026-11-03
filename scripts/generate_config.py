@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 """Generate distinct local secrets and the CS2 GSI file, without overwriting users."""
+import argparse
 from pathlib import Path
 import secrets
 import os
@@ -9,11 +10,18 @@ ROOT = Path(__file__).resolve().parents[1]
 DOTENV = ROOT / '.env'
 GSI = ROOT / 'cs2_cfg' / 'gamestate_integration_companion.cfg'
 
+sys.path.insert(0, str(ROOT))
+from companion.localization import Translator
+
 
 def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--language', default='EN', choices=list(Translator().languages))
+    args = parser.parse_args()
+    tr = Translator(args.language).text
     if DOTENV.exists() or GSI.exists():
-        print('Local configuration already exists; no changes were made.')
-        print('To regenerate credentials, back up and remove the local .env and GSI configuration files first.')
+        print(tr('configuration.existing'))
+        print(tr('configuration.regenerate'))
         return 1
     pin = ''.join(str(secrets.randbelow(10)) for _ in range(10))
     token = secrets.token_urlsafe(36)
@@ -23,7 +31,7 @@ def main():
         'DASHBOARD_PIN=' + pin + '\n'
         'BOMB_TIMER_ENABLED=false\n'
         'BOMB_DURATION_SECONDS=40\n'
-        '# Localhost by default. For phone access, use BIND_HOST=0.0.0.0 on a trusted LAN with firewall rules.\n'
+        '# Localhost by default. For other devices on the local network, use BIND_HOST=0.0.0.0 on a trusted LAN with firewall rules.\n'
         'BIND_HOST=127.0.0.1\n'
         'PORT=8080\n'
     )
@@ -52,9 +60,9 @@ def main():
     if os.name != 'nt':
         DOTENV.chmod(0o600)
         GSI.chmod(0o600)
-    print('Local configuration created. Personal PIN: ' + pin)
-    print('GSI configuration file: ' + str(GSI))
-    print('Never share these values or the generated files.')
+    print(tr('configuration.created', pin=pin))
+    print(tr('configuration.path', path=str(GSI)))
+    print(tr('configuration.privacy'))
     return 0
 
 

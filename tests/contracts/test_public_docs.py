@@ -1,4 +1,5 @@
 """The project must not quietly drop its AI transparency or public safety docs."""
+import json
 from pathlib import Path
 ROOT = Path(__file__).resolve().parents[2]
 
@@ -19,5 +20,9 @@ def test_required_public_community_files():
         assert (ROOT/name).is_file(), name
 
 def test_transparent_in_app_help():
-    assert "ChatGPT (OpenAI)" in (ROOT/"static/index.html").read_text(encoding="utf-8")
-    assert "Personal project developed with substantial help" in (ROOT/"static/js/i18n.js").read_text(encoding="utf-8")
+    for language in ('en', 'fr'):
+        catalog = json.loads((ROOT / 'static/locales' / (language + '.json')).read_text('utf-8'))
+        assert 'ChatGPT (OpenAI)' in catalog['experience.disclosure']
+    assert 'Personal project developed with substantial help' in json.loads(
+        (ROOT / 'static/locales/en.json').read_text('utf-8'))['experience.disclosure']
+    assert "element('p', 'disclosure')" in (ROOT / 'static/js/experience.js').read_text('utf-8')

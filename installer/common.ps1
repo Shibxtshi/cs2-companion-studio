@@ -72,7 +72,7 @@ function New-RandomPin {
 
 function New-PrivateEnv([string] $Pin, [string] $Token, [string] $BindHost) {
     $result = @"
-# Configuration personnelle CS2 Companion Studio. NE PAS PUBLIER.
+# Local private CS2 Companion Studio configuration. NEVER PUBLISH.
 GSI_TOKEN=$Token
 DASHBOARD_PIN=$Pin
 BOMB_TIMER_ENABLED=false
@@ -132,7 +132,7 @@ function Find-Cs2ConfigFolder([string] $Hint) {
                 }
             } catch { continue }
         }
-        throw ((T 'bad_access_path') + " $Hint. Select the CS2 folder or game\csgo\cfg.")
+        throw ((T 'bad_access_path') + (" " + $Hint + ". " + (T 'path_help')))
     }
 
     $roots = New-Object 'System.Collections.Generic.List[string]'
@@ -231,8 +231,8 @@ function Write-InstallerState($State) {
 function Confirm-Action([string] $Question, [bool] $NonInteractive) {
     if ($NonInteractive) { return $false }
     $answer = (Read-Host ($Question + ' ' + (T 'yes_prompt'))).Trim().ToUpperInvariant()
-    if ($script:InstallLanguage -eq 'FR') { return $answer -eq 'O' }
-    return $answer -eq 'Y'
+    $language = $script:LanguageRegistry.languages | Where-Object { $_.code -eq $script:InstallLanguage } | Select-Object -First 1
+    return $answer -eq [string]$language.confirmYes
 }
 
 # Probe the actual destination folder (not merely the administrator group membership).

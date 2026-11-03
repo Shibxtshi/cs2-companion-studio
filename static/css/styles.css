@@ -1089,3 +1089,6 @@ button:disabled {
     animation:none;
   }
 }
+
+/* Keep initial copy hidden until catalogs and the ordered application modules are ready. */
+html:not([data-i18n-ready]) body { visibility:hidden; }

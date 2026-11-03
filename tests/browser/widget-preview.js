@@ -36,9 +36,9 @@
       previousCategory = definition.cat;
       const categoryHeading = document.createElement('h2');
       categoryHeading.className = 'preview-category-heading';
-      categoryHeading.textContent = definition.cat;
+      CS2I18N.bind(categoryHeading, definition.cat);
       categoryHeading.id='category-'+kind;
-      const link=document.createElement('a');link.href='#'+categoryHeading.id;link.textContent=definition.cat;categoryNav.append(link);
+      const link=document.createElement('a');link.href='#'+categoryHeading.id;CS2I18N.bind(link, definition.cat);categoryNav.append(link);
       document.getElementById('preview-catalog').append(categoryHeading);
     }
     const section = document.createElement('section');
@@ -47,10 +47,10 @@
     const heading = document.createElement('header');
     heading.className = 'preview-section-heading';
     const title = document.createElement('h3');
-    title.textContent = definition.title;
+    CS2I18N.bind(title, 'widgets.' + kind + '.title');
     const category = document.createElement('span');
     category.className = 'tiny';
-    category.textContent = definition.cat;
+    CS2I18N.bind(category, definition.cat);
     const code = document.createElement('code');
     code.textContent = kind;
     code.setAttribute('translate', 'no');
@@ -137,7 +137,8 @@
         if (options.title !== undefined) {
           const title = card.querySelector('.widget-heading');
           title.textContent = options.title || CS2WidgetCatalog[card.dataset.kind].title;
-          if (options.title) title.setAttribute('translate','no'); else title.removeAttribute('translate');
+          if (options.title) { title.setAttribute('translate','no'); delete title.dataset.i18n; }
+          else { title.removeAttribute('translate'); CS2I18N.bind(title, 'widgets.' + card.dataset.kind + '.title'); }
         }
         card.style.setProperty('--widget-accent',options.color || '');
         card.style.setProperty('--widget-bg',options.background || '');

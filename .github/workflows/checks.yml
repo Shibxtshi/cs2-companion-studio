@@ -108,7 +108,9 @@ jobs:
         run: .\tests\windows\check_syntax.ps1
       - name: Installer helper tests (no UAC/CS2)
         shell: powershell
-        run: .\tests\windows\test_helpers.ps1
+        run: |
+          .\tests\windows\test_helpers.ps1
+          .\tests\windows\test_locales.ps1
 
   browsers:
     name: Real browser + WebSocket (${{ matrix.browser }})
@@ -174,6 +176,7 @@ jobs:
           HOME: /root
         run: |
           python tests/browser/test_experience.py --browser ${{ matrix.browser }}
+          python tests/browser/test_localization.py --browser ${{ matrix.browser }}
           python tests/browser/test_experience_edges.py --browser ${{ matrix.browser }}
           python tests/browser/test_logo_navigation.py --browser ${{ matrix.browser }}
           python tests/browser/test_rendering_regressions.py --browser ${{ matrix.browser }} --output /tmp/ccs-rendering-regressions

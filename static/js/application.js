@@ -2,8 +2,6 @@
 (() => {
   'use strict';
   const byId = id => document.getElementById(id);
-  const french = () => CS2I18N.locale() === 'FR';
-  const say = (en, fr) => french() ? fr : en;
   document.documentElement.dataset.production = 'target';
    byId('studio-app').classList.add('studio-page');
    byId('studio-dialog').classList.add('studio-page');
@@ -24,7 +22,7 @@
   const renderer = CS2WidgetRenderer({board: byId('board'), format: CS2DisplayFormat,
     presentation: CCSWidgetPresentation, onGeometryChange: () => grid.requestRefresh()});
   const grid = CCSDashboardGrid({board: byId('board'), onStatus: code => {
-    if (code === 'layout_overflow') notice(say('Layout too large; remaining widgets follow below.', 'Disposition trop grande ; les widgets restants sont affichés à la suite.'));
+    if (code === 'layout_overflow') notice("app.dashboard.layoutOverflow");
   }});
   const dashboardData = CCSStudioData({board: byId('board'), onDemo: values, renderer: {
     updateValues(state, options) { if (section === 'dashboard') renderer.updateValues(state, options); },
@@ -34,16 +32,16 @@
     loginErrorKey = key;
     byId('loginerror').textContent = key ? CCSExperienceCopy.text(key) : '';
   }
-  function notice(message, kind = 'error') { CCSNotifications.show({message, kind}); }
+  function notice(messageKey, kind = 'error') { CCSNotifications.show({messageKey, kind}); }
   function issue(error) {
     const code = typeof error === 'string' ? error : error?.code || 'error';
     if (studio && section === 'studio') studio.workspace.issue(code);
     else notice(code === 'legacy_export'
-      ? say('This is an old layout export. It is not converted; keep the original file.', 'Cet export de disposition est ancien. Il n’est pas converti ; conserve le fichier original.')
-      : say('The action failed. Your published profile is unchanged; check the connection or open the Studio.', 'L’action a échoué. Le profil publié reste inchangé ; vérifie la connexion ou ouvre le Studio.'));
+      ? "app.import.legacyUnsupported"
+      : "app.action.failedUnchanged");
   }
   function status(code, message = '') {
-    const badge = byId('status'); badge.textContent = message || say('Disconnected', 'Déconnecté');
+    const badge = byId('status'); badge.textContent = message || CS2I18N.t("application.disconnected");
     badge.className = 'badge ' + (demo ? 'ok' : '');
     document.dispatchEvent(new CustomEvent('cs2:status', {detail: {code}}));
   }
@@ -55,8 +53,8 @@
     if (section === 'studio') studio?.workspace.canvas.values(game, demo);
     document.dispatchEvent(new CustomEvent('cs2:state', {detail: {online: !!game.online,
       gsi_connected: !!game.gsi_connected, demo, age_seconds: Number.isFinite(game.age_seconds) ? game.age_seconds : null}}));
-    byId('status').textContent = demo ? say('Demonstration', 'Démonstration') : game.online
-      ? say('Match data available', 'Données de partie disponibles') : game.gsi_connected ? say('GSI active · waiting', 'GSI actif · en attente') : say('CS2 offline', 'CS2 hors ligne');
+    byId('status').textContent = demo ? CS2I18N.t("navigation.demo") : game.online
+      ? CS2I18N.t("application.matchDataAvailable") : game.gsi_connected ? CS2I18N.t("application.gsiActiveWaiting") : CS2I18N.t("application.cs2Offline");
   }
   function clearLive() { if (!demo) values({online: false, gsi_connected: false, player: {}, bomb_timer: {status: 'stale'}}); }
   const menu = document.createElement('select'); menu.id = 'dashboard-profile-menu'; menu.className = 'select';
@@ -116,8 +114,8 @@
         const result = CCSStudioModel.add(lifecycle.preview, widget.kind, widget); lifecycle.edit(result.content); workspace.select(result.id);
       },
       async remove(id) {
-        if (await workspace.choose(say('Remove widget?', 'Supprimer le widget ?'), say('This stays local and can be undone.', 'Cette action reste locale et peut être annulée.'),
-          [['remove', say('Remove', 'Supprimer')], ['cancel', workspace.text('cancel')]]) === 'remove') lifecycle.edit(CCSStudioModel.remove(lifecycle.preview, id));
+        if (await workspace.choose(CS2I18N.ref("application.removeWidget"), CS2I18N.ref("studio.widget.removeNotice"),
+          [['remove', CS2I18N.ref("application.remove")], ['cancel', workspace.message('cancel')]]) === 'remove') lifecycle.edit(CCSStudioModel.remove(lifecycle.preview, id));
       },
       undo: () => lifecycle.undo(), redo: () => lifecycle.redo(),
       selectProfile: id => lifecycle.selectProfile(id), publish: () => lifecycle.publish(),
@@ -174,7 +172,7 @@
     if (demo) { disconnect(); return; }
     if (studioInitialized) { await studio.lifecycle.logout(); return; }
     if (!profiles.ready) { disconnect(); return; }
-    if (!confirm(say('Log out and erase this context’s local drafts and pending intents?', 'Se déconnecter et effacer les brouillons et intentions de ce contexte ?'))) return;
+    if (!confirm(CS2I18N.t("app.logout.confirmDraftRemoval"))) return;
     const store = await CCSDraftStore.open({context: profiles.context});
     try { await CCSDraftSession.logout({store, confirmed: true}); }
     finally { store.close(); }
@@ -190,7 +188,7 @@
     finally { if (url) setTimeout(() => URL.revokeObjectURL(url), 1000); }
   }
   const client = CS2DashboardClient({version: '1.0.0', getPin: () => pin, isDemo: () => demo,
-    onConnecting: () => status('connecting', say('Connecting…', 'Connexion…')),
+    onConnecting: () => status('connecting', CS2I18N.t("application.connecting")),
     onHealthError: (error, versionMismatch) => { showLoginError(versionMismatch ? 'version' : 'unavailable'); },
     onNetworkError() { clearLive(); document.dispatchEvent(new Event('cs2:network-error')); },
     onClose({authorized, failed}) {
@@ -238,17 +236,17 @@
       variant: 'standard', title: '', color: '', background: '', opacity: 100, style: 'solid'}));
     const configuration = {theme: 'tactical-blue', appearance: {accent: '', background: '', density: 'normal'},
       navigation: {mode: 'compact', floatingButton: true}, fullscreen: {showConnectionStatus: true}, layout: {columns: 24, widgets}};
-    render({configuration}); CCSDashboardShell.setTargetProfile({name: say('Demonstration', 'Démonstration'), configuration});
+    render({configuration}); CCSDashboardShell.setTargetProfile({name: CS2I18N.t("navigation.demo"), configuration});
     values(CCSDemoState()); preferences(); CCSNotifications.dismiss(); CCSDashboardShell.navigate('dashboard');
   }
   async function importFile(file) {
     const current = ensureStudio();
     const content = await transfer.validateFile(file);
     for (;;) {
-      const answer = await current.workspace.choose(say('Import target profile', 'Importer un profil cible'),
-        say('Preview only. Nothing is published until Save and apply.', 'Prévisualisation uniquement. Rien n’est publié avant Enregistrer et appliquer.'),
-        [['create', say('Create local draft', 'Créer un brouillon local')], ['replace', say('Replace current draft', 'Remplacer le brouillon actuel')],
-          ['preview', say('Open visual preview', 'Ouvrir l’aperçu visuel')], ['cancel', current.workspace.text('cancel')]],
+      const answer = await current.workspace.choose(CS2I18N.ref("app.import.title"),
+        CS2I18N.ref("app.import.reviewNotice"),
+        [['create', CS2I18N.ref("application.createLocalDraft")], ['replace', CS2I18N.ref("application.replaceCurrentDraft")],
+          ['preview', CS2I18N.ref("application.openVisualPreview")], ['cancel', current.workspace.message('cancel')]],
         {review: JSON.stringify(content, null, 2)});
       if (answer === 'preview') { preview.open(content, current.workspace.canvas.previewData()); continue; }
       if (answer === 'create' || answer === 'replace') await current.lifecycle.importProfile(content, answer === 'replace');
@@ -259,16 +257,15 @@
      CCSDashboardShell.setStudioAvailable(!demo && (profiles.ready || studioInitialized));
     const summary = byId('production-profile-preferences'); if (!summary) return;
     const profile = profiles.profile(profiles.selectedProfileId);
-    const modes = {full: say('Full', 'Complète'), compact: say('Compact', 'Compacte'), hidden: say('Hidden', 'Masquée')};
-    summary.textContent = profile ? profile.name + ' · ' + profile.configuration.theme + ' · '
-      + say('Density: ', 'Densité : ') + (profile.configuration.appearance.density === 'compact' ? say('Compact', 'Compacte') : say('Normal', 'Normale'))
-      + ' · Navigation : ' + modes[profile.configuration.navigation.mode]
-      : say('No private profile selected', 'Aucun profil privé sélectionné');
-    byId('settings-edit-profile').textContent = say('Edit profile in Studio', 'Modifier le profil dans le Studio');
+    const modes = {full: CS2I18N.t("navigation.full"), compact: CS2I18N.t("navigation.compact"), hidden: CS2I18N.t("navigation.hidden")};
+    summary.textContent = profile ? CS2I18N.t('app.profilePreferences', {profile: profile.name, theme: profile.configuration.theme,
+      density: CS2I18N.t(profile.configuration.appearance.density === 'compact' ? 'studio.density.compact' : 'studio.density.normal'),
+      navigation: modes[profile.configuration.navigation.mode]}) : CS2I18N.t('application.noPrivateProfileSelected');
+    byId('settings-edit-profile').textContent = CS2I18N.t("application.editProfileInStudio");
     byId('settings-edit-profile').disabled = !profiles.ready || demo;
-    menu.setAttribute('aria-label', say('Displayed profile', 'Profil affiché'));
-    byId('production-import').textContent = say('Import profile…', 'Importer un profil…');
-    byId('production-export').textContent = say('Export published profile', 'Exporter le profil publié');
+    menu.setAttribute('aria-label', CS2I18N.t("navigation.profile"));
+    byId('production-import').textContent = CS2I18N.t("application.importProfile");
+    byId('production-export').textContent = CS2I18N.t("application.exportPublishedProfile");
   }
   byId('connect').addEventListener('click', login);
   byId('pin').addEventListener('keydown', event => { if (event.key === 'Enter') login(); });
@@ -277,11 +274,11 @@
   byId('download-support').addEventListener('click', () => { try { send({type: 'diagnostics_request'}); } catch { CCSNotifications.show({key: 'diagnosticsFailed', kind: 'error'}); } });
   menu.addEventListener('change', () => { studioHint = menu.value; profiles.select(menu.value); });
   document.addEventListener('cs2:locale-changed', () => { showLoginError(loginErrorKey); preferences(); values(game); });
-  document.addEventListener('DOMContentLoaded', () => {
+  CS2I18N.mount( () => {
     const appearance = byId('settings-appearance');
     const summary = document.createElement('p'); summary.id = 'production-profile-preferences'; summary.setAttribute('translate', 'no');
     const edit = document.createElement('button'); edit.id = 'settings-edit-profile'; edit.className = 'btn';
-    edit.textContent = say('Edit profile in Studio', 'Modifier le profil dans le Studio');
+    edit.textContent = CS2I18N.t("application.editProfileInStudio");
     edit.addEventListener('click', async () => { await CCSDashboardShell.navigate('studio'); if (section === 'studio') byId('studio-profile-tab').click(); });
     appearance.append(summary, edit);
     const controls = document.createElement('div'); controls.className = 'production-transfer';

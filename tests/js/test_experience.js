@@ -4,7 +4,7 @@ const assert = require('node:assert/strict');
 const fs = require('node:fs');
 const path = require('node:path');
 const vm = require('node:vm');
-let language = 'EN';
+const {api, catalogs} = require('./i18n_fixture')();
 const listeners = new Map();
 const timers = new Map();
 let sequence = 0;
@@ -20,7 +20,7 @@ const host = node();
 const context = {window: null, document: {
   getElementById: () => host, createElement: node,
   addEventListener: (key, callback) => listeners.set(key, callback),
-}, CS2I18N: {locale: () => language, translate: value => value},
+}, CS2I18N: api,
 setTimeout: callback => { const id = ++sequence; timers.set(id, callback); return id; },
 clearTimeout: id => timers.delete(id), addEventListener() {}};
 context.window = context;
@@ -29,21 +29,22 @@ for (const file of ['experience-copy.js', 'notifications.js']) {
   vm.runInContext(fs.readFileSync(path.join(__dirname, '../../static/js', file), 'utf8'), context);
 }
 for (const locale of ['EN', 'FR']) {
-  language = locale;
+  api.setLocale(locale);
   for (const key of context.CCSExperienceCopy.keys()) {
-    assert.notEqual(context.CCSExperienceCopy.text(key), key, `${locale}: ${key}`);
-    assert(context.CCSExperienceCopy.text(key).trim());
+    const params = Object.fromEntries([...catalogs.EN['experience.' + key].matchAll(/\{([A-Za-z][A-Za-z0-9]*)\}/g)].map(match => [match[1], 2]));
+    assert.notEqual(context.CCSExperienceCopy.text(key, params), key, `${locale}: ${key}`);
+    assert(context.CCSExperienceCopy.text(key, params).trim());
   }
 }
 const notifications = context.CCSNotifications;
-notifications.show({key: 'importFailed', kind: 'error'});
+notifications.show({key: 'exportFailed', kind: 'error'});
 assert.equal(timers.size, 0, 'Errors must not expire');
 assert.equal(host.attributes.role, 'alert');
 const error = host.children[0].textContent;
 notifications.show({message: 'unrelated success', kind: 'success'});
 assert.equal(host.children[0].textContent, error, 'A success must not hide an error');
-language = 'EN'; listeners.get('cs2:locale-changed')();
-assert(host.children[0].textContent.includes('Could not import'));
+api.setLocale('EN'); listeners.get('cs2:locale-changed')();
+assert(host.children[0].textContent.includes('Could not prepare the download'));
 host.children[1].click();
 notifications.show({key: 'exportPrepared', kind: 'info'});
 assert.equal(host.attributes.role, 'status');
