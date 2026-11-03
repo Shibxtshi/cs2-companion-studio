@@ -1,5 +1,20 @@
 # Changelog — user-visible changes
 
+## Unreleased — V1 preparation
+
+- V1-01 removes the historical Dashboard/editor and autosave. Fresh private installations initialize an empty target layout; incompatible storage is refused without replacement or migration.
+- V1-02 simplifies source/test boundaries; synthetic browser hosts live under tests/browser and are not production routes.
+- V1-03 centralizes browser, installer and maintenance translations in shared EN/FR JSON catalogs.
+- V1-04 provides ten complete themes, including Arctic White, with generated profile/browser validation parity.
+- PR #34 fixes CI syntax-check paths for the relocated test harnesses.
+- V1-05 prepares current bilingual user guides, contributor/developer indexes and offline documentation-link checks for review. This entry does not mark that PR merged.
+
+The code reports 1.0.0; no public release is announced. License approval, third-party/contribution rights and final release gates remain open.
+
+## Earlier development milestones (historical)
+
+The phase descriptions below record behavior at their original delivery date, including now-retired historical editors and inactive foundations. They are not current operating instructions; use the [current documentation](docs/README.md).
+
 ## Unreleased — P10 stabilization
 
 - Preserve game-data freshness when CS2 sends only player identity/activity; do not present old match values as current.

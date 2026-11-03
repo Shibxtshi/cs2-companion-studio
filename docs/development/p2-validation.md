@@ -1,5 +1,8 @@
 # P2 validation — 2026-10-28
 
+> HISTORICAL RECORD — this dated phase report/plan is retained for provenance, not current operating instructions or current test evidence. Production is now target-only; historical files are refused without replacement. Use the [documentation index](../README.md) and [current operator procedure](production-activation.md).
+
+
 ## Baseline and scope
 
 Baseline main: cbefcdf477c2e497f4604496ff260b26b647874e, containing P1 #17. All 112 tracked files in the isolated local baseline matched their remote Git blob hashes before P2 edits. The maintainer approved Repère, Tactical Blue as default, the other three complete palettes and Barlow Condensed + Inter.

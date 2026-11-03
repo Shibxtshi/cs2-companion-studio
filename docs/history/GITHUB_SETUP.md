@@ -1,5 +1,8 @@
 # Setting up the GitHub repository
 
+> Historical archive: retained descriptions and commands concern the dated version only. For current operation use the [documentation index](../README.md); this is not current validation evidence.
+
+
 This document is for the personal project maintainer preparing the **first public V1P release**. This archive is not itself a published GitHub repository.
 
 ## Suggested repository metadata

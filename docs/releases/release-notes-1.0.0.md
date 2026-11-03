@@ -4,7 +4,9 @@ This is a personal CS2 Game State Integration dashboard developed with substanti
 
 ## Highlights
 
-- 29 customizable widgets for game state, economy estimates, weapons and personal statistics.
+- Target-only X/Y Dashboard and three-panel Studio; 29 widget types with Standard/Compact/Minimal, separate surfaces and ten themes.
+- Persistent local drafts, bounded session undo/redo, explicit publication and per-tab profile selection.
+- Reviewed `ccs-dashboard-export` v1 import/export; no automatic historical conversion.
 - EN/FR interface; responsive dashboards on PC and phone.
 - Server-side profiles synchronized across devices after PIN authentication.
 - Guided Windows installer and Docker deployment.
@@ -21,7 +23,7 @@ The intended Community No-Resale license would allow free access, use, modificat
 
 ## Transparency and limitations
 
-AI-assisted implementation and automated tests are not an independent security audit or evidence of anti-cheat approval. See AI_DISCLOSURE.md, SECURITY.md and README.md. Preserve `.env` and `data/` across upgrades; never publish personal files.
+AI-assisted implementation and automated tests are not an independent security audit or evidence of anti-cheat approval. See AI_DISCLOSURE.md, SECURITY.md and README.md. Preserve `.env`, `data/`, installation/GSI backups and a compatible application artifact during a documented target update; never publish personal files. Historical storage requires separate offline recovery, not automatic conversion.
 
 ## Before publishing
 

@@ -1,5 +1,8 @@
 # P1 validation — 2026-10-28
 
+> HISTORICAL RECORD — this dated phase report/plan is retained for provenance, not current operating instructions or current test evidence. Production is now target-only; historical files are refused without replacement. Use the [documentation index](../README.md) and [current operator procedure](production-activation.md).
+
+
 ## Scope and baseline
 
 Baseline: main commit 38cb111c5790166e9f82fe87e98710762add9b11, including PR #16. All 101 tracked source files in the isolated baseline matched their Git blob hashes before application edits. P1 extracts three frontend responsibilities; no backend, CSS, widget catalog, profile schema, runtime dependency or security setting changes.

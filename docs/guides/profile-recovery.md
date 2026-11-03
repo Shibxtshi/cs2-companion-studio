@@ -3,15 +3,19 @@
 > V1-01: normal startup is target-only. A genuinely empty data directory initializes an empty target Dashboard automatically. Historical files are refused and preserved; these offline tools remain available only for deliberate recovery/activation. Restoring historical bytes requires the archived compatible application, not this runtime. See [target startup rules](../development/target-runtime.md).
 
 
-This procedure is for the local maintainer. It works even when invalid profile storage prevents HTTP/WebSocket startup. It never runs automatically. The runtime selects either historical storage or the [target contracts](../development/profile-contracts.md) from the validated document format. The reset commands below concern historical storage only. For target activation, manifest v2, interrupted activation/restore markers and target recovery, follow the [production operator procedure](../development/production-activation.md); do not apply a historical reset to target data.
+This procedure is for the local maintainer. It works even when invalid profile storage prevents HTTP/WebSocket startup. It never runs automatically. The runtime accepts only the [target contracts](../development/profile-contracts.md); historical documents are preserved and refused. The reset commands below concern historical storage only. For target activation, manifest v2, interrupted activation/restore markers and target recovery, follow the [production operator procedure](../development/production-activation.md); do not apply a historical reset to target data.
 
 ## Before any write
 
-1. Stop the native service, or stop the Compose service below. Close CCS tabs on all devices so pending legacy autosaves cannot overwrite a recovered configuration after restart.
+1. Stop the native service, or stop the Compose service below. Close CCS tabs on all devices; retained old application versions can still be writers.
 2. Keep data/, .env and logs/ in place. Do not delete the data directory. Use the same data directory as the stopped instance (PROFILE_DATA_DIR or --data-dir).
 3. Run --inspect to classify the file without printing its content. A classification is not permission to erase it. Prefer restoring a valid rotating backup when appropriate; otherwise prepare a distinct reset snapshot.
 
 The --service-stopped flag is an explicit operator acknowledgement, not a running-service detector. The cooperative OS lock serializes recovery tools and is also held for the production server lifespan. It excludes cooperating offline writers while the runtime is active, but cannot identify every external writer or replace a clean service shutdown. Never run reset/restore against a live service, even when the flag is supplied.
+
+## Historical raw-reset tools (not target initialization)
+
+The following commands operate on historical storage only. They do not produce a store loadable by the current runtime. For normal target backup recovery use the target procedure below; for an explicit historical-to-target reset use [production activation](../development/production-activation.md).
 
 ## Native Windows / Python
 
@@ -53,7 +57,7 @@ docker compose run --rm --no-deps --entrypoint python cs2-companion-studio scrip
 docker compose run --rm --no-deps --entrypoint python cs2-companion-studio scripts/recover_profiles.py --inspect-reset $backupId
 ~~~
 
-The reset command is interactive; type RESET and the ID only after reviewing the operation. These commands require an image containing this recovery implementation. They do not build an image or modify secrets. After a successful current-format validation, restart normally:
+The reset command is interactive; type RESET and the ID only after reviewing the operation. These commands require an image containing this recovery implementation. They do not build an image or modify secrets. Only restart after validating a target document for this runtime, or selecting the archived compatible historical application for a historical restore. The command below starts the existing image, not a format converter:
 
 ~~~powershell
 docker compose up -d --no-build --pull never --wait
@@ -95,3 +99,19 @@ python scripts/recover_profiles.py --restore
 ~~~
 
 Stop the service first. This historical command validates profiles.json.bak against the historical format and preserves any current file as profiles.json.corrupt-<unique ID> before replacing it. There is no automatic fallback to a future/unknown schema. Do not delete recovery files until you have independently confirmed the desired data is retained.
+
+## Current target recovery
+
+With the actual service stopped and all private files retained, inspect first:
+
+```powershell
+docker compose run --rm --no-deps --entrypoint python cs2-companion-studio scripts/recover_profiles.py --data-dir /app/data --inspect
+```
+
+If the current target store is damaged but its rotating target backup is valid, use the separately confirmed operation:
+
+```powershell
+docker compose run --rm --no-deps --entrypoint python cs2-companion-studio scripts/recover_profiles.py --data-dir /app/data --restore-target --service-stopped
+```
+
+This preserves failed state in a unique verified snapshot, validates the target backup, installs a new generation and clears receipts. Later publications may not be recovered. It does not reuse old drafts/intents automatically. It does not alter credentials or unrelated private files. Inspection alone does not authorize restoration. An interrupted activation restoration must be resolved through its own official restoration ID; never remove pending/attempted markers. See [full operator procedure](../development/production-activation.md) and [user backup guidance](../user/backup.md).

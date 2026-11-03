@@ -20,14 +20,14 @@ These conventions guide scoped changes. Update callers, tests and documentation 
 - Prefer readable, formatted source over dense single-line JavaScript, CSS or HTML.
 - Keep WebSocket/authentication, profiles and game-state lifecycle boundaries explicit; add tests before moving entry points or persisted data paths.
 - Avoid timers or DOM refreshes without work to perform; preserve timer accuracy and the default-disabled setting.
-- Update all launchers, callers, tests and documentation when an interface changes. The software is not deployed: do not retain aliases or add migrations solely for backward compatibility.
+- Update all launchers, callers, tests and documentation when an interface changes. Fresh development installations do not require permanent aliases or migrations by default; preserving existing private files remains mandatory.
 - Place historical development documentation in `docs/history/`; use the current guide, development, security and release sections indexed by `docs/README.md`.
 - Keep pytest tests in `tests/unit/`, `tests/integration/` and `tests/contracts/`; browser journeys in `tests/browser/`; JavaScript tests in `tests/js/`; isolated CLI regressions in `tests/standalone/`; disposable Docker runners in `tests/docker/`, and PowerShell verification in `tests/windows/`. See `tests/README.md` for the different invocation methods.
 - Keep widget template definitions in `static/js/widgets.js` and ensure it loads before `static/js/application.js` and the shared renderer.
 
 ## Quality gates
 
-Run `python scripts/run_checks.py`, GitHub Actions on Windows and Linux, browser tests (Chromium, Firefox, WebKit), Docker smoke tests and dependency auditing before merging substantive changes.
+Use risk-based checks: select suites relevant to the change and expand for affected authentication, GSI, storage and cross-platform behavior. The backend/security entry point is `python scripts/run_checks.py`; [tests](../../tests/README.md) describes browser, Windows, Docker and dependency checks. Record local results and unavailable checks honestly. Hosted CI is separate evidence, not implied by local success. Public distribution has stronger separately reviewed [release gates](../releases/checklist.md).
 
 Production publication uses published-profiles.js, profile-publication.js and the Studio lifecycle; historical autosave messages are rejected. Controllers emit stable state codes; UI text is resolved by translation. Exercise the corresponding Node and production-browser suites before changing save/conflict behavior.
 

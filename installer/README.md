@@ -9,6 +9,6 @@ Start commands from the project root. These scripts operate on an installed inst
 | `DESINSTALLER_WINDOWS.cmd` | `uninstall.ps1` | Restore/remove the managed GSI configuration |
 | `powershell -File installer/status.ps1` | `status.ps1` | Inspect local service status |
 
-`common.ps1` contains shared filesystem, configuration, Docker and installation helpers; `i18n.ps1` owns the EN/FR installer messages. Neither is a standalone launcher.
+`common.ps1` contains shared filesystem, configuration, Docker and installation helpers; `i18n.ps1` adapts the shared `static/locales/` JSON catalogs for installer messages. Neither is a standalone launcher.
 
 Use the [Windows installation guide](../docs/guides/windows-installation.md) for prerequisites, LAN choices, credentials, backups and recovery. Never upload .env, generated GSI files, installation state or personal profiles.

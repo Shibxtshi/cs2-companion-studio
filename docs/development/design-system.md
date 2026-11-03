@@ -51,3 +51,11 @@ Keep P1 golden fixtures unchanged. Run the existing live journey, widget charact
 See [tests/README.md](../../tests/README.md) for commands. Local timing/screenshot evidence is kept outside the repository and reported in the PR. Use the unchanged P1 baseline and the same characterization benchmark for comparisons; do not present automation round trips as pure rendering or infer real CS2/LAN certification.
 
 The dated local results, timing ranges and limitations are recorded in [p2-validation.md](p2-validation.md).
+
+## Adding a palette
+
+1. Add its stable identifier/display name to `THEME_NAMES` in `companion/profile_contracts.py`; preserve existing identifiers.
+2. Define the complete semantic palette in `static/css/themes.css`, including native `color-scheme` and readable status/overlay overrides for light themes. Reuse tokens; do not scatter component hex values.
+3. Run `python scripts/generate_profile_schema.py`, then `--check`. Never hand-edit generated `draft-schema.js`. Selectors consume generated theme metadata, not new independent lists.
+4. Keep copy in the shared JSON catalogs if explanatory labels are needed; validate locales.
+5. Test server/browser validation, unknown-value refusal, draft/history, temporary preview, explicit publication/reload/profile isolation and real computed surfaces/contrast. Extend theme/widget journeys and review synthetic desktop/mobile captures. Arbitrary custom colors and sampled ratios do not establish global WCAG conformance.

@@ -1,5 +1,8 @@
 # Recette finale CCS — P10-A et P10-B
 
+> HISTORICAL RECORD — this dated phase report/plan is retained for provenance, not current operating instructions or current test evidence. Production is now target-only; historical files are refused without replacement. Use the [documentation index](../README.md) and [current operator procedure](../development/production-activation.md).
+
+
 P10-A utilise uniquement des instances jetables et des données synthétiques. **P10-B et l’activation de l’installation personnelle nécessitent une autorisation distincte du mainteneur.** Ce guide ne constitue pas cette autorisation. La fusion d’une PR ne déclenche aucune remise à zéro.
 
 Le [guide technique d’activation](../development/production-activation.md) décrit les formats, les sauvegardes et les erreurs. La procédure ci-dessous concerne le mainteneur et ses essais manuels.

@@ -1,9 +1,6 @@
-# Widget presentations — P7
+# Widget presentations
 
-> P9.5 update: these phase boundaries describe their original delivery. The integrated production composition and the explicit, separately authorized transition are documented in [Production activation](production-activation.md). Valid historical installations remain usable until offline confirmation.
-
-
-The maintainer approved the representative score, health, weapon, inventory, economy, stats, round_history, bomb and connection direction before catalog-wide implementation. Identity, themes and fonts remain P2; no P8 Studio or target-store activation is introduced.
+All 29 kinds and all three presentations are used by the production Dashboard, Studio and preview. [User catalog](../user/widgets.md) describes each kind and source. The one target profile contract persists each instance’s variant independently of surface style and dashboard density.
 
 ## Ownership and active boundary
 
@@ -16,7 +13,7 @@ The maintainer approved the representative score, health, weapon, inventory, eco
 | widget-presentation.css | Standard, Compact, Minimal and semantic source/status presentation |
 | dashboard-layout.js / dashboard-grid.js | P6 projection plus variant minima and measured intrinsic content height |
 
-The active legacy dashboard uses Standard. No variant field is added to legacy profiles, autosave or v2 export/import. The isolated authenticated P3/P6 host reads standard/compact/minimal from the existing target contract. Surface solid/glass/outline remains independent, as do custom title, accent, background and opacity. No persistent preview selector, conversion, second writer or new schema exists.
+Production reads `standard`, `compact` or `minimal` from each widget configuration. Surface `solid`/`glass`/`outline`, title, accent, background and opacity remain independent. Themes do not override explicit widget colors. There is no historical frontend or second writer.
 
 ## Shared structure and family differences
 
@@ -61,8 +58,4 @@ Run the existing checks in tests/README.md, plus node tests/js/test_widget_prese
 
 P1 fixture files are not regenerated. Characterization compares the same values, bars, lists and estimates, normalizing only reviewed node order, round winner labels and French playing localization. P6's earlier demo-board correction remains. Separate tests compare all variants over complete/partial/missing/zero/estimated/stale/waiting/long/demo data, customization, language and theme changes. Target tests cover 87 variant/kind combinations at all seven required resolutions, with clipping checks and no storage writes from reflow/details.
 
-Native IndexedDB, publication, PIN/Origin, GSI/WS, reconnect, historical autosave/import/export, PowerShell, Windows/Linux and Docker gates remain. Performance comparisons must use foreground pages, matching fixtures and sequential runs; background-tab throttling is not rendering cost.
-
-## Remaining transition
-
-Standard is active, but target variant selection/persistence remains the P3/P5/P6 isolated path. P8 still needs actual editing/selection UI, draft lifecycle and explicit publication flows before a warned, backed-up, confirmed replacement of legacy storage. P7 does not activate that transition, implement OBS, or change licensing/publication.
+Native IndexedDB, explicit publication, PIN/Origin, GSI/WS, reconnect, target import/export, PowerShell, Windows/Linux and Docker checks remain available. Performance comparisons must use foreground pages, matching fixtures and sequential runs; background-tab throttling is not rendering cost.

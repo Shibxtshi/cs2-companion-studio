@@ -50,4 +50,4 @@ Use short, natural sentences. Do not promise a save or publication before confir
 | Recovery backup | Sauvegarde de récupération | Verified private recovery copy |
 | Import / Export | Importer / Exporter | Reviewed transfer, never implicit publication |
 
-Theme names and product branding stay unchanged. Catalogs contain public product copy, never credentials or personal data. Broader documentation reorganization is outside this phase.
+Theme names and product branding stay unchanged. Catalogs contain public product copy, never credentials or personal data. Use the [contributor guide](README.md) for PR scope, documentation and licensing requirements. The offline Python translator also consumes these shared catalogs.
