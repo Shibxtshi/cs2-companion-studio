@@ -18,7 +18,7 @@ Use Windows PowerShell 5.1 or PowerShell 7, Steam with CS2 installed, and Docker
    ```
 
 5. A new installation generates a private PIN and a separate GSI token. An existing `.env` is reused; never post it or the displayed PIN. Keep the estimated bomb timer disabled unless the intended use is explicitly permitted.
-6. The installer checks GSI folder access first. Only a filesystem permission problem may offer consent to UAC; Docker failure is not a reason to elevate. Refusing a required operation stops that installation. It asks before replacing a different GSI file and saves its original under private `.installer-state/`. Preserve that directory for uninstall/recovery.
+6. The installer checks GSI folder access first. Only a filesystem permission problem may offer consent to UAC; Docker failure is not a reason to elevate. Refusing a required operation stops that installation. It asks before replacing an unmanaged different GSI file (unless explicitly forced). A file still matching its recorded managed hash can be updated without that extra question. Original backups stay under private `.installer-state/`. Preserve that directory for uninstall/recovery.
 7. Choose local-only access unless you need another device. See [LAN setup](network.md) before opting in. No firewall rule is created automatically.
 8. The installer builds/starts CCS. Open `http://localhost:8080` (or your configured port). Use Demonstration for synthetic data, then connect with the PIN. A fresh Dashboard is empty; follow [first use](first-use.md).
 9. Restart CS2 after adding/changing `gamestate_integration_companion.cfg`, then start a training session. GSI reception alone does not prove an active match.

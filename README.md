@@ -26,7 +26,7 @@ Prerequisites: Windows PowerShell 5.1 or PowerShell 7, Steam/CS2 installed, Dock
 
 1. Obtain a trusted source archive and extract it completely into a writable folder. Do not run it inside the ZIP. No public release is announced here.
 2. Start Docker Desktop, then double-click `INSTALLER_WINDOWS.cmd`.
-3. Choose EN or FR, verify the detected CS2 folder and follow the prompts. Keep the locally displayed PIN private. The installer generates/reuses credentials and asks before replacing a different GSI file, retaining a backup.
+3. Choose EN or FR, verify the detected CS2 folder and follow the prompts. Keep the locally displayed PIN private. The installer generates/reuses credentials and asks before replacing an unrecognized different GSI file, retaining a backup.
 4. Open `http://localhost:8080` (or the configured port). Demonstration works without a running match and cannot access private profiles.
 5. Connect with your PIN. A new Dashboard is **empty**. Open Customization Studio, add widgets and choose **Save and apply**. A locally saved draft alone does not change the Dashboard.
 6. Restart CS2 after installing/changing GSI configuration, then use a training session to check real data.
