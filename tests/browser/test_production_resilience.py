@@ -108,7 +108,7 @@ def storage_failures(browser):
                 original = (data / 'profiles.json').read_bytes()
                 page.evaluate('failure=>{window.p10StorageFailure=failure;}',failure)
                 field(page,'studio-title','P10 not confirmed on disk')
-                expect(page.locator('#studio-save-state')).to_contain_text('Local persistence failed')
+                expect(page.locator('#studio-save-state')).to_have_text(page.evaluate("CS2I18N.t('studio.error')"))
                 assert read_drafts(page) == confirmed
                 assert (data / 'profiles.json').read_bytes() == original
                 expect(page.locator('#studio-board>.widget')).to_contain_text('P10 not confirmed on disk')

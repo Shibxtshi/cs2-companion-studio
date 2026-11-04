@@ -2,6 +2,8 @@
 
 The code version is a **publication candidate**, not a published or security-certified release. Documentation prepared in V1-05 does not satisfy any unchecked gate. Use this checklist **before making the repository public**.
 
+See [private candidate validation](candidate-validation.md) for isolated Windows/Docker, compatible-update and manual CS2/LAN procedures. V1-06 reports use PASS/FAIL/BLOCKED/NOT_RUN/NOT_APPLICABLE; only actual candidate evidence can complete a gate. A successful private test does not resolve legal/publication approval.
+
 ## Ownership, licensing and openness — BLOCKING
 
 - [ ] **Finalize and approve the no-resale source-available license.** `LICENSE` is currently a **non-effective draft**: obtain qualified legal review, confirm the intended distinction between selling copies and permitted commercial use/services, and verify that the confirmed attribution `Copyright (c) 2026 Shibxtshi` correctly identifies the holder entitled to license all original contributions. Check compatibility with third-party dependencies/assets before publication.

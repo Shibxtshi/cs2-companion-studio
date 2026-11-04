@@ -108,6 +108,7 @@ def run(browserName, output):
             expect(page.locator('#help-topic-content')).to_contain_text('brouillon local')
             capture('08-centre-aide')
             page.keyboard.press('Escape')
+            expect(page.locator('#settings-help')).to_be_focused()
             page.locator('#diagnostics-toggle').click()
             expect(page.locator('#diag-ws')).to_have_text('Authentifiée et connectée')
             expect(page.locator('#diag-match')).to_have_text('Indisponibles ou périmées')

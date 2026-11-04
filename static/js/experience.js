@@ -30,8 +30,8 @@
     if (key) label(node, key);
     return node;
   }
-  function openHelp(next = 'start') {
-    fromHelp = document.activeElement;
+  function openHelp(next = 'start', trigger = document.activeElement) {
+    fromHelp = trigger;
     topic = next;
     step = 0;
     renderHelp();
@@ -111,7 +111,7 @@
     later.onclick = dismissWelcome;
     actions.append(helpButton, later); welcome.append(actions); welcome.hidden = dismissed;
     const helpLink = element('button', 'connectionTopic', 'text-link'); helpLink.type = 'button';
-    helpLink.onclick = () => openHelp('connection'); form.append(helpLink);
+    helpLink.onclick = event => openHelp('connection', event.currentTarget); form.append(helpLink);
   }
   function createHelp() {
     const dialog = byId('help-dialog');
@@ -135,8 +135,9 @@
     byId('help-close').onclick = closeHelp;
     byId('help-done').onclick = closeHelp;
     byId('help-close').setAttribute('aria-label', text('close'));
-    byId('open-help').onclick = () => openHelp('start');
-    byId('help-from-login').onclick = () => openHelp('start');
+    byId('open-help').onclick = event => openHelp('start',
+      document.activeElement === byId('settings-help') ? document.activeElement : event.currentTarget);
+    byId('help-from-login').onclick = event => openHelp('start', event.currentTarget);
     dialog.addEventListener('close', () => { if (fromHelp?.isConnected) fromHelp.focus(); });
     renderHelp();
   }

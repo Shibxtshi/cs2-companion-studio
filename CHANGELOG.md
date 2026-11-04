@@ -1,6 +1,12 @@
 # Changelog — user-visible changes
 
-## Unreleased — V1 preparation
+## Unreleased — V1-06 candidate validation
+
+- Restore help-dialog focus to its explicit opener on browsers that do not focus clicked buttons, including WebKit; preserve Settings help return.
+- Repair the isolated Dashboard test composition after the shared catalog loader change. Update storage-error expectations to the shared catalog and make rendering checks wait for loader readiness and compare low-alpha painted colors correctly.
+- Add candidate validation guidance without marking unperformed installation, legal or publication gates complete.
+
+## Earlier V1 preparation
 
 - V1-01 removes the historical Dashboard/editor and autosave. Fresh private installations initialize an empty target layout; incompatible storage is refused without replacement or migration.
 - V1-02 simplifies source/test boundaries; synthetic browser hosts live under tests/browser and are not production routes.
