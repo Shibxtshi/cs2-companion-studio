@@ -70,7 +70,7 @@
     document.dispatchEvent(new Event('cs2:connection-lost'));
   }
   const client = CS2DashboardClient({
-    version: '1.0.0', getPin: () => pin, isDemo: () => false,
+    version: '1.1.0', getPin: () => pin, isDemo: () => false,
     onConnecting: () => status(CS2I18N.locale() === 'FR' ? 'Connexion…' : 'Connecting…'),
     onHealthError: () => status(CS2I18N.locale() === 'FR' ? 'Serveur indisponible' : 'Server unavailable', 'bad'),
     onNetworkError: clearLive,

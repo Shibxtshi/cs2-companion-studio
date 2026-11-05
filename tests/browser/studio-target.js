@@ -64,7 +64,7 @@
     if (latestData?.demo) return;
     values({online: false, gsi_connected: false, player: {}, bomb_timer: {status: 'stale'}}, false);
   }
-  const client = CS2DashboardClient({version: '1.0.0', getPin: () => pin, isDemo: () => false,
+  const client = CS2DashboardClient({version: '1.1.0', getPin: () => pin, isDemo: () => false,
     onConnecting() {}, onHealthError: () => issue('network_error'),
     onNetworkError() { clearLive(); issue('network_error'); },
     onClose({authorized}) {

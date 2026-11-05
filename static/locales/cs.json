@@ -205,7 +205,7 @@
   "installer.gsi_ok": "Konfigurace GSI nainstalována. Pokud se soubor změnil, restartujte CS2.",
   "installer.gsi_replace": "Jiný soubor GSI již existuje. Zálohovat a vyměnit?",
   "installer.initialization": "Inicializace",
-  "installer.intro": "CS2 Companion Studio – nastavení v1.0.0",
+  "installer.intro": "CS2 Companion Studio – nastavení v1.1.0",
   "installer.invalid_credentials": "Chybějící nebo neplatné přihlašovací údaje v .env. Ponechte původní soubor.",
   "installer.invalid_lang": "Neznámý jazyk: používám angličtinu.",
   "installer.invalid_port": "Neplatná hodnota PORT v .env.",

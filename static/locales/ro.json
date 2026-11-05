@@ -205,7 +205,7 @@
   "installer.gsi_ok": "Configurația GSI a fost instalată. Repornește CS2 dacă fișierul s-a schimbat.",
   "installer.gsi_replace": "Un alt fișier GSI există deja. Faceți o copie de rezervă și înlocuiți-o?",
   "installer.initialization": "Inițializare",
-  "installer.intro": "CS2 Companion Studio - Configurare v1.0.0",
+  "installer.intro": "CS2 Companion Studio - Configurare v1.1.0",
   "installer.invalid_credentials": "Acreditări lipsă sau nevalide în .env. Păstrați fișierul original.",
   "installer.invalid_lang": "Limba necunoscută: folosind engleza.",
   "installer.invalid_port": "Valoare PORT nevalidă în .env.",

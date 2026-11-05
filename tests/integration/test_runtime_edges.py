@@ -30,7 +30,7 @@ def runtime_server(monkeypatch, tmp_path):
     monkeypatch.setattr(server, 'GSI_TOKEN', 'synthetic-edge-token')
     monkeypatch.setattr(server, 'DASHBOARD_PIN', 'synthetic-edge-pin')
     monkeypatch.setattr(server, 'profile_store', create_runtime_store(tmp_path / 'data'))
-    monkeypatch.setattr(server, 'diagnostics', Diagnostics(tmp_path / 'logs', '1.0.0'))
+    monkeypatch.setattr(server, 'diagnostics', Diagnostics(tmp_path / 'logs', '1.1.0'))
     monkeypatch.setattr(server, 'limiter', LoginLimiter())
     return server
 

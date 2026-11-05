@@ -205,7 +205,7 @@
   "installer.gsi_ok": "Konfiguracja GSI zainstalowana. Uruchom ponownie CS2, jeśli plik się zmienił.",
   "installer.gsi_replace": "Istnieje już inny plik GSI. Zrobić kopię zapasową i wymienić?",
   "installer.initialization": "Inicjalizacja",
-  "installer.intro": "CS2 Companion Studio — konfiguracja wersji 1.0.0",
+  "installer.intro": "CS2 Companion Studio — konfiguracja wersji 1.1.0",
   "installer.invalid_credentials": "Brakujące lub nieprawidłowe poświadczenia w .env. Zachowaj oryginalny plik.",
   "installer.invalid_lang": "Nieznany język: używany angielski.",
   "installer.invalid_port": "Nieprawidłowa wartość PORT w .env.",

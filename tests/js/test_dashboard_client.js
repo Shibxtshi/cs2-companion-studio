@@ -6,7 +6,7 @@ const vm = require('node:vm');
 function harness() {
   const sockets = [];
   const events = [];
-  let health = async () => ({ok: true, json: async () => ({version: '1.0.0'})});
+  let health = async () => ({ok: true, json: async () => ({version: '1.1.0'})});
   let demo = false;
   class Socket {
     static OPEN = 1;
@@ -28,7 +28,7 @@ function harness() {
   });
   vm.runInContext(fs.readFileSync('static/js/dashboard-client.js', 'utf8'), context);
   const client = context.window.CS2DashboardClient({
-    version: '1.0.0', getPin: () => 'synthetic-client-pin', isDemo: () => demo,
+    version: '1.1.0', getPin: () => 'synthetic-client-pin', isDemo: () => demo,
     onConnecting: () => events.push(['connecting']),
     onHealthError: (error, mismatch) => events.push(['health', error.message, mismatch]),
     onMessage: message => events.push(['message', message.type]),

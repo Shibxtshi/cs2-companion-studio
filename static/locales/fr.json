@@ -205,7 +205,7 @@
   "installer.gsi_ok": "Configuration GSI installée. Redémarre CS2 si le fichier a changé.",
   "installer.gsi_replace": "Un fichier GSI différent existe déjà. Le sauvegarder puis le remplacer ?",
   "installer.initialization": "Initialisation",
-  "installer.intro": "CS2 Companion Studio - installation v1.0.0",
+  "installer.intro": "CS2 Companion Studio - installation v1.1.0",
   "installer.invalid_credentials": "Identifiants absents ou invalides dans .env. Conserve le fichier original.",
   "installer.invalid_lang": "Langue inconnue : anglais utilisé.",
   "installer.invalid_port": "La valeur PORT dans .env est invalide.",
