@@ -1,57 +1,79 @@
 # CS2 Companion Studio
 
-**CCS — Match Center / Player Edition** is an independent Personal project: a Dashboard for Counter-Strike 2. View available game information in a browser on a PC, tablet or phone, and customize the layout in a separate visual Studio.
+**Your match. Your second screen.**
 
-Developed with substantial ChatGPT (OpenAI) assistance; see [AI disclosure](AI_DISCLOSURE.md).
+Personal CS2 dashboard powered by Game State Integration. Keep useful match information on another screen and build your own layout in a separate visual Studio.
 
-[English documentation](docs/README.md) · [Documentation en français](docs/README.fr.md) · [Windows installation](docs/user/installation.md)
+An independent project developed with substantial **ChatGPT/Codex (OpenAI)** assistance. [AI disclosure](AI_DISCLOSURE.md).
 
-> **Version 1.1.0 candidate.** V1.0.0 has been published; this source prepares the next release. The [Community No-Resale License v1.0](LICENSE) sets the source-available terms, **not OSI-approved open source**. License adoption was integrated through an expressly authorized merge; no legal certification is claimed. See [licensing and redistribution](docs/legal/licensing.md), the [informative French translation](docs/legal/LICENSE.fr.md) and [V1.1.0 release notes](docs/releases/release-notes-1.1.0.md).
+[![Latest release](https://img.shields.io/github/v/release/Shibxtshi/cs2-companion-studio?label=release&color=4b9cff)](https://github.com/Shibxtshi/cs2-companion-studio/releases/latest)
+[![License: Community No-Resale](https://img.shields.io/badge/license-Community_No--Resale-blue)](LICENSE)
+[![Windows installer](https://img.shields.io/badge/Windows-installer-0078D4)](docs/user/installation.md)
 
-## Available now
+**[Download v1.1.0](https://github.com/Shibxtshi/cs2-companion-studio/releases/tag/v1.1.0)** · **[Windows setup](docs/user/installation.md)** · **[Documentation](docs/README.md)** · [Français](docs/README.fr.md)
 
-- Read-only Dashboard with responsive X/Y layouts and an independently selected profile in each tab.
-- Three-panel **Customization Studio**: widget library, canvas and inspector; move/resize, undo/redo and preview.
-- [29 widget types](docs/user/widgets.md), each with Standard, Compact and Minimal presentations. Solid, Glass and Outline surfaces are separate settings.
-- [Ten themes](docs/user/themes.md), including the light Arctic White theme; individual widget colors remain overrides.
-- Persistent **local browser drafts**. Only **Save and apply** explicitly publishes a configuration to the server and synchronizes authenticated clients.
-- Interface, help, Settings, diagnostics and installer in English, French, Russian, Polish, Ukrainian, Czech and Romanian; isolated synthetic demonstration.
-- Native Windows guided installer for Steam/CS2 and Docker Desktop; no Python installation required for that installer.
+## See CCS in action
 
-CCS receives Game State Integration (GSI) messages. It does not read game memory, inject code or provide an in-game overlay. Streamer Mode and Overlay Studio are future work. Some fields may be unavailable; economy forecasts and optional bomb timing are estimates. The estimated bomb timer is **disabled by default**.
+<img src="docs/assets/showcase/dashboard-preview.png" alt="CCS v1.1.0 Dashboard in Tactical Blue, showing the score, equipped weapon, economy, personal statistics and bomb state with synthetic demonstration data." width="1200">
+
+*A real V1.1.0 Dashboard capture using the built-in demonstration. The values are synthetic, not a live CS2 match.*
+
+### Build your layout
+
+Move and resize widgets on the canvas, then adjust their presentation and appearance in the inspector. Local drafts stay separate from your published Dashboard.
+
+<details>
+<summary>Watch the Customization Studio — 14-second recording</summary>
+
+<img src="docs/assets/showcase/customization-studio.gif" alt="Real CCS Studio recording: add an equipment-value widget, move and resize it on the grid, then return to the Dashboard through the exit dialog." width="800">
+
+*Maintainer-provided recording with offline values. Expand to play; collapse to hide the animation.*
+
+</details>
+
+## Make it yours
+
+| Feature | What you can do |
+|---|---|
+| **Visual Studio** | Add, move, resize, duplicate and style widgets; undo/redo and preview your changes. |
+| **29 widget types** | Choose match, weapon, economy, player, bomb, statistics and connection information. |
+| **3 presentations** | Pick Standard, Compact or Minimal per widget. Solid, Glass and Outline surfaces are separate choices. |
+| **10 themes** | Use Tactical Blue, Arctic White and eight more palettes, with individual color overrides. |
+| **Drafts and profiles** | Keep persistent local drafts; **Save and apply** explicitly publishes and synchronizes a profile. Each tab selects its own profile. |
+| **Responsive layouts** | View your Dashboard in a browser on a PC, tablet or phone. LAN setup is required for other devices. |
+| **7 languages** | English, French, Russian, Polish, Ukrainian, Czech and Romanian. |
+| **CS2 GSI** | Display the game data CS2 makes available, with clear missing-data and estimate states. |
+
+The five additional translations use machine translation and AI-assisted review; native-speaker review has not been completed. See the [V1.1.0 notes](docs/releases/release-notes-1.1.0.md).
 
 ## Start on Windows
 
-Prerequisites: Windows PowerShell 5.1 or PowerShell 7, Steam/CS2 installed, Docker Desktop with Compose v2 installed and running. Real-machine compatibility beyond recorded tests is not guaranteed.
+1. **[Download the official source ZIP](https://github.com/Shibxtshi/cs2-companion-studio/releases/download/v1.1.0/CS2-Companion-Studio-v1.1.0.zip)** from the release. Its SHA-256 file is attached to the same release.
+2. Extract the **entire ZIP** into a writable folder. Do not launch the installer from inside the archive.
+3. Install/start **Docker Desktop with Compose v2**, and make sure **Steam and CS2 are installed**. The guided installer uses Windows PowerShell 5.1 or PowerShell 7; it does not require Python.
+4. Run **`INSTALLER_WINDOWS.cmd`** and follow the prompts for language and the detected CS2 folder. Keep your installation PIN private.
+5. Open **`http://localhost:8080`** (or your configured port) and connect with that PIN. You can also explore the synthetic demonstration without a running game.
 
-1. Obtain a trusted source archive and extract it completely into a writable folder. Do not run it inside the ZIP. Use the source ZIP attached to the official GitHub release.
-2. Start Docker Desktop, then double-click `INSTALLER_WINDOWS.cmd`.
-3. Choose EN, FR, RU, PL, UK, CS or RO, verify the detected CS2 folder and follow the prompts. Keep the locally displayed PIN private. The installer generates/reuses credentials and asks before replacing an unrecognized different GSI file, retaining a backup.
-4. Open `http://localhost:8080` (or the configured port). Demonstration works without a running match and cannot access private profiles.
-5. Connect with your PIN. A new Dashboard is **empty**. Open Customization Studio, add widgets and choose **Save and apply**. A locally saved draft alone does not change the Dashboard.
-6. Restart CS2 after installing/changing GSI configuration, then use a training session to check real data.
+A new Dashboard starts **empty**. Open **Customization Studio**, add widgets and choose **Save and apply**. Restart CS2 after installing/changing its GSI configuration. For detailed prerequisites, permissions and troubleshooting, follow the [Windows installation guide](docs/user/installation.md) and [first-use walkthrough](docs/user/first-use.md).
 
-Follow the [full Windows guide](docs/user/installation.md), [first-use walkthrough](docs/user/first-use.md) and [Studio guide](docs/user/studio.md). Linux/native development and disposable tests are described in the [developer index](docs/development/README.md); the guided installer is Windows-only.
+The release includes source, the Windows installer, Dockerfile and Compose. **No prebuilt Docker image is published.** Preserve `.env`, `data/` and your recovery backups when maintaining an existing installation; follow the [maintenance guide](docs/user/maintenance.md).
 
-## Network and privacy
+## Find your way
 
-Localhost is the default. Other PCs, tablets and phones require explicit trusted-LAN setup; see [LAN access](docs/user/network.md). HTTP/WebSocket traffic is **not encrypted** and the PIN does not encrypt it. Never expose CCS directly to the Internet or forward its port from a router. Docker Desktop/WSL2, firewalls and Wi-Fi isolation can prevent LAN access.
+- **Get started:** [Installation](docs/user/installation.md) · [First use](docs/user/first-use.md) · [Studio](docs/user/studio.md).
+- **Customize:** [Widgets](docs/user/widgets.md) · [Themes](docs/user/themes.md) · [Trusted LAN access](docs/user/network.md).
+- **Get help:** [Support](SUPPORT.md) · [Troubleshooting](docs/user/maintenance.md) · [Backups and recovery](docs/user/backup.md). Report security issues through [SECURITY.md](SECURITY.md), not a public bug report.
+- **Contribute:** [Contributing](CONTRIBUTING.md) · [Translations](docs/contributing/translations.md) · [Developer documentation](docs/development/README.md).
+- **Follow the project:** [Changelog](CHANGELOG.md) · [Roadmap](docs/ROADMAP.md) · [Code of conduct](CODE_OF_CONDUCT.md).
 
-One shared PIN authorizes access to the instance’s published profiles; this is not a multi-user account system. Preserve `.env`, `data/` and private recovery files. Never share credentials, generated GSI configuration, personal profiles or raw runtime logs. See [security](SECURITY.md), [backups/recovery](docs/user/backup.md) and [troubleshooting](docs/user/maintenance.md).
+Streamer Mode and Overlay Studio are future work, not features of V1.1.0.
 
-## Documentation and participation
+## Security, license and transparency
 
-- [User guides](docs/user/README.md): installation, Dashboard, Studio, widgets, themes and maintenance.
-- [Contributors](docs/contributing/README.md): scoped issues/PRs, widgets, themes, translations and tests.
-- [Developer reference](docs/development/README.md): architecture, contracts, data flows, security and checks.
-- [Support](SUPPORT.md), [security reporting](SECURITY.md), [roadmap](docs/ROADMAP.md) and [unpublished release checklist](docs/releases/checklist.md).
+**GSI, not game injection.** CCS receives Game State Integration messages. It does not read game memory, inject code or provide an injected in-game overlay. Some information is unavailable; economy forecasts and optional bomb timing are estimates. The estimated bomb timer is **disabled by default**.
 
-A solo maintainer reviews work on a best-effort basis; no response time is promised. Contributions require the explicit permissions described in LICENSE section 9; no transfer of ownership or general future relicensing permission is presumed. See [CONTRIBUTING.md](CONTRIBUTING.md).
+**Local first.** Localhost is the default. Other devices require explicit setup on a **trusted private LAN**. HTTP/WebSocket traffic is **not encrypted**, and the PIN does **not** encrypt it. Do not expose CCS directly to the Internet or forward its port from a router. One shared PIN is instance access, not a multi-user account system. Never share credentials, generated GSI files, personal profiles or raw logs. Read the [security policy](SECURITY.md).
 
-## Independence, AI assistance and credits
+**License.** CCS is **source-available, not OSI-approved open source**, under the [Community No-Resale License v1.0](LICENSE). Read its terms before redistributing or offering services; the [French translation](docs/legal/LICENSE.fr.md) is informative and English is authoritative. License adoption was integrated through an expressly authorized merge; no legal certification is claimed. Third-party components retain their own terms, including the [local fonts and notices](static/fonts/README.md). Contributors retain their rights and must grant the permissions described in [CONTRIBUTING.md](CONTRIBUTING.md).
 
-CCS was developed with substantial **ChatGPT/Codex by OpenAI** assistance across code, UI, tests and documentation, with iterative maintainer testing. AI-generated work can contain errors; no independent security audit or competitive-platform approval is claimed. Read the [full AI disclosure](AI_DISCLOSURE.md).
-
-CCS is **not affiliated with or endorsed by Valve, Counter-Strike 2, FACEIT or OpenAI**. Check applicable competitive rules; GSI access does not establish permission to use an aid. See [usage limitations](docs/guides/usage-and-affiliation.md).
-
-The Repère identity is project artwork. Local Inter and Barlow Condensed fonts retain their [SIL OFL notices and provenance](static/fonts/README.md). Third-party components retain their own terms; the CCS license does not replace them. [Changelog](CHANGELOG.md) · [Code of conduct](CODE_OF_CONDUCT.md).
+**Independent and AI-assisted.** This is a solo-maintained personal project developed with substantial ChatGPT/Codex assistance and iterative maintainer testing. AI-assisted work can contain errors; no independent security certification is claimed. CCS is **not affiliated with or endorsed by Valve, Counter-Strike 2, FACEIT or OpenAI**. Compatibility or permission on competitive platforms is not guaranteed: check their applicable rules. See [AI disclosure](AI_DISCLOSURE.md) and [usage limitations](docs/guides/usage-and-affiliation.md).
