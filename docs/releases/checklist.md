@@ -6,7 +6,7 @@ See [private candidate validation](candidate-validation.md) for isolated Windows
 
 ## Ownership, licensing and openness — BLOCKING
 
-- [ ] **Finalize and approve the no-resale source-available license.** `LICENSE` is currently a **non-effective draft**: obtain qualified legal review, confirm the intended distinction between selling copies and permitted commercial use/services, and verify that the confirmed attribution `Copyright (c) 2026 Shibxtshi` correctly identifies the holder entitled to license all original contributions. Check compatibility with third-party dependencies/assets before publication.
+- [ ] **Confirm expressly authorized adoption of Community No-Resale License v1.0.** Review the exact English [LICENSE](../../LICENSE), its [informative French translation](../legal/LICENSE.fr.md) and [licensing guide](../legal/licensing.md); an open PR is not adoption. Verify attribution to the entitled holder(s), explicit permissions for any external contributions and notices for material actually shipped. The maintainer has chosen not to commission a lawyer; no qualified legal approval or enforceability certification is claimed. Preserve valid earlier permissions, mandatory rights and third-party terms.
 - [ ] Confirm the README labels the project **source-available**, not OSI-approved open source, and that [AI disclosure](../../AI_DISCLOSURE.md) accurately describes its personal nature and significant ChatGPT contribution. Do **not** erase AI attribution.
 - [ ] Confirm names/brands are used only for compatibility descriptions and no affiliation/approval is claimed.
 - [ ] Confirm no copied proprietary CS2 assets, Valve logos, FACEIT marks or third-party graphics are distributed without permission.
@@ -35,6 +35,8 @@ See [private candidate validation](candidate-validation.md) for isolated Windows
 - [ ] Run `python scripts/check_public_archive.py <your-release-zip>` on the final artifact before upload.
 
 ## Publishing
+
+- [ ] Prepare only the approved **source ZIP** with Windows installer, Dockerfile and Compose; do not publish a prebuilt Docker image. Recheck the exact final archive, license, informative translation, font notices and provenance after the authorized license merge. Keep private legal reports and approval packages outside the artifact.
 
 - [ ] Choose a GitHub organization/owner and stable repository name.
 - [ ] Fill in repo metadata: description, topics, issue templates, repository settings.

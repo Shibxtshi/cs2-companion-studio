@@ -14,4 +14,4 @@ CCS is a personal browser Dashboard, not an in-game overlay. CS2 sends GSI data 
 - [Backups and recovery](backup.md)
 - [Maintenance and troubleshooting](maintenance.md)
 
-Missing values are not invented. Economy forecasts and optional bomb timing are estimates. The timer is disabled by default. Streamer Mode and Overlay Studio are not implemented. No competitive approval or security certification is claimed. The code version is not proof of a published release; the [license](../../LICENSE) remains a non-effective draft.
+Missing values are not invented. Economy forecasts and optional bomb timing are estimates. The timer is disabled by default. Streamer Mode and Overlay Studio are not implemented. No competitive approval or security certification is claimed. The code version is not proof of a published release; the [Community No-Resale License v1.0](../../LICENSE) defines source-available terms, not OSI-approved open source. See [licensing and integration status](../legal/licensing.md).

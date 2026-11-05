@@ -2,7 +2,7 @@
 
 [Documentation home](../README.md) · [Contribution policy](../../CONTRIBUTING.md)
 
-CCS is a solo-maintained personal project. Small focused fixes can be proposed directly; discuss larger behavior/contract changes first. No response time or acceptance is promised. The [license](../../LICENSE) is a non-effective draft: do not assume a final grant or that contribution rights are already settled. Confirm your rights and discuss terms with the maintainer before supplying third-party code/assets or contributions requiring a licensing agreement.
+CCS is a solo-maintained personal project. Small focused fixes can be proposed directly; discuss larger behavior/contract changes first. No response time or acceptance is promised. The [Community No-Resale License v1.0](../../LICENSE), section 9, requires explicit permission for integration, reproduction, modification and redistribution, including downstream permissions. Contributors retain ownership; submission alone grants no presumed rights, and no general future relicensing authority is assumed. Follow the [contribution policy](../../CONTRIBUTING.md) and [licensing guide](../legal/licensing.md); identify third-party code/assets and their separate terms.
 
 ## Issue and pull request workflow
 

@@ -1,6 +1,6 @@
 # Private candidate validation before publication
 
-This is an operator procedure, not a release announcement, permission to deploy, or a completed acceptance report. Use the [release checklist](checklist.md), [draft release notes](release-notes-1.0.0.md) and [test guide](../../tests/README.md). Keep artifacts/results private until reviewed. The [LICENSE](../../LICENSE) is still a non-effective draft; technical success cannot grant legal or publication approval.
+This is an operator procedure, not a release announcement, permission to deploy, or a completed acceptance report. Use the [release checklist](checklist.md), [draft release notes](release-notes-1.0.0.md) and [test guide](../../tests/README.md). Keep artifacts/results private until reviewed. The [Community No-Resale License v1.0](../../LICENSE) and [licensing guide](../legal/licensing.md) describe the terms and integration status; technical success cannot grant license-merge or publication approval.
 
 ## Record evidence
 
@@ -40,6 +40,6 @@ Do not post PIN/token, generated GSI CFG, profiles, raw packets/logs or identify
 ## Separate decisions
 
 - Technical: no open P0/P1 and required installation/runtime/browser/persistence/security evidence available; list limitations explicitly.
-- Legal: qualified review and maintainer approval of effective terms, contribution/asset rights and third-party compatibility; Codex review is not legal clearance.
+- Legal: expressly authorized adoption of the exact license text, contribution/asset rights and third-party notices for the selected source ZIP. The maintainer has chosen not to commission a lawyer; Codex review is not legal clearance or qualified approval. No prebuilt image is part of the selected distribution.
 - PR merge: review the scoped changes and exact-HEAD local/hosted evidence; merge requires maintainer consent.
 - Publication: all blocking checklist criteria, verified private-reporting readiness at an approved public transition, final artifact/capture/notes approval and explicit tag/release/visibility authorization. A merged PR is not that authorization.

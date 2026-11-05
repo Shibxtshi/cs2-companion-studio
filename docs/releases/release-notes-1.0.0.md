@@ -17,9 +17,9 @@ This is a personal CS2 Game State Integration dashboard developed with substanti
 
 Windows, Docker Desktop and CS2 installed via Steam for guided setup. LAN access is optional and uses unencrypted HTTP/WebSocket; keep it on trusted networks and never expose port 8080 to the Internet.
 
-## License (draft — not yet effective)
+## License and integration status
 
-The intended Community No-Resale license would allow free access, use, modifications, free redistribution, and professional/internal use, while prohibiting sale of the software and its modified versions. Monetized use (including coaching) and paid commissioned development are intended to remain permitted; paid setup, hosting and support require further legal drafting. This would be **source-available, not OSI-approved open source**. Legal review and rights-holder confirmation remain mandatory before release.
+The [Community No-Resale License v1.0](../../LICENSE) allows personal, professional and internal use, modifications and free redistribution under its conditions; it prohibits software resale, paid Pro editions and subscriptions selling CCS functionality. Genuine commissioned development, optional installation/configuration/support/maintenance and qualifying managed infrastructure services are permitted under sections 6–8. Source delivery, privacy and attribution obligations remain. CCS is **source-available, not OSI-approved open source**; third-party licenses are independent. The [French translation](../legal/LICENSE.fr.md) is informative; English is authoritative. See [licensing and integration status](../legal/licensing.md). The integration requires an expressly authorized merge, not this draft announcement; no lawyer approval is claimed.
 
 ## Transparency and limitations
 
@@ -27,4 +27,4 @@ AI-assisted implementation and automated tests are not an independent security a
 
 ## Before publishing
 
-Complete docs/releases/checklist.md. In particular, legally finalize and approve the draft license, enable private vulnerability reporting, review the code/assets and fresh screenshots, run all CI checks, and verify archive contents. Do not tag or publish until these are complete.
+Complete [the release checklist](checklist.md). Confirm expressly authorized license adoption and rights/notices, enable private vulnerability reporting, review the code/assets and fresh screenshots, run the required checks, and verify the exact final source ZIP. The selected distribution includes the Windows installer, Dockerfile and Compose, not a prebuilt Docker image. Do not tag or publish until the separate publication decision and remaining gates are complete.

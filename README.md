@@ -6,7 +6,7 @@ Developed with substantial ChatGPT (OpenAI) assistance; see [AI disclosure](AI_D
 
 [English documentation](docs/README.md) · [Documentation en français](docs/README.fr.md) · [Windows installation](docs/user/installation.md)
 
-> **Publication pending.** The code version is `1.0.0`; this is not an announcement of a published GitHub release. The repository is under private development. The [Community No-Resale LICENSE](LICENSE) is an **unapproved, non-effective draft, not a license grant**. Legal review, contribution rights and third-party compatibility remain open before publication. The intended model is source-available, not OSI-approved open source; the draft grants no rights.
+> **Publication pending.** The code version is `1.0.0`; this is not an announcement of a published GitHub release. The repository is under private development. The [Community No-Resale License v1.0](LICENSE) sets the source-available terms, **not OSI-approved open source**. This integration requires an expressly authorized merge before taking effect; it is not a public release or legal certification. See [licensing and redistribution](docs/legal/licensing.md) and the [informative French translation](docs/legal/LICENSE.fr.md).
 
 ## Available now
 
@@ -46,7 +46,7 @@ One shared PIN authorizes access to the instance’s published profiles; this is
 - [Developer reference](docs/development/README.md): architecture, contracts, data flows, security and checks.
 - [Support](SUPPORT.md), [security reporting](SECURITY.md), [roadmap](docs/ROADMAP.md) and [unpublished release checklist](docs/releases/checklist.md).
 
-A solo maintainer reviews work on a best-effort basis; no response time is promised. Contribution licensing remains subject to the final legal decision. See [CONTRIBUTING.md](CONTRIBUTING.md).
+A solo maintainer reviews work on a best-effort basis; no response time is promised. Contributions require the explicit permissions described in LICENSE section 9; no transfer of ownership or general future relicensing permission is presumed. See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Independence, AI assistance and credits
 
@@ -54,4 +54,4 @@ CCS was developed with substantial **ChatGPT/Codex by OpenAI** assistance across
 
 CCS is **not affiliated with or endorsed by Valve, Counter-Strike 2, FACEIT or OpenAI**. Check applicable competitive rules; GSI access does not establish permission to use an aid. See [usage limitations](docs/guides/usage-and-affiliation.md).
 
-The Repère identity is project artwork. Local Inter and Barlow Condensed fonts retain their [SIL OFL notices and provenance](static/fonts/README.md). Third-party components retain their own terms; the draft project license does not replace them. [Changelog](CHANGELOG.md) · [Code of conduct](CODE_OF_CONDUCT.md).
+The Repère identity is project artwork. Local Inter and Barlow Condensed fonts retain their [SIL OFL notices and provenance](static/fonts/README.md). Third-party components retain their own terms; the CCS license does not replace them. [Changelog](CHANGELOG.md) · [Code of conduct](CODE_OF_CONDUCT.md).
