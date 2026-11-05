@@ -30,7 +30,7 @@ def wait_for_health(base, timeout=60):
     while time.monotonic() < deadline:
         try:
             code, data = get(base + '/health')
-            if code == 200 and json.loads(data).get('version') == '1.0.0':
+            if code == 200 and json.loads(data).get('version') == '1.1.0':
                 return
         except (URLError, OSError, ValueError) as exc:
             # URLError: refused connections; OSError: resets/disconnects;

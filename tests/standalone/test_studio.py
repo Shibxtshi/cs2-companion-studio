@@ -18,7 +18,7 @@ def run():
     app.last_game_seen = None
     with TestClient(app.app) as client:
         hp = client.get('/health')
-        assert hp.status_code == 200 and hp.json()['version'] == '1.0.0'
+        assert hp.status_code == 200 and hp.json()['version'] == '1.1.0'
         html = client.get('/')
         assert client.get('/static/js/profile-sync.js').status_code == 404
         assert html.status_code == 200
@@ -67,7 +67,7 @@ def run():
         with client.websocket_connect('/ws', headers={'origin':'http://testserver'}) as bad:
             bad.send_json({'type': 'auth', 'pin': '000000'})
             assert bad.receive_json()['type'] == 'auth_error'
-    print('OK: v1.0.0 health, page, GSI normalization, 29-widget UI, authenticated WS, token isolation')
+    print('OK: v1.1.0 health, page, GSI normalization, 29-widget UI, authenticated WS, token isolation')
 
 
 if __name__ == '__main__':

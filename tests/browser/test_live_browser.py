@@ -38,7 +38,7 @@ def start_server():
             raise RuntimeError('Server crashed: ' + err)
         try:
             with urlopen(url + '/health', timeout=.3) as response:
-                if json.load(response)['version'] == '1.0.0':
+                if json.load(response)['version'] == '1.1.0':
                     return runtime, proc, url
         except (URLError, TimeoutError, OSError):
             time.sleep(.1)

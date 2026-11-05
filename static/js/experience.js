@@ -158,7 +158,7 @@
     const helpButton = byId('settings-help');
     label(helpButton, 'help');
     description.append(element('h2', 'about'), element('p', 'edition'), element('p', 'disclosure'), helpButton);
-    const version = element('span', null, 'settings-version'); version.textContent = 'v1.0.0';
+    const version = element('span', null, 'settings-version'); version.textContent = 'v1.1.0';
     about.append(description, version);
     settings.replaceChildren(appearance, connection, about);
     const diagnosticGrid = document.querySelector('.diagnostics-grid');

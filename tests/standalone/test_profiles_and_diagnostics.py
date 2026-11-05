@@ -18,7 +18,7 @@ from companion import server as app
 def run():
     with tempfile.TemporaryDirectory() as directory:
         app.profile_store = create_runtime_store(Path(directory) / 'data')
-        app.diagnostics = Diagnostics(Path(directory) / 'logs', '1.0.0')
+        app.diagnostics = Diagnostics(Path(directory) / 'logs', '1.1.0')
         with TestClient(app.app) as client:
             for route in ('/profiles', '/api/profiles', '/data/profiles.json', '/logs/support-summary.json'):
                 assert client.get(route).status_code in (404, 405), route

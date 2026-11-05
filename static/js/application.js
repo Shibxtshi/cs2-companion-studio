@@ -188,7 +188,7 @@
     } catch { CCSNotifications.show({key: 'exportFailed', kind: 'error'}); }
     finally { if (url) setTimeout(() => URL.revokeObjectURL(url), 1000); }
   }
-  const client = CS2DashboardClient({version: '1.0.0', getPin: () => pin, isDemo: () => demo,
+  const client = CS2DashboardClient({version: '1.1.0', getPin: () => pin, isDemo: () => demo,
     onConnecting: () => status('connecting', CS2I18N.t("application.connecting")),
     onHealthError: (error, versionMismatch) => { showLoginError(versionMismatch ? 'version' : 'unavailable'); },
     onNetworkError() { clearLive(); document.dispatchEvent(new Event('cs2:network-error')); },

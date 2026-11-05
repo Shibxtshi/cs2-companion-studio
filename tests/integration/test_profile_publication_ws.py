@@ -28,7 +28,7 @@ def target(monkeypatch, tmp_path):
     monkeypatch.setattr(server, 'limiter', LoginLimiter())
     monkeypatch.setattr(server, 'DASHBOARD_PIN', 'synthetic-publication-pin')
     monkeypatch.setattr(server, 'GSI_TOKEN', 'synthetic-publication-gsi-token')
-    monkeypatch.setattr(server, 'diagnostics', Diagnostics(tmp_path / 'logs', '1.0.0'))
+    monkeypatch.setattr(server, 'diagnostics', Diagnostics(tmp_path / 'logs', '1.1.0'))
     monkeypatch.setattr(server, 'lock', asyncio.Lock())
     monkeypatch.setattr(server, 'state', {'map': {}, 'round': {}, 'player': {}, 'provider': {}})
     monkeypatch.setattr(server, 'last_seen', None)

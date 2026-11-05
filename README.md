@@ -6,7 +6,7 @@ Developed with substantial ChatGPT (OpenAI) assistance; see [AI disclosure](AI_D
 
 [English documentation](docs/README.md) · [Documentation en français](docs/README.fr.md) · [Windows installation](docs/user/installation.md)
 
-> **Publication pending.** The code version is `1.0.0`; this is not an announcement of a published GitHub release. The repository is under private development. The [Community No-Resale License v1.0](LICENSE) sets the source-available terms, **not OSI-approved open source**. This integration requires an expressly authorized merge before taking effect; it is not a public release or legal certification. See [licensing and redistribution](docs/legal/licensing.md) and the [informative French translation](docs/legal/LICENSE.fr.md).
+> **Version 1.1.0 candidate.** V1.0.0 has been published; this source prepares the next release. The [Community No-Resale License v1.0](LICENSE) sets the source-available terms, **not OSI-approved open source**. License adoption was integrated through an expressly authorized merge; no legal certification is claimed. See [licensing and redistribution](docs/legal/licensing.md), the [informative French translation](docs/legal/LICENSE.fr.md) and [V1.1.0 release notes](docs/releases/release-notes-1.1.0.md).
 
 ## Available now
 
@@ -24,7 +24,7 @@ CCS receives Game State Integration (GSI) messages. It does not read game memory
 
 Prerequisites: Windows PowerShell 5.1 or PowerShell 7, Steam/CS2 installed, Docker Desktop with Compose v2 installed and running. Real-machine compatibility beyond recorded tests is not guaranteed.
 
-1. Obtain a trusted source archive and extract it completely into a writable folder. Do not run it inside the ZIP. No public release is announced here.
+1. Obtain a trusted source archive and extract it completely into a writable folder. Do not run it inside the ZIP. Use the source ZIP attached to the official GitHub release.
 2. Start Docker Desktop, then double-click `INSTALLER_WINDOWS.cmd`.
 3. Choose EN, FR, RU, PL, UK, CS or RO, verify the detected CS2 folder and follow the prompts. Keep the locally displayed PIN private. The installer generates/reuses credentials and asks before replacing an unrecognized different GSI file, retaining a backup.
 4. Open `http://localhost:8080` (or the configured port). Demonstration works without a running match and cannot access private profiles.

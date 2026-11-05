@@ -14,7 +14,7 @@
   const errors = [];
   const states = [];
   const profiles = CCSPublishedProfiles({send: command => client.send(command)});
-  const client = CS2DashboardClient({version: '1.0.0', getPin: () => pin, isDemo: () => false,
+  const client = CS2DashboardClient({version: '1.1.0', getPin: () => pin, isDemo: () => false,
     onConnecting() {}, onHealthError: () => connectReject?.(new Error('Synthetic health failure')),
     onNetworkError() {},
     onClose() { profiles.disconnected(); controller?.disconnected(); },

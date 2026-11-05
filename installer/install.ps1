@@ -127,7 +127,7 @@ try {
     if (-not $existed -or $different) { Write-Utf8File $target $cfgText }
     $sha = (Get-FileHash -LiteralPath $target -Algorithm SHA256).Hash
     Write-InstallerState ([pscustomobject]@{
-        version='1.0.0'; cfg_path=$target; installed_hash=$sha
+        version='1.1.0'; cfg_path=$target; installed_hash=$sha
         original_existed=$originalExisted; backup_path=$backup
         created_env= $(if ($null -ne $oldState) { [bool]$oldState.created_env } else { $createdEnv })
         installed_at=(Get-Date).ToString('o')

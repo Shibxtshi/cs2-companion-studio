@@ -1,5 +1,19 @@
 # Changelog — user-visible changes
 
+## 1.1.0 — Release candidate
+
+- Add Russian, Polish, Ukrainian, Czech and Romanian to the interface, Windows installer and offline tools; English and French remain available.
+- Share 684 complete message keys across seven languages, including the few/many plural forms needed for item counts.
+- Keep the Studio grid caption translated when changing language without reloading.
+- Preserve profiles, explicit publication, GSI behavior, all 29 widget types, three presentations and ten themes. Profile/export/draft document versions are unchanged.
+- Additional translations use machine translation and AI-assisted terminology review; native-speaker review has not been completed. System fonts provide unsupported Latin/Cyrillic glyphs locally.
+
+V1.0.0 is published. V1.1.0 is prepared here but is not published by this change. See the [release notes](docs/releases/release-notes-1.1.0.md).
+
+## Archived preparation notes
+
+The entries below retain the wording and publication status of their original development milestones; they do not describe the current publication status.
+
 ## Unreleased — V1-06 candidate validation
 
 - Restore help-dialog focus to its explicit opener on browsers that do not focus clicked buttons, including WebKit; preserve Settings help return.
