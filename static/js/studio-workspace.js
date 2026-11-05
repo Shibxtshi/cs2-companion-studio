@@ -245,7 +245,7 @@
         if (!content.configuration.layout.widgets.some(widget => widget.id === selectedId)) selectedId = null;
         // A hidden editor must not override the published Dashboard's appearance.
         if (!byId('studio-app')?.hidden) activateAppearance();
-        byId('studio-grid-caption').textContent = CS2I18N.t('studio.columns', {count: content.configuration.layout.columns});
+        CS2I18N.bind(byId('studio-grid-caption'), 'studio.columns', {count: content.configuration.layout.columns});
         byId('studio-empty').hidden = content.configuration.layout.widgets.length > 0;
         paintSelection(); status(saveCode, publicationCode);
       },

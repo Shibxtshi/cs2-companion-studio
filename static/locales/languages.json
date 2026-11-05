@@ -12,6 +12,36 @@
       "name": "Français",
       "file": "fr.json",
       "confirmYes": "O"
+    },
+    {
+      "code": "RU",
+      "name": "Русский",
+      "file": "ru.json",
+      "confirmYes": "D"
+    },
+    {
+      "code": "PL",
+      "name": "Polski",
+      "file": "pl.json",
+      "confirmYes": "T"
+    },
+    {
+      "code": "UK",
+      "name": "Українська",
+      "file": "uk.json",
+      "confirmYes": "T"
+    },
+    {
+      "code": "CS",
+      "name": "Čeština",
+      "file": "cs.json",
+      "confirmYes": "A"
+    },
+    {
+      "code": "RO",
+      "name": "Română",
+      "file": "ro.json",
+      "confirmYes": "D"
     }
   ]
 }

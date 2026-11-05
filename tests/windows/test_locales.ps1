@@ -13,7 +13,8 @@ try {
     Compress-Archive -Path (Join-Path $bundle '*') -DestinationPath $archive
     $extracted = Join-Path $temporary 'extracted'
     Expand-Archive -LiteralPath $archive -DestinationPath $extracted
-    foreach ($requestedLanguage in @('', 'EN', 'FR')) {
+    $languageData = Get-Content -LiteralPath (Join-Path $extracted 'static/locales/languages.json') -Encoding UTF8 -Raw | ConvertFrom-Json
+    foreach ($requestedLanguage in (@('') + @($languageData.languages.code))) {
         $selection = & {
             param([string] $Language, [string] $LocaleScript)
             $script:languagePromptCalls = 0
@@ -45,6 +46,11 @@ try {
     Assert-True ((T 'installer.network.title') -ceq 'Accès au réseau local') 'UTF-8 accents were lost'
     Assert-True ((T 'installer.network.warning').Contains('ne chiffre pas')) 'LAN encryption warning missing'
     Assert-True ((T 'installer.network.warning').Contains('pare-feu')) 'Firewall disclosure missing'
+    Set-InstallLanguage 'RU'
+    Assert-True ((T 'widgets.health.title') -ceq 'Здоровье') 'Russian UTF-8 text was lost'
+    Set-InstallLanguage 'UK'
+    Assert-True ((T 'widgets.health.title') -ceq "Здоров’я") 'Ukrainian UTF-8 text was lost'
+    Set-InstallLanguage 'FR'
     $personal = 'Émilie "quoted" $() <tag> {unchanged}'
     Assert-True ((T 'status_path' @{ path=$personal }).Contains($personal)) 'Parameter data was interpreted or modified'
     $failed = $false
@@ -60,10 +66,12 @@ try {
     $script:answer = '2'
     Select-InstallLanguage $false ''
     Assert-True ($script:InstallLanguage -ceq 'FR') 'Interactive registry selection failed'
-    foreach ($language in @('EN','FR')) {
-        Set-InstallLanguage $language
-        $script:answer = if ($language -eq 'FR') { 'O' } else { 'Y' }
+    foreach ($entry in $script:LanguageRegistry.languages) {
+        Set-InstallLanguage $entry.code
+        $script:answer = $entry.confirmYes
         Assert-True (Confirm-Action 'Synthetic confirmation' $false) 'Explicit confirmation failed'
+        $script:answer = 'wrong'
+        Assert-True (-not (Confirm-Action 'Synthetic confirmation' $false)) 'Unrecognized answer granted consent'
         $script:answer = ''
         Assert-True (-not (Confirm-Action 'Synthetic confirmation' $false)) 'Empty input granted consent'
         Assert-True (-not (Confirm-Action 'Synthetic confirmation' $true)) 'Noninteractive input granted consent'
@@ -98,7 +106,7 @@ elseif ($Action -eq 'status') { & (Join-Path $RootPath 'installer/status.ps1') -
 else { & (Join-Path $RootPath 'installer/uninstall.ps1') -Yes -KeepDocker -Language $Language }
 '@
     [System.IO.File]::WriteAllText($wrapper, $wrapperText, [System.Text.UTF8Encoding]::new($true))
-    foreach ($language in @('EN','FR')) {
+    foreach ($language in $languageData.languages.code) {
         $game = Join-Path $temporary ($language + '/game/csgo/cfg')
         New-Item -ItemType Directory -Path $game -Force | Out-Null
         $output = & powershell.exe -NoProfile -File $wrapper -RootPath $extracted -GamePath $game -Action install -Language $language 2>&1

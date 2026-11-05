@@ -3,6 +3,25 @@
 const assert = require('node:assert/strict');
 const create = require('./i18n_fixture');
 const {api, catalogs, registry, storage} = create('FR');
+for (const entry of registry.languages) {
+  const localized = create(entry.code);
+  assert.equal(localized.api.locale(), entry.code);
+  for (const [key, value] of Object.entries(localized.catalogs[entry.code])) {
+    const params = Object.fromEntries([...value.matchAll(/\{([A-Za-z][A-Za-z0-9]*)\}/g)]
+      .map(match => [match[1], match[1] === 'count' ? 2 : 'Personal <tag> {unchanged}']));
+    assert.equal(localized.api.t(key, params), value.replace(/\{([A-Za-z][A-Za-z0-9]*)\}/g,
+      (_match, name) => String(params[name])));
+  }
+  for (const count of [0, 1, 2, 4, 5, 11, 12, 14, 20, 21, 22, 25, 101, 102, 1.5]) {
+    const category = new Intl.PluralRules(entry.code.toLowerCase()).select(count);
+    const catalog = localized.catalogs[entry.code];
+    const expected = catalog['widgets.quantity.' + category] || catalog['widgets.quantity.other'];
+    assert.equal(localized.api.t('widgets.quantity', {count}), expected.replace('{count}', count));
+  }
+  assert(localized.api.setLocale('EN'));
+  assert(localized.api.setLocale(entry.code));
+  assert.equal(localized.storage.get('cs2-companion-language'), entry.code);
+}
 assert.equal(api.locale(), 'FR');
 assert.equal(api.t('studio.publish'), 'Enregistrer et appliquer');
 assert(api.setLocale('EN'));
@@ -39,4 +58,4 @@ assert.equal(api.t('studio.publish'), 'Synthetic publish');
 assert.throws(() => api.validate(catalogs.EN, {...catalogs.FR, 'widgets.event.damage':'Bad {other}'}), /locale_parameter_mismatch/);
 const incomplete = {...catalogs.FR}; delete incomplete['studio.publish'];
 assert.throws(() => api.validate(catalogs.EN, incomplete), /incomplete_locale_catalog/);
-console.log('OK: shared catalogs, EN/FR/third language, persistence, explicit fallback, named parameters, plurals and text-only personal values');
+console.log('OK: seven shared catalogs, persistence, explicit fallback, named parameters, Slavic/Romanian plurals and text-only personal values');
