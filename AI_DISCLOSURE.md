@@ -26,4 +26,8 @@ The application was developed **iteratively with a human user testing builds** a
 
 Please disclose **substantial AI assistance** in pull requests and describe which parts you verified and tested. AI-assisted code is not automatically accepted: maintainers and contributors should inspect security-sensitive changes carefully and confirm they have the right to submit the code and assets.
 
+The Repère logo and pictograms were also made with ChatGPT/Codex assistance. According to the maintainer, CCS was developed independently outside professional duties, with no known human contribution from an employer, colleague or contractor. These are maintainer declarations, not certifications of originality, exclusive ownership or freedom from third-party rights.
+
+The [Community No-Resale License v1.0](LICENSE) applies only within its stated rights and scope; separately licensed material retains its terms. Contributions require the explicit permissions in [CONTRIBUTING.md](CONTRIBUTING.md). AI assistance does not establish those permissions or certify legal enforceability.
+
 This statement is intended to be prominent and candid, not a blanket guarantee of correctness or originality.

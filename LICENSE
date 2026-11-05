@@ -1,106 +1,341 @@
-CS2 Companion Studio — Community No-Resale License
-DRAFT v0.2 — NOT YET APPROVED OR EFFECTIVE
+CS2 COMPANION STUDIO — COMMUNITY NO-RESALE LICENSE
+Version 1.0
 
-Copyright (c) 2026 Shibxtshi
+Copyright (c) 2026 Shibxtshi, in respect of rights lawfully held or
+licensed for this purpose. Third-party rights remain separate.
 
-IMPORTANT — WORKING DRAFT, NOT A LICENSE GRANT
-This document records the maintainer's intended terms for review. It is
-not the final, effective license and grants no rights on its own.
-A final version must be reviewed for legal enforceability, third-party
-rights and compatibility, approved by the rights holder, and published
-before any public software release. Do not distribute this draft as if
-it were a legally validated open-source license.
+1. Definitions and scope
 
-1. Scope
-"Software" means CS2 Companion Studio source and executable code
-released under these terms, including modified versions and derivative
-works incorporating copyrightable portions of that code. Separately
-licensed third-party components remain subject to their own terms.
+"Licensor" means the CCS maintainer operating under the name Shibxtshi,
+established in France, solely to the extent entitled to grant the rights
+described here. This description does not establish exclusive ownership
+of every part of the repository. Contributors retain their own rights.
 
-2. Permitted use and private modifications (in the eventual final license)
-The intended permission is worldwide, nonexclusive and royalty-free.
-Anyone may study, run, reproduce and modify the Software, including
-for personal, educational, nonprofit or professional/business purposes.
-Private and purely internal modifications need not be published.
+"Covered Material" means the original CCS code, documentation,
+translations and templates made available under this license, together
+with adaptations or modifications of their protectable portions. Code
+includes source and executable forms. The official visual identity
+accompanying CCS copies is addressed specifically in section 10.
 
-Use during monetized streaming, sponsored content, professional esports
-training, paid coaching and similar activities is permitted; such use
-does not, by itself, count as selling a copy of the Software.
+"Third-Party Material" means components subject to separate rights and
+licenses, including the Inter and Barlow Condensed font files and any
+third-party dependencies. Its inclusion or reference in a package does
+not put that material under the CCS license.
 
-3. Free sharing and code transparency
-Anyone may redistribute the unmodified Software or a modified version
-without charging for access, in source or executable form, provided
-they:
-- preserve the copyright notice and these license conditions;
-- clearly identify material modifications;
-- give recipients free access to the corresponding source code for
-  executable versions they redistribute; and
-- retain the same no-resale and source-disclosure obligations for
-  covered modified versions.
+"Corresponding Source" means the complete preferred editable form of
+the covered version actually provided, including its modifications and
+the instructions, manifests and original build scripts needed to
+reconstruct that version. General-purpose tools and separate third-party
+components remain subject to their own licenses; identify the relevant
+versions and means of obtaining them without purporting to relicense
+them under CCS. Providing only an unmodified upstream version is not
+providing the source of a modified version.
 
-No duty to share source arises solely from private/internal use.
+"Internal Scope" includes a person using CCS privately, or an entity,
+the companies in its corporate group, and authorized service providers
+acting on its behalf and under its control for that internal use.
+External customers are not internal users merely because they have an
+account, a contract or access to a dedicated instance. A provider may
+act within a customer's Internal Scope for operations, but that does
+not make the customer part of the provider's own Internal Scope.
 
-4. Prohibition on selling the Software
-Recipients may not charge, require payment or impose a paid subscription
-as a condition of obtaining a copy or license of the Software, including
-a modified version. This applies to source downloads, executables,
-installers, paid "Pro" editions and bundles in which payment is required
-to obtain the covered Software.
+"Redistribution" means supplying a copy of Covered Material outside
+the applicable Internal Scope. Supplying a commissioned result to an
+external client remains subject to sections 4 and 6. Interactive network
+use without delivery of a copy is addressed separately in section 8.
 
-Recipients must not provide paid-only access to the functionality of a
-hosted modified version of the Software as a substitute for selling it.
+"Public Modified Fork" means a modified version of CCS presented or
+made available to the public as a separate project or product. Mere
+compatibility or a genuinely independent configuration does not, by
+itself, make a work a fork or an adaptation of Covered Material.
 
-An entirely voluntary donation is allowed only when the same Software
-and all its covered functionality remain genuinely available for free,
-without a paywall or exclusive software benefits.
+2. Copyright permissions and independent works
 
-Permission to sell copies or licenses may be granted separately only
-by the rights holder in writing.
+Licensor grants, for the duration of the applicable copyright rights
+and subject to these conditions and section 12, a worldwide,
+non-exclusive, royalty-free permission to use,
+run, study, reproduce and modify Covered Material for personal,
+educational, nonprofit, internal and professional purposes, and to
+redistribute it under section 4. No ownership is transferred.
 
-5. Paid work distinguished from sale of the Software
-Professional use does not become prohibited merely because a person
-earns income from an activity using the Software. Charging for coaching,
-training or separately commissioned programming work (including bug
-fixes, custom widgets and new features) is intended to be permitted.
-Such a payment must not be a disguised mandatory charge for obtaining
-or licensing the Software or a covered modified copy.
+This license does not extend to independently created works merely
+because they describe, interoperate with or are compatible with CCS.
+Independent tutorials, themes, plugins or other creations are not
+automatically subject to CCS restrictions. Any actual reproduction or
+adaptation of protectable Covered Material must be assessed on its
+content. No monopoly over ideas, functionality or interfaces is asserted
+merely by this license, and mandatory exceptions remain unaffected.
 
-If commissioned modifications are later distributed, the obligations
-in section 3 apply to those distributions.
+Your private profiles, credentials and game data are not transferred
+to Licensor or made subject to disclosure by these permissions. The
+license does not certify originality, non-infringement or exclusivity.
 
-6. Hosted modified versions
-A person who makes a modified version available for interactive use
-over a network must offer users of that version the corresponding
-modified source code without charge, even when no executable copy is
-distributed. Solely private use does not create a public-disclosure
-obligation.
+3. Private, internal and professional use
 
-7. Attribution, names and third-party rights
-The copyright notice and license conditions must accompany copies.
-Forks must not misrepresent themselves as the official CS2 Companion
-Studio project or claim endorsement from Shibxtshi, Valve, FACEIT,
-OpenAI or other unaffiliated organizations. No trademark rights are
-granted. All third-party assets and dependencies keep their own rights
-and licenses.
+Making or using modifications solely within the Internal Scope does
+not require publication or disclosure of those modifications to the
+public. Connecting private devices or using an internal network does
+not by itself remove this exception. External distribution and external
+users of a modified hosted version remain subject to sections 4 and 8.
 
-8. Disclaimer
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING MERCHANTABILITY, FITNESS FOR A
-PARTICULAR PURPOSE AND NONINFRINGEMENT. TO THE EXTENT PERMITTED
-BY APPLICABLE LAW, THE RIGHTS HOLDER SHALL NOT BE LIABLE FOR DAMAGES
-ARISING FROM USE OF THE SOFTWARE.
+Earning income from activities using CCS is not, by itself, selling CCS.
+Monetized streaming, sponsorship, paid coaching, training and other
+professional use are permitted. This permission is distinct from a
+charge for copies, software licenses or CCS functional access. Neither
+this license nor use of GSI establishes approval by a game publisher,
+competitive platform, tournament or anti-cheat provider.
 
-9. Open drafting questions — MUST BE RESOLVED BEFORE PUBLICATION
-- Draw a clear and enforceable line between separately billed setup,
-  hosting, maintenance and support services and a disguised software
-  paywall; some of these scenarios remain disputed.
-- Determine which obligations can legitimately apply to independent
-  tutorials, themes and third-party creations that copy no Software.
-- Review derivative-work boundaries, paid bundles, brand/fork naming,
-  network source disclosure and compatibility with third-party licenses.
-- Obtain a qualified intellectual-property legal review and approve
-  an operative final license.
+4. Free redistribution, attribution and source delivery
 
-This is a CUSTOM SOURCE-AVAILABLE DRAFT, not an Open Source Initiative
-approved open-source license. The copyright holder's choice of a
-no-resale term means it cannot truthfully be marketed as OSI-open-source.
+You may redistribute unmodified or modified Covered Material without
+charging for the software copy or its license, subject to the genuine
+service and commissioned-work provisions in sections 6 and 7. You must:
+
+  (a) retain applicable copyright, license and third-party notices;
+  (b) supply the applicable effective CCS license with covered copies;
+  (c) identify material changes and not misrepresent a modified version
+      as official or supported by Licensor;
+  (d) give each recipient of an executable version its complete
+      Corresponding Source immediately, free of charge, together with
+      the executable delivery; and
+  (e) preserve these CCS no-resale and source conditions for covered
+      portions and their modifications, without imposing contradictory
+      restrictions on the rights granted to recipients.
+
+An additional source link is optional; it does not substitute for
+delivery of the complete Corresponding Source to the recipient. A
+complete source-only package already supplies its covered source.
+These duties apply to the version actually delivered, not an unrelated
+or later version. They do not require publishing source to the whole
+world when delivery is only to identified recipients.
+
+Keep secrets, personal profiles, PINs, tokens, private operational data,
+private signing keys and game data out of source deliveries and source
+offers. Supply safe examples and non-secret reconstruction instructions.
+This exclusion must not be used to withhold covered source by merely
+labeling source code confidential. User data and access to operational
+credentials are governed separately by their applicable rights and any
+lawful service arrangements, not by a requirement to publish secrets.
+
+5. Prohibited software sales and voluntary donations
+
+You may not sell or require payment for a covered software copy, its
+license or continued exercise of its licensed functionality. Prohibited
+arrangements include paid software downloads, paid "Pro" editions,
+serial resale of covered software or modified editions, mandatory
+software subscriptions and charges for access to CCS functionality.
+The functional-access restriction applies equally to original and
+modified hosted CCS. A nominal price of zero on an invoice does not
+make a disguised software sale compliant.
+
+The specifically permitted services in sections 6 and 7 are not
+prohibited merely because their genuine labor, infrastructure or
+operations are paid for. They must not disguise an otherwise prohibited
+copy sale or functional-access subscription.
+
+Entirely voluntary donations and symbolic acknowledgments are allowed.
+No donation may be required for a version, feature, early access or
+other software entitlement. Donor-only versions, paid early releases
+and exclusive CCS functions are not permitted. Optional paid support
+must comply independently with section 6; it is not a donor-only
+software benefit.
+
+A competent rights holder may give a separate written permission for
+acts otherwise restricted here, but only for rights that holder is
+authorized to license. No authority over Third-Party Material or other
+contributors' ungranted rights is presumed.
+
+6. Commissioned work, independent bundles and optional services
+
+Genuinely commissioned, custom development may be paid for and its
+results delivered to the commissioning client. The fee remunerates
+the work, not the sale of a CCS copy or a continuing software license.
+Attribution and Corresponding Source obligations apply to the covered
+result delivered to that client. This exception does not permit serial
+resale, standardized paid "Pro" editions, or a nominal commission used
+to disguise a software paywall.
+
+Payment for commissioned work does not require disclosure to the world
+of otherwise private work. It does not remove the client's license and
+source rights in the covered result received. Independent client data
+and third-party material remain separate. A contract must not cancel
+the CCS redistribution rights actually granted for covered portions.
+
+Independent hardware or services may be sold with CCS supplied free
+of charge, provided the covered software is also obtainable separately
+without mandatory payment for that hardware or service. This does not
+require a developer to perform genuinely commissioned work without pay;
+the commissioned-delivery rule above governs that distinct situation.
+
+Optional installation, configuration, support and maintenance services
+may be charged for independently. Their fees must concern the services,
+not a paid feature, copy or software entitlement. No support or
+maintenance subscription is required to keep exercising CCS rights
+already obtained, and ending such a service must not revoke those
+rights or introduce a software lock. Paid updates or functions cannot
+be relabeled "maintenance" to evade section 5. Genuinely commissioned
+patches remain governed by the commissioned-work rule above.
+
+7. Paid managed private instances
+
+A managed private CCS instance may be provided for payment when the
+remuneration genuinely concerns infrastructure and operations, rather
+than selling a CCS license, feature tier or subscription to CCS
+functionality. This exception applies to original and modified CCS.
+
+The customer must receive the copies, source and reconstruction
+materials to which this license entitles it and be able to run CCS
+independently of the provider without buying a CCS software license
+or functional-access entitlement. The distinction between service
+charges and the free software must be made clear. Merely calling a
+functional-access charge "hosting" is insufficient.
+
+A provider may stop supplying unpaid or ended infrastructure and
+operations in accordance with its lawful service terms; this license
+does not require free infrastructure indefinitely. Such cessation must
+not revoke the customer's software rights or justify withholding source
+or other materials already due under this license. Any rights concerning
+the customer's private data and necessary operational handover remain
+subject to applicable law and lawful service arrangements, without
+requiring publication of credentials or private data.
+
+Where the hosted version is modified, external users also have the
+source access described in section 8, regardless of who pays for the
+infrastructure. Customers are not deemed internal to the provider simply
+to avoid that obligation.
+
+For the provider-customer relationship, the customer is an external
+user of the provider's modified hosted offering and must receive that
+source access. Performing authorized technical work within the
+customer's Internal Scope does not exempt the provider from this
+obligation to its customer.
+
+This copyright/service permission is not a technical validation of
+Internet hosting, security, privacy compliance or multi-user isolation.
+It does not override the applicable terms of infrastructure providers.
+
+8. Source access for modified hosted versions
+
+If you operate a modified covered version for interactive network use
+by users outside the applicable Internal Scope, those external users
+must be able to obtain its complete Corresponding Source free of
+charge throughout operation of the service. Make this source access
+clear and usable without a software payment, donation or support
+subscription. Do not provide only the unmodified upstream source.
+
+The source must correspond to the modified version being provided.
+Sections 1 and 4 define its scope and the exclusion of secrets and
+private data. The requirement does not compel publication of purely
+internal modifications to people outside that Internal Scope.
+
+The hosted source trigger is a MODIFIED version. This does not create
+a paid-functional-access exception for unmodified versions: section 5
+still applies to both original and modified hosted software. If a copy
+of an executable is supplied, section 4 independently requires immediate
+source delivery to its recipient. A network offer alone does not replace
+that executable-delivery obligation.
+
+9. Contributions and third-party licenses
+
+Contributors retain ownership of their contributions. A contribution
+intended for integration must be accompanied by an explicit permission
+from the person entitled to give it, allowing its incorporation,
+reproduction, modification and redistribution under this identified
+Community No-Resale License as supplied with the covered copy,
+including the permissions needed for downstream recipients to exercise
+it.
+Submission or a Git author field alone is not presumed to be a transfer
+of title or a sufficient grant. No general authorization to relicense
+contributions under future, different terms is presumed.
+
+Third-Party Material keeps its own licenses, copyrights and permissions.
+Preserve the notices and satisfy the obligations that apply to the
+parts actually redistributed. This CCS license neither removes those
+permissions nor imposes its no-resale or source conditions on separately
+licensed components as such. It cannot authorize copying of material
+for which the necessary rights are absent.
+
+10. Official identity and public modified forks
+
+Unchanged CCS copies may retain the official CCS name, logo and identity
+as they accompany those copies, without implying new endorsement or a
+separate trademark license. A Public Modified Fork must use a distinct
+name and logo as its own identity. It may accurately state its CCS
+origin and must preserve the applicable copyright and license notices.
+An origin statement is not permission to present a fork as official.
+
+No general trademark license or independent right to use official
+artwork as another product's identity is granted. The limited permission
+to retain identity on unchanged copies and to identify origin does not
+certify that any mark is registered, available or exclusively owned.
+Third-party names and marks retain their own rights. Do not falsely
+claim affiliation, endorsement or support by Shibxtshi, Valve, FACEIT,
+OpenAI or other unaffiliated parties.
+
+11. No additional contractual warranty; lawful liability limits
+
+Covered Material is offered "AS IS", without an additional contractual
+warranty of correct or uninterrupted operation, suitability or
+compatibility. No competitive-platform approval or independent security
+certification is promised. Except for obligations that cannot lawfully
+be excluded, Licensor disclaims contractual warranties and liability
+for loss arising from use of the Covered Material to the extent such
+exclusions are permitted by applicable law.
+
+Nothing excludes or restricts a liability, legal guarantee, remedy or
+mandatory protection that cannot lawfully be excluded or restricted.
+No zero liability cap is inferred from the fact that software rights
+are royalty-free. A separately agreed service obligation is not
+silently cancelled by this software-license disclaimer.
+
+12. Duration, breach and termination
+
+The copyright permissions granted here have the duration stated in section
+2, subject to termination for breach, not discretionary retrospective
+withdrawal of compliant recipients' rights. For a remediable breach,
+Licensor must notify the affected person of the breach, the required
+remedy and a reasonable remediation period appropriate to the
+circumstances before terminating those permissions for failure to cure.
+
+For serious or repeated violations, notice and remedies must address
+their gravity and recurrence. Immediate cessation of the infringing
+activity and other proportionate measures available under applicable
+law may be sought; this does not silently remove the reasonable-cure
+protection for remediable breaches. An irremediable breach may lead to
+termination by reasoned notice, subject to applicable law. This text
+does not create an automatic restoration mechanism following termination.
+
+Termination of one person's rights does not by itself terminate rights
+of downstream recipients who comply with their own applicable terms,
+nor rights independently held under third-party licenses or law.
+Attribution and source obligations already incurred remain due to the
+extent permitted by law. No provision authorizes remote deletion,
+erasure of user data, alteration of credentials or any automatic data
+destruction mechanism. Cessation of unauthorized acts is distinct from
+destruction of users' information.
+
+13. French law, jurisdiction, language and earlier rights
+
+French law governs this license, subject to mandatory rules
+and protections that cannot be waived, including applicable consumer
+protections. Jurisdiction is determined by the applicable rules; no
+exclusive court displacing those rules is imposed here.
+
+The English version is authoritative. A French translation is
+supplied for information; this language rule does not
+override mandatory information or language requirements.
+
+Neither adoption of new terms nor replacement of a repository file
+purports to revoke permissions validly obtained under an earlier
+license, override mandatory rights, or alter third-party licenses.
+No automatic election of any later license version is introduced.
+
+14. Patent rights and character of the license
+
+No express patent license is granted by this text. Any patent questions
+require separate consideration; this statement does not purport to
+remove rights arising under mandatory law or another applicable license.
+
+This is a proprietary/source-available license with a no-resale
+condition, not an OSI-approved open-source license. The open-source or
+other licenses of individual third-party components remain independent.

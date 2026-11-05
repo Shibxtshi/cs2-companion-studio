@@ -2,7 +2,7 @@
 
 [Français](README.fr.md) · [Project overview](../README.md)
 
-CCS is an independent personal project developed with substantial ChatGPT/Codex (OpenAI) assistance. No Valve/FACEIT/OpenAI affiliation, independent security audit or competitive approval is claimed. Code version `1.0.0` does not announce a published release. The [license](../LICENSE) is an unapproved, non-effective draft, not a rights grant.
+CCS is an independent personal project developed with substantial ChatGPT/Codex (OpenAI) assistance. No Valve/FACEIT/OpenAI affiliation, independent security audit or competitive approval is claimed. Code version `1.0.0` does not announce a published release. The [Community No-Resale License v1.0](../LICENSE) is source-available, not OSI-approved open source; see [licensing](legal/licensing.md) for terms and integration status.
 
 ## Choose a path
 

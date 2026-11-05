@@ -2,7 +2,7 @@
 
 [English](README.md) · [Présentation du projet](../README.md)
 
-CCS est un projet personnel indépendant développé avec une aide importante de ChatGPT/Codex (OpenAI), sans affiliation Valve/FACEIT/OpenAI, sans audit de sécurité indépendant ni approbation compétitive. La version du code `1.0.0` n’annonce pas une release publiée. La [licence](../LICENSE) reste un brouillon non approuvé et non effectif, sans octroi de droits.
+CCS est un projet personnel indépendant développé avec une aide importante de ChatGPT/Codex (OpenAI), sans affiliation Valve/FACEIT/OpenAI, sans audit de sécurité indépendant ni approbation compétitive. La version du code `1.0.0` n’annonce pas une release publiée. La [licence Community No-Resale v1.0](../LICENSE) est propriétaire à code accessible, et non open source au sens OSI. Consultez sa [traduction française informative](legal/LICENSE.fr.md) ; seul le texte anglais fait foi. Le [guide de licence](legal/licensing.md) précise les conditions et le statut d’intégration.
 
 ## Choisir son parcours
 
