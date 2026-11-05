@@ -9,7 +9,10 @@ from test_production_studio import PIN, ROOT, production, target_document
 from widget_fixtures import settle
 
 
-def run(browser):
+def run(browser, output=None):
+    registry = json.loads((ROOT / 'static/locales/languages.json').read_text('utf-8'))
+    catalogs = {entry['code']: json.loads((ROOT / 'static/locales' / entry['file']).read_text('utf-8'))
+                for entry in registry['languages']}
     initial = target_document()
     initial['profiles'][0]['name'] = 'studio.publish'
     with production(initial) as (url, data, _initial, _restart):
@@ -33,9 +36,22 @@ def run(browser):
         page.goto(url)
         page.wait_for_function("() => document.documentElement.dataset.i18nReady === 'true'")
         expect(page.locator('#login-title')).to_have_text('Se connecter à CCS')
+        for language, catalog in catalogs.items():
+            page.select_option('#locale-select', language)
+            expect(page.locator('#login-title')).to_have_text(catalog['experience.login'])
+            assert page.evaluate('document.documentElement.lang') == language.lower()
+            page.reload()
+            expect(page.locator('#login-title')).to_have_text(catalog['experience.login'])
+            expect(page.locator('#locale-select')).to_have_value(language)
+            if output:
+                page.screenshot(path=str(output / (language.lower() + '-login.png')))
+        page.select_option('#locale-select', 'FR')
         page.locator('#pin').fill('incorrect-synthetic-pin')
         page.locator('#connect').click()
         expect(page.locator('#loginerror')).to_contain_text('PIN incorrect')
+        for language, catalog in catalogs.items():
+            page.select_option('#locale-select', language)
+            expect(page.locator('#loginerror')).to_have_text(catalog['experience.invalidPin'])
         page.select_option('#locale-select', 'EN')
         expect(page.locator('#loginerror')).to_contain_text('Incorrect PIN')
         page.locator('#pin').fill(PIN)
@@ -44,6 +60,14 @@ def run(browser):
         expect(page.locator('#dashboard-profile-menu option:checked')).to_have_text('studio.publish')
         page.locator('[data-section="studio"]').click()
         expect(page.locator('#studio-app')).to_be_visible()
+        for language, catalog in catalogs.items():
+            page.select_option('#locale-select', language)
+            expect(page.locator('#studio-publish')).to_have_text(catalog['studio.publish'])
+            expect(page.locator('.studio-library-item[data-kind="health"] h3')).to_have_text(catalog['widgets.health.title'])
+            expect(page.locator('#studio-grid-caption')).to_have_text(catalog['studio.columns'].replace('{count}', '24'))
+            if output:
+                page.screenshot(path=str(output / (language.lower() + '-studio.png')))
+        page.select_option('#locale-select', 'EN')
         page.locator('.studio-library-item[data-kind="health"] button').click()
         personal = 'Santé "Émilie" <img src=x onerror=alert(1)> {amount}'[:36]
         page.locator('#studio-title').fill(personal)
@@ -69,6 +93,9 @@ def run(browser):
         with page.expect_popup() as popup:
             page.locator('#studio-open-preview').click()
         preview = popup.value
+        for language, catalog in catalogs.items():
+            preview.select_option('#locale-select', language)
+            expect(preview.locator('#studio-preview-exit')).to_have_text(catalog['studio.closePreview'])
         expect(preview.locator('#board .widget-heading')).to_have_text(personal)
         preview.select_option('#locale-select', 'FR')
         expect(preview.locator('#studio-preview-exit')).to_have_text('Fermer l’aperçu')
@@ -103,9 +130,13 @@ def run(browser):
         expect(page.locator('#studio-board .w-events [data-list="events"]')).to_contain_text('Dégâts reçus · 87 HP restants')
         for width in (390, 320):
             page.set_viewport_size({'width': width, 'height': 844})
-            settle(page)
-            dimensions = page.evaluate("() => ({width:innerWidth,scrollWidth:document.documentElement.scrollWidth,items:[...document.querySelectorAll('body *')].map(node=>({tag:node.tagName,cls:node.className,text:node.textContent.slice(0,70),right:node.getBoundingClientRect().right})).filter(item=>item.right>innerWidth).slice(0,15)})")
-            assert dimensions['scrollWidth'] <= dimensions['width'], dimensions
+            for language in catalogs:
+                page.select_option('#locale-select', language)
+                settle(page)
+                dimensions = page.evaluate("() => ({width:innerWidth,scrollWidth:document.documentElement.scrollWidth})")
+                assert dimensions['scrollWidth'] <= dimensions['width'], (language, dimensions)
+                if output and width == 390:
+                    page.screenshot(path=str(output / (language.lower() + '-mobile.png')))
         assert commands.count('profile_operation') == 1
         assert not errors, errors
         context.close()
@@ -126,19 +157,22 @@ def run(browser):
         assert page.locator('#login-title img').count() == 0
         assert page.evaluate('document.documentElement.scrollWidth <= innerWidth')
         context.close()
-    print('PASS: production FR/EN, hot PIN/dialog/preview translation, data-only third locale, explicit publication and personal-text isolation')
+    print('PASS: seven production locales, hot PIN/dialog/preview translation, explicit publication, personal-text isolation and mobile overflow checks')
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--browser', default='chromium', choices=['chromium', 'firefox', 'webkit'])
+    parser.add_argument('--output', type=Path)
     args = parser.parse_args()
+    if args.output:
+        args.output.mkdir(parents=True, exist_ok=True)
     with sync_playwright() as playwright:
         options = {'headless': True}
         if args.browser == 'chromium' and os.environ.get('CCS_CHROMIUM_EXECUTABLE'):
             options.update(executable_path=os.environ['CCS_CHROMIUM_EXECUTABLE'], args=['--no-sandbox'])
         browser = getattr(playwright, args.browser).launch(**options)
         try:
-            run(browser)
+            run(browser, args.output)
         finally:
             browser.close()

@@ -15,7 +15,7 @@ Developed with substantial ChatGPT (OpenAI) assistance; see [AI disclosure](AI_D
 - [29 widget types](docs/user/widgets.md), each with Standard, Compact and Minimal presentations. Solid, Glass and Outline surfaces are separate settings.
 - [Ten themes](docs/user/themes.md), including the light Arctic White theme; individual widget colors remain overrides.
 - Persistent **local browser drafts**. Only **Save and apply** explicitly publishes a configuration to the server and synchronizes authenticated clients.
-- English/French interface, help, Settings, diagnostics and an isolated synthetic demonstration.
+- Interface, help, Settings, diagnostics and installer in English, French, Russian, Polish, Ukrainian, Czech and Romanian; isolated synthetic demonstration.
 - Native Windows guided installer for Steam/CS2 and Docker Desktop; no Python installation required for that installer.
 
 CCS receives Game State Integration (GSI) messages. It does not read game memory, inject code or provide an in-game overlay. Streamer Mode and Overlay Studio are future work. Some fields may be unavailable; economy forecasts and optional bomb timing are estimates. The estimated bomb timer is **disabled by default**.
@@ -26,7 +26,7 @@ Prerequisites: Windows PowerShell 5.1 or PowerShell 7, Steam/CS2 installed, Dock
 
 1. Obtain a trusted source archive and extract it completely into a writable folder. Do not run it inside the ZIP. No public release is announced here.
 2. Start Docker Desktop, then double-click `INSTALLER_WINDOWS.cmd`.
-3. Choose EN or FR, verify the detected CS2 folder and follow the prompts. Keep the locally displayed PIN private. The installer generates/reuses credentials and asks before replacing an unrecognized different GSI file, retaining a backup.
+3. Choose EN, FR, RU, PL, UK, CS or RO, verify the detected CS2 folder and follow the prompts. Keep the locally displayed PIN private. The installer generates/reuses credentials and asks before replacing an unrecognized different GSI file, retaining a backup.
 4. Open `http://localhost:8080` (or the configured port). Demonstration works without a running match and cannot access private profiles.
 5. Connect with your PIN. A new Dashboard is **empty**. Open Customization Studio, add widgets and choose **Save and apply**. A locally saved draft alone does not change the Dashboard.
 6. Restart CS2 after installing/changing GSI configuration, then use a training session to check real data.

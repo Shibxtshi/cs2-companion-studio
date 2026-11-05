@@ -8,7 +8,7 @@ CCS est un projet personnel indépendant développé avec une aide importante de
 
 - [Utilisateur — guides français](user/README.fr.md) : installation, premier widget, Dashboard, Studio, 29 widgets, dix thèmes, LAN, sauvegardes et dépannage.
 - [Contributeur (anglais)](contributing/README.md) : issues, PR, tests ciblés, conventions, droits et assistance IA.
-- [Traductions (anglais)](contributing/translations.md) : catalogues JSON EN/FR, paramètres et ajout d’une langue.
+- [Traductions (anglais)](contributing/translations.md) : catalogues JSON en sept langues, paramètres et ajout d’une langue.
 - [Développeur (anglais)](development/README.md) : architecture, modules, flux, contrats, stockage, publication et tests.
 
 Les pages utilisateur suivent la convention `page.md` / `page.fr.md`, avec un lien de langue. Les références techniques sont maintenues en anglais pour éviter deux descriptions contradictoires.

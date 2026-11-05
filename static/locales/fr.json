@@ -680,5 +680,7 @@
   "widgets.value.waiting": "En attente",
   "widgets.value.waitingForData": "En attente de données",
   "widgets.value.winner": "Vainqueur : {team}",
-  "widgets.weapon.title": "Arme équipée"
+  "widgets.weapon.title": "Arme équipée",
+  "widgets.quantity.few": "{count} objets reçus",
+  "widgets.quantity.many": "{count} objets reçus"
 }

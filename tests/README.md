@@ -76,7 +76,7 @@ Linux engines also need their OS libraries (or the version-matched pinned Playwr
 | `test_production_faults.py` | Throttling, stale/metadata-only GSI, invalid imports, lost reply and server restart |
 | `test_rendering_regressions.py` | Computed custom surfaces/opacity, same-ID type replacement, focus and demo bomb controls |
 | `test_themes.py` | Ten published palettes, light/native controls, draft/history/preview, profiles, FR/EN and contrast samples |
-| `test_localization.py` | Real auth/publication, hot language changes, personal-text isolation and temporary third language |
+| `test_localization.py` | Seven locales, real auth/publication, hot language changes, reload, preview, mobile overflow, personal-text isolation and temporary test language |
 | `test_experience.py`, `test_experience_edges.py`, `test_logo_navigation.py` | Help/onboarding/settings/diagnostics, offline/errors/zoom, guarded logo exits, mouse/keyboard/touch |
 | `test_widget_preview.py` | 29 × 3 presentations across ten themes (870 combinations), missing/zero/stale/demo/long content and overrides |
 | `test_drafts.py`, `test_profile_publication.py` | Native IndexedDB, CAS/context revocation, journals/receipts/conflicts and failure injection |

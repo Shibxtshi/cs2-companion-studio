@@ -14,8 +14,19 @@ SPEC.loader.exec_module(checks)
 
 def test_real_catalogs_and_references_are_valid():
     result = checks.check()
-    assert result['languages'] == ['EN', 'FR']
+    assert result['languages'] == ['EN', 'FR', 'RU', 'PL', 'UK', 'CS', 'RO']
     assert result['keys'] > 500
+
+
+@pytest.mark.parametrize('language', ['EN', 'FR', 'RU', 'PL', 'UK', 'CS', 'RO'])
+def test_offline_tools_use_the_same_complete_catalog(language):
+    from companion.localization import Translator
+
+    translator = Translator(language)
+    assert translator.catalog.keys() == translator.reference.keys()
+    personal = 'Private name {unchanged} <tag>'
+    assert personal in translator.text('studio.addWidget', widget=personal)
+    assert translator.text('studio.publish') == translator.catalog['studio.publish']
 
 
 @pytest.mark.parametrize('content', [b'{broken', b'{"key":"one","key":"two"}', b'{"key":"one","Key":"two"}', b'\xff', b'\xef\xbb\xbf{}'])

@@ -1,6 +1,6 @@
 # Local fonts
 
-These original Latin WOFF2 distributions are served locally by CCS. No Google Fonts request is made by the application. The subsets support the EN/FR UI; unsupported glyphs use system fallback.
+These original Latin WOFF2 distributions are served locally by CCS. No Google Fonts request is made by the application. Unsupported Latin and Cyrillic glyphs in the additional locales use system fallback; their appearance depends on locally available fonts. No external font download is required.
 
 - Inter variable 400–700: Inter Project Authors, [upstream](https://github.com/rsms/inter), SIL Open Font License 1.1; retain inter-OFL.txt.
 - Barlow Condensed 600 and 700: Barlow Project Authors, [upstream](https://github.com/jpt/barlow), SIL Open Font License 1.1; retain barlow-condensed-OFL.txt.
