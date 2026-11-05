@@ -13,6 +13,32 @@ try {
     Compress-Archive -Path (Join-Path $bundle '*') -DestinationPath $archive
     $extracted = Join-Path $temporary 'extracted'
     Expand-Archive -LiteralPath $archive -DestinationPath $extracted
+    foreach ($requestedLanguage in @('', 'EN', 'FR')) {
+        $selection = & {
+            param([string] $Language, [string] $LocaleScript)
+            $script:languagePromptCalls = 0
+            function Read-Host {
+                param([string] $Prompt)
+                $script:languagePromptCalls++
+                return '2'
+            }
+            # Dot-sourcing must not overwrite the installer's Language parameter.
+            . $LocaleScript
+            $loadedLanguage = $Language
+            Select-InstallLanguage $false $Language
+            [pscustomobject]@{
+                requested = $loadedLanguage
+                prompts = $script:languagePromptCalls
+                selected = $script:InstallLanguage
+            }
+        } $requestedLanguage (Join-Path $extracted 'installer/i18n.ps1')
+        Assert-True ($selection.requested -ceq $requestedLanguage) 'Loading catalogs changed the requested language'
+        if ($requestedLanguage -eq '') {
+            Assert-True ($selection.prompts -eq 1 -and $selection.selected -ceq 'FR') 'Default startup did not ask for language'
+        } else {
+            Assert-True ($selection.prompts -eq 0 -and $selection.selected -ceq $requestedLanguage) 'Explicit language was ignored or prompted again'
+        }
+    }
     . (Join-Path $extracted 'installer/i18n.ps1')
     . (Join-Path $extracted 'installer/common.ps1')
     Set-InstallLanguage 'FR'

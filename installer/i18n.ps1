@@ -15,14 +15,14 @@ foreach ($entry in $script:LanguageRegistry.languages) {
 }
 # Refuse an incomplete listed language instead of hiding errors through fallback.
 $reference = $script:LocaleCatalogs.EN
-foreach ($language in $script:Languages.Keys) {
-    $catalog = $script:LocaleCatalogs[$language]
-    if ($catalog.Count -ne $reference.Count) { throw ('incomplete_locale_catalog:' + $language) }
+foreach ($languageCode in $script:Languages.Keys) {
+    $catalog = $script:LocaleCatalogs[$languageCode]
+    if ($catalog.Count -ne $reference.Count) { throw ('incomplete_locale_catalog:' + $languageCode) }
     foreach ($key in $reference.Keys) {
-        if (@($catalog.Keys) -cnotcontains $key -or [string]::IsNullOrWhiteSpace($catalog[$key])) { throw ('invalid_locale_message:' + $language + ':' + $key) }
+        if (@($catalog.Keys) -cnotcontains $key -or [string]::IsNullOrWhiteSpace($catalog[$key])) { throw ('invalid_locale_message:' + $languageCode + ':' + $key) }
         $expected = @([regex]::Matches($reference[$key], '\{([A-Za-z][A-Za-z0-9]*)\}') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
         $actual = @([regex]::Matches($catalog[$key], '\{([A-Za-z][A-Za-z0-9]*)\}') | ForEach-Object { $_.Groups[1].Value } | Sort-Object -Unique)
-        if (($expected -join ',') -cne ($actual -join ',')) { throw ('locale_parameter_mismatch:' + $language + ':' + $key) }
+        if (($expected -join ',') -cne ($actual -join ',')) { throw ('locale_parameter_mismatch:' + $languageCode + ':' + $key) }
     }
 }
 function Set-InstallLanguage([string] $Code) {
